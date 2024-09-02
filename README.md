@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Gambler Pawns
 
-First, run the development server:
+Gambler Pawns is a web platform to enjoy a Chess game with friends online. This project adds some features to the classic Chess game, such as:
+
+- Puzzles: Improve your skills by solving some highly complex problems.
+- Arcade Mode: A new way to play chess, enjoy new abilities added to common pieces and discover a new world of possibilities.
+- Store: Customize your game by buying new piece skins and chessboard.
+- Club: Find or create your own community to share with other chess players.
+- Leadboard: Climb to the top of the player rankings and be the best.
+
+This project was developed as academic product for the Universidad del Valle. 
+
+## Repository
+
+This repo contains the Gambler Pawns frontend code, developed with [NextJS](https://nextjs.org/).
+
+
+
+## Run Locally
+
+Clone the project
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  git clone https://github.com/amg1114/gambler-pawns-frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to the project directory
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+  cd gambler-pawns-frontend
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Install dependencies
 
-## Learn More
+```bash
+  npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+  npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Authors
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [@amg1114](https://www.github.com/amg1114)
+- [@NicolasPL64](https://www.github.com/NicolasPL64)
+- [@JSebastianMarin](https://www.github.com/JSebastianMarin)
+- [@RamSterB](https://www.github.com/RamSterB)
+- [@JuanPidarraga](https://www.github.com/JuanPidarraga)
+- [@MonsaveAKAdictador](https://www.github.com/JuanPidarraga)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
