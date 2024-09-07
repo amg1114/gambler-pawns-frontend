@@ -1,4 +1,4 @@
-import { bungee, azeret_mono } from "../fonts";
+import { bungee, azeret_mono } from "@/app/ui/fonts";
 
 const styleClasses = {
     h1: `text-3xl font-bold ${bungee.className} mb-xl`,
