@@ -58,7 +58,7 @@ export default function GameAlert({ children, size, close }: GameAlertProps) {
                         &times;
                     </button>
                 </header>
-                <div className={`w-full rounded bg-dark-1 p-lg`}>{children}</div>
+                <div className={`w-full rounded-base bg-dark-1 p-lg`}>{children}</div>
             </div>
         </div>
     );

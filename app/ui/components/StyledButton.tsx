@@ -36,7 +36,7 @@ export default function StyledButton(props: StyledButtonProps) {
     const { children, extraClasses, onClick } = props;
     return (
         <button
-            className={`${styleClasses[props.style || "filled"][props.variant || "primary"]} w-fit shrink-0 rounded px-md py-sm ${nunito.className} cursor-pointer font-bold transition-colors ${extraClasses}`}
+            className={`${styleClasses[props.style || "filled"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm ${nunito.className} cursor-pointer font-bold transition-colors ${extraClasses}`}
             onClick={onClick}
         >
             {children}

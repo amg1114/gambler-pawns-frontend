@@ -30,6 +30,11 @@ const config: Config = {
             light: "#EAE9FC",
             gray: "#333333",
         },
+        borderRadius: {
+            none: "0",
+            "base": "0.25rem",
+        },
+        
         padding: spacing,
         margin: spacing,
         extend: {
