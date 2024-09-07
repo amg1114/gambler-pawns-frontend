@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface GameAlertProps {
     children: React.ReactNode;
@@ -36,7 +36,7 @@ export default function GameAlert({ children, size, close }: GameAlertProps) {
         if (isClosing) {
             const timeout = setTimeout(() => {
                 close();
-            }, 500); // Tiempo que dura la animación fade-out
+            }, 500);
 
             return () => clearTimeout(timeout);
         }
