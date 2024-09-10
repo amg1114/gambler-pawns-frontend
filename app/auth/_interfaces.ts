@@ -1,12 +1,13 @@
 export interface RegisterForm {
-    username: string
+    nickname: string
     email: string
     password: string
     confirmpassword: string
+    countryCode: string
 }
 
 export interface LoginForm {
-    username: string
+    nickname: string
     password: string
 }
 
