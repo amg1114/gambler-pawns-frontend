@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginRequest } from "../../../auth/_api";
+import { loginRequest } from "@/services/auth";
 import { JWT } from "next-auth/jwt";
 
 const authOptions = {
