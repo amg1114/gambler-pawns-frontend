@@ -1,7 +1,7 @@
 'use client'
 
 import { SubmitHandler, useForm } from "react-hook-form"
-import { registerRequest } from "@/services/auth"
+import { registerRequest } from "@/app/lib/services/auth"
 import { RegisterForm } from "../_interfaces"
 import { useRouter } from "next/navigation"
 

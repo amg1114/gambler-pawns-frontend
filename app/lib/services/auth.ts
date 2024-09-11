@@ -1,4 +1,4 @@
-import axios from '@/_axios';
+import axios from '@/app/lib/_axios';
 import { LoginForm, RegisterForm } from '@/app/auth/_interfaces';
 import { AxiosResponse } from 'axios';
 
