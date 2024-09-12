@@ -9,6 +9,7 @@ const spacing = {
     "2xl": "4rem",  // 64px
     "3xl": "6rem",  // 96px
     full: "100%",   // 100%
+    auto: "auto",   // auto
 };
 
 const config: Config = {
