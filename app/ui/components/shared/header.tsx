@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { azeret_mono, bungee } from "@/app/ui/fonts";
 import Logo from "../../icons/logo.svg";
 import Coin from "../../icons/coin.svg";
 import Fire from "../../icons/fire.svg";
@@ -8,7 +9,9 @@ function conditionalRendering() {
     if (userlogin) {
         return (
             <div className="flex w-1/3 justify-end max-[340px]:sr-only">
-                <text className="__className_94ea24 pr-xs text-base text-light">
+                <text
+                    className={bungee.className + " pr-xs text-base text-light"}
+                >
                     200
                 </text>
                 <Image
@@ -18,7 +21,11 @@ function conditionalRendering() {
                     height={20}
                     className="h-auto w-auto"
                 />
-                <text className="__className_94ea24 pl-sm pr-xs text-base text-light">
+                <text
+                    className={
+                        bungee.className + " pl-sm pr-xs text-base text-light"
+                    }
+                >
                     14
                 </text>
                 <Image src={Fire} alt="" width={14.78} height={20} />
