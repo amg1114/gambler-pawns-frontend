@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Logo from "./ui/icons/logo.svg";
 
-export default function Home() {
+export default function Landing() {
     return (
         <main className="flex items-center justify-center pt-3xl">
             <Image
