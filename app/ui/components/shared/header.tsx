@@ -1,12 +1,12 @@
 import Image from "next/image";
-import Logo from "../../lib/icons/logo.svg";
-import Coin from "../../lib/icons/coin.svg";
-import Fire from "../../lib/icons/fire.svg";
+import Logo from "../../icons/logo.svg";
+import Coin from "../../icons/coin.svg";
+import Fire from "../../icons/fire.svg";
 
 export default function Header() {
     return (
         <nav className="fixed flex w-full items-center justify-between border-b-2 border-primary bg-dark-1 p-md">
-            <div className="flex w-1/3 bg-dark-2 max-[600px]:sr-only max-[370px]:w-1/4">
+            <div className="flex w-1/3 max-[370px]:w-1/4">
                 <text className="text-light md:sr-only">Menu</text>
             </div>
 
