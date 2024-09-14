@@ -8,6 +8,31 @@ import { azeret_mono, bungee } from "@/app/ui/fonts";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
+import { Nunito } from "next/font/google";
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+
+function BetOption(id: string) {
+    return (
+        <div>
+            <input
+                id={"bet" + id}
+                className="peer/bet hidden"
+                type="radio"
+                name="status"
+                defaultChecked
+            />
+            <div className="p-5 bg-green-board peer-checked/bet:bg-green-hover ring-transparent h-6 w-14 rounded-base text-light ring-2 peer-checked/bet:ring-accent peer-checked:ring-offset-2">
+                <label htmlFor={"bet" + id} className="cursor-pointer">
+                    <div className="flex justify-center">
+                        <StyledParagraph extraClasses="font-bold">
+                            ${id}
+                        </StyledParagraph>
+                    </div>
+                </label>
+            </div>
+        </div>
+    );
+}
 
 export default function ClassicOptionPage() {
     const [showAlertM, setShowAlertM] = useState(false);
@@ -28,6 +53,17 @@ export default function ClassicOptionPage() {
             <StyledTitle variant="h2" extraClasses="text-center">
                 Your bet
             </StyledTitle>
+
+            <fieldset className="flex justify-between">
+                {BetOption("0")}
+                {BetOption("20")}
+                {BetOption("60")}
+                {BetOption("100")}
+                {BetOption("220")}
+                {BetOption("580")}
+                {BetOption("1000")}
+            </fieldset>
+
             <StyledTitle variant="h2" extraClasses="text-center">
                 Against Who?
             </StyledTitle>
