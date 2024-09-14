@@ -27,7 +27,7 @@ export default function RootLayout({
                 <header>
                     <Header />
                 </header>
-                <main className="pt-2xl">{children}</main>
+                <main className="pt-[116px]">{children}</main>
             </body>
         </html>
     );
