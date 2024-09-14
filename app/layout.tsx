@@ -7,6 +7,7 @@ import { nunito } from "./ui/fonts";
 import "./globals.css";
 
 // components
+import Providers from "./ui/components/Providers";
 import Header from "./ui/components/shared/header";
 
 export const metadata: Metadata = {
@@ -28,10 +29,12 @@ export default function RootLayout({
                 />
             </head>
             <body className={nunito.className + " bg-dark-1 text-light"}>
-                <header>
-                    <Header />
-                </header>
-                <main className="pt-2xl">{children}</main>
+                <Providers>
+                    <header>
+                        <Header />
+                    </header>
+                    <main className="pt-2xl">{children}</main>
+                </Providers>
             </body>
         </html>
     );

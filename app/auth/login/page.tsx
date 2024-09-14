@@ -29,11 +29,10 @@ export default function LoginPage() {
             }
 
             if (res.error) {
-                console.log("hola a todo el mundo")
+                console.log("hola a todo el mundo", res.error)
                 alert("Error al iniciar sesión")
                 
             } else {
-                console.log(res)
                 router.push("/")
             }
 
