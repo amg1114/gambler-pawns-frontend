@@ -68,7 +68,7 @@ export default function LoginPage() {
                 )}
                 <label className="text-slate-500 block">Password</label>
                 <input
-                    type="text"
+                    type="password"
                     {...register("password", {
                         required: {
                             value: true,
