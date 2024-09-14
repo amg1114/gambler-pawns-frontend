@@ -36,6 +36,6 @@ export default function RootLayout({
                     <main className="pt-2xl">{children}</main>
                 </Providers>
             </body>
-        </html>
+        </html >
     );
 }
