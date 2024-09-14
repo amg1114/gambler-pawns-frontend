@@ -1,7 +1,12 @@
-
+// lib
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
+// styles
+import { nunito } from "./ui/fonts";
+
 import "./globals.css";
+
+// components
 import Header from "./ui/components/shared/header";
 import Providers from "./ui/components/Providers";
 import Sidebar from "./ui/components/shared/Sidebar";
@@ -29,7 +34,7 @@ export default function RootLayout({
                 />
             </head>
 
-            <body className={inter.className + " bg-dark-1 text-light"}>
+            <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
                     <div className="flex">
                         <main className="flex-1 pt-[116px] min-h-screen w-full">
