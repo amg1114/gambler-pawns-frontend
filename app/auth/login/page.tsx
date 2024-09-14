@@ -29,11 +29,10 @@ export default function LoginPage() {
             }
 
             if (res.error) {
-                console.log("hola a todo el mundo")
+                console.log("hola a todo el mundo", res.error)
                 alert("Error al iniciar sesión")
                 
             } else {
-                console.log(res)
                 router.push("/")
             }
 
@@ -69,7 +68,7 @@ export default function LoginPage() {
                 )}
                 <label className="text-slate-500 block">Password</label>
                 <input
-                    type="password"
+                    type="text"
                     {...register("password", {
                         required: {
                             value: true,
