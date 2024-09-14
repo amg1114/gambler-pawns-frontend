@@ -31,6 +31,9 @@ const config: Config = {
             warning: "#FFFFFF",
             light: "#EAE9FC",
             gray: "#333333",
+            "green-board": "#427119",
+            "green-hover": "#6B7119",
+            "transparent": "transparent",
         },
         borderRadius: {
             none: "0",
