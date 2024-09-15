@@ -60,7 +60,7 @@ export function ProfileAvatarSelect({
     return (
         <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">
             <div
-                className={clsx(`w-full max-w-lg`, {
+                className={clsx(`w-4/5 max-w-lg`, {
                     "animate-fade-out-up": isClosing,
                     "animate-fade-in-down": !isClosing,
                 })}
@@ -73,7 +73,9 @@ export function ProfileAvatarSelect({
                         &times;
                     </button>
                 </header>
-                <div className={`w-full rounded-base bg-primary p-lg`}>
+                <div
+                    className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary p-lg lg:max-h-none lg:overflow-y-auto`}
+                >
                     <StyledTitle
                         extraClasses="!text-secondary text-center"
                         variant="h3"
