@@ -5,7 +5,8 @@ declare module "next-auth" {
     interface Session{
         data: {
             access_token: string
-        }
+        },
+        user: "hola" | "chau"
         timestamp: string
     }
 }
