@@ -17,10 +17,10 @@ export default function LoginPage() {
         try {
             const res = await registerRequest({
                 nickname: data.nickname, email: data.email, password: data.password,
-                confirmpassword: "", countryCode: "COL"
+                confirmpassword: "", countryCode: "CO"
             })
 
-            if (res.status === 200) {
+            if (res.status === 201) {
                 router.push("/auth/login")
             }
         } catch (error) {
