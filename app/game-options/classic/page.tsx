@@ -8,7 +8,6 @@ import BetOption from "@/app/game-options/components/bet-options";
 import Dropdown from "@/app/game-options/components/drop-down";
 
 // Importing icons
-import Clock from "@/app/ui/icons/clock.svg";
 import ChessTile from "@/app/ui/icons/chess-tile.svg";
 import Dice from "@/app/ui/icons/dice.svg";
 import Link from "@/app/ui/icons/link-shared.svg";
@@ -20,7 +19,14 @@ export default function ClassicOptionPage() {
                 Game Options
             </StyledTitle>
 
-            <Dropdown dropStyles="outlined" />
+            <Dropdown
+                dropDown={{
+                    dropStyles: "outlined",
+                    text: "Select a Game Mode",
+                }}
+            >
+                <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
+            </Dropdown>
 
             <StyledTitle variant="h2" extraClasses="text-center">
                 Your bet
@@ -59,8 +65,6 @@ export default function ClassicOptionPage() {
                         <Image
                             src={Link}
                             alt=""
-                            width={20}
-                            height={20}
                             className="h-auto w-auto pr-sm"
                         />
                         Copy Game’s Link
@@ -77,6 +81,16 @@ export default function ClassicOptionPage() {
                         />
                         Play vs. a Friend
                     </StyledButton>
+                </div>
+                <div>
+                    <Dropdown
+                        dropDown={{
+                            dropStyles: "filled",
+                            text: "Play vs. a Friend",
+                        }}
+                    >
+                        <Dropdown.FriendsDrop></Dropdown.FriendsDrop>
+                    </Dropdown>
                 </div>
 
                 <div className="flex items-center justify-center p-md">
