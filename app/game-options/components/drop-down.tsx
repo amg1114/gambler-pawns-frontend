@@ -1,6 +1,12 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import {
+    Children,
+    createContext,
+    PropsWithChildren,
+    useContext,
+    useState,
+} from "react";
 
 // Importing components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -18,11 +24,38 @@ const arrayGameModes = [
     { mode: "Bullet, 2 min +1 sec", id: "option6" },
 ];
 
-export default function DropdownButton({
-    dropStyles,
-}: {
+const arrayFriends = [
+    { icon: "src", name: "Friend 1", id: "friend1" },
+    { icon: "src", name: "Friend 1", id: "friend1" },
+    { icon: "src", name: "Friend 1", id: "friend1" },
+];
+
+type DropDownContext = {
+    dropDown: Dropdown;
+};
+
+const DropDownContext = createContext<DropDownContext | undefined>(undefined);
+
+function useDropDownContext() {
+    const context = useContext(DropDownContext);
+    if (!context) {
+        throw new Error(
+            "useDropDownContext must be used within a DropDownProvider",
+        );
+    }
+    return context;
+}
+
+type Dropdown = {
     dropStyles: "filled" | "outlined" | undefined;
-}) {
+    text: string;
+};
+
+type DropDownProps = PropsWithChildren & {
+    dropDown: Dropdown;
+};
+
+export default function DropdownButton({ children, dropDown }: DropDownProps) {
     // Estado para controlar la visibilidad del dropdown
     const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
 
@@ -31,50 +64,95 @@ export default function DropdownButton({
         setIsDropdownVisible(!isDropdownVisible);
     };
 
-    let selected = "option2";
+    // Función para cambiar el texto del boton por la opción seleccionada
 
-    function selectedOption(id: string) {
-        selected = id;
+    function selectedOption(mode: string) {
         const button = document.getElementById("toggleButton");
-        const div = document.getElementById(selected);
-        button!.textContent = div!.textContent;
+        button!.textContent = mode;
     }
 
     return (
-        <div id="dropdownButton">
-            <div className="flex justify-center">
-                <StyledButton
-                    style={dropStyles}
-                    extraClasses="w-full flex justify-between items-center bg-dark-2"
-                    onClick={toggleDropdown}
-                >
-                    <Image
-                        src={Clock}
-                        alt=""
-                        width={20}
-                        height={20}
-                        className="h-auto w-auto"
-                    />
-                    <div id="toggleButton">Select Game Mode</div>
-                    <Image src={ArrowDown} alt="" width={18} height={18} />
-                </StyledButton>
-            </div>
-
-            <div
-                className={`absolute h-auto w-[334px] select-none rounded-base border-x-2 border-b-2 border-primary bg-dark-2 ${isDropdownVisible ? "" : "hidden"}`}
-                id="dropdown"
-            >
-                {arrayGameModes.map((gameMode) => (
-                    <span
-                        key={gameMode.id}
-                        className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
-                        id={gameMode.id}
-                        onClick={() => selectedOption(gameMode.id)}
+        <DropDownContext.Provider value={{ dropDown }}>
+            <div id="dropdownButton">
+                <div className="flex justify-center">
+                    <StyledButton
+                        style={dropDown.dropStyles}
+                        extraClasses="w-full flex justify-between items-center bg-dark-2"
+                        onClick={toggleDropdown}
                     >
-                        {gameMode.mode}
-                    </span>
-                ))}
+                        <Image
+                            src={Clock}
+                            alt=""
+                            width={20}
+                            height={20}
+                            className="h-auto w-auto"
+                        />
+                        <text id="toggleButton">{dropDown.text}</text>
+
+                        <Image
+                            src={ArrowDown}
+                            alt=""
+                            width={18}
+                            height={18}
+                            className="fill-primary"
+                        />
+                    </StyledButton>
+                </div>
+
+                <div
+                    className={`absolute h-auto w-[334px] select-none rounded-base border-x-2 border-b-2 border-primary bg-dark-2 ${isDropdownVisible ? "" : "hidden"}`}
+                    id="dropdown"
+                >
+                    {children}
+                </div>
             </div>
-        </div>
+        </DropDownContext.Provider>
     );
 }
+
+DropdownButton.GameModesDrop = function GameModesDrop() {
+    const { dropDown } = useDropDownContext();
+
+    function selectedOption(mode: string) {
+        const button = document.getElementById("toggleButton");
+        button!.textContent = mode;
+    }
+
+    return (
+        <>
+            {arrayGameModes.map((gameMode) => (
+                <span
+                    key={gameMode.id}
+                    className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
+                    id={gameMode.id}
+                    onClick={() => selectedOption(gameMode.mode)}
+                >
+                    {gameMode.mode}
+                </span>
+            ))}
+        </>
+    );
+};
+
+DropdownButton.FriendsDrop = function FriendsDrop() {
+    const { dropDown } = useDropDownContext();
+
+    function selectedOption(mode: string) {
+        const button = document.getElementById("toggleButton");
+        button!.textContent = mode;
+    }
+
+    return (
+        <>
+            {arrayFriends.map((friends) => (
+                <span
+                    key={friends.id}
+                    className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
+                    id={friends.id}
+                >
+                    {friends.name}
+                </span>
+            ))}
+        </>
+    );
+};
