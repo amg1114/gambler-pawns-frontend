@@ -9,7 +9,20 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Clock from "@/app/ui/icons/clock.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 
-export default function DropdownButton() {
+const arrayGameModes = [
+    { mode: "Rapid, 15 min, +10 sec", id: "option1" },
+    { mode: "Rapid, 10 min", id: "option2" },
+    { mode: "Blitz, 5 min", id: "option3" },
+    { mode: "Blitz, 3 min, +2 sec", id: "option4" },
+    { mode: "Bullet, 1 min", id: "option5" },
+    { mode: "Bullet, 2 min +1 sec", id: "option6" },
+];
+
+export default function DropdownButton({
+    dropStyles,
+}: {
+    dropStyles: "filled" | "outlined" | undefined;
+}) {
     // Estado para controlar la visibilidad del dropdown
     const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
 
@@ -31,7 +44,7 @@ export default function DropdownButton() {
         <div id="dropdownButton">
             <div className="flex justify-center">
                 <StyledButton
-                    style="outlined"
+                    style={dropStyles}
                     extraClasses="w-full flex justify-between items-center bg-dark-2"
                     onClick={toggleDropdown}
                 >
@@ -48,51 +61,19 @@ export default function DropdownButton() {
             </div>
 
             <div
-                className={`h-65 absolute w-[334px] select-none rounded-base border-x-2 border-b-2 border-primary bg-dark-2 ${isDropdownVisible ? "" : "hidden"}`}
+                className={`absolute h-auto w-[334px] select-none rounded-base border-x-2 border-b-2 border-primary bg-dark-2 ${isDropdownVisible ? "" : "hidden"}`}
                 id="dropdown"
             >
-                <div
-                    className="cursor-pointer py-sm pl-md hover:bg-dark-1"
-                    id="option1"
-                    onClick={() => selectedOption("option1")}
-                >
-                    Rapid, 15 min, +10 sec
-                </div>
-                <div
-                    className="cursor-pointer py-sm pl-md hover:bg-dark-1"
-                    id="option2"
-                    onClick={() => selectedOption("option2")}
-                >
-                    Rapid, 10 min
-                </div>
-                <div
-                    className="cursor-pointer py-sm pl-md hover:bg-dark-1"
-                    id="option3"
-                    onClick={() => selectedOption("option3")}
-                >
-                    Blitz, 5 min
-                </div>
-                <div
-                    className="cursor-pointer py-sm pl-md hover:bg-dark-1"
-                    id="option4"
-                    onClick={() => selectedOption("option4")}
-                >
-                    Blitz, 3 min, +2 sec
-                </div>
-                <div
-                    className="cursor-pointer py-sm pl-md hover:bg-dark-1"
-                    id="option5"
-                    onClick={() => selectedOption("option5")}
-                >
-                    Bullet, 1 min
-                </div>
-                <div
-                    className="cursor-pointer py-sm pl-md hover:bg-dark-1"
-                    id="option6"
-                    onClick={() => selectedOption("option6")}
-                >
-                    Bullet, 2 min +1 sec
-                </div>
+                {arrayGameModes.map((gameMode) => (
+                    <span
+                        key={gameMode.id}
+                        className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
+                        id={gameMode.id}
+                        onClick={() => selectedOption(gameMode.id)}
+                    >
+                        {gameMode.mode}
+                    </span>
+                ))}
             </div>
         </div>
     );
