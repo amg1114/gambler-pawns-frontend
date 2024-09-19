@@ -8,14 +8,21 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Fire from "../ui/icons/fire.svg";
 import Arcade from "../ui/icons/arcade.svg";
 import Classic from "../ui/icons/classic.svg";
+import { useSession } from "next-auth/react";
+import { JWT } from "next-auth/jwt";
+import React, { use } from "react";
 
 export default function HomePage() {
     let friends: String[]; /*arreglo de tipo user*/
+    const {data:session} = useSession();
+    if (session && session.user) {
+        console.log(session)
     return (
+        
         <div className=" lg:grid grid-cols-2 w-auto gap-14">
             <div className="space-y-5  my-3xl w-auto ">
                 <div className="bg-dark-2 w-auto h-auto p-md  "> 
-                    <StyledTitle variant="h2" extraClasses="text-left text-slate-500 ">Welcome to the game</StyledTitle>
+                    <StyledTitle variant="h2" extraClasses="text-left text-slate-500 ">{session?.data.nickname}</StyledTitle>
                     <StyledParagraph extraClasses="text-left text-slate-500">Enjoy chess with our new features, learn more in about</StyledParagraph>
                 </div >
                 <Image src={Board} alt=""  className="w-full"/>
@@ -54,5 +61,6 @@ export default function HomePage() {
             </div>
             
         </div>
-    );
+    );}
+    return ( <h1>Sesion no iniciada</h1>)
 }
