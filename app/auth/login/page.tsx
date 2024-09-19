@@ -1,65 +1,62 @@
-'use client'
-import {useForm, SubmitHandler} from "react-hook-form"
-import { LoginForm } from "../_interfaces"
-import { signIn, SignInResponse } from "next-auth/react"
-import { useRouter } from "next/navigation"
-
+"use client";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { LoginForm } from "../_interfaces";
+import { signIn, SignInResponse } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import GameAlert from "@/app/ui/components/modals/GameAlert";
 
 export default function LoginPage() {
-
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>()
-    const router = useRouter()
-
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<LoginForm>();
+    const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-        console.log(process.env.HOLA)
-
         try {
-
-            const res: SignInResponse | undefined = await signIn("credentials", {
-                nickname: data.nickname,
-                password: data.password,
-                redirect: false,
-            })
-
-            console.log(res)
+            const res: SignInResponse | undefined = await signIn(
+                "credentials",
+                {
+                    nickname: data.nickname,
+                    password: data.password,
+                    redirect: false,
+                },
+            );
 
             if (!res) {
-                alert("Error al iniciar sesion, intente de nuevo")
-                return
+                setErrorMessage("Error at login");
+                console.error("response is undefined");
+                return;
             }
 
             if (res.error) {
-                console.log("hola a todo el mundo", res.error)
-                alert("Error al iniciar sesión")
-                
-            } else {
-                router.push("/")
+                console.error(res.error);
+                setErrorMessage(res.error);
+                return;
             }
 
+            router.push("/");
         } catch (error) {
-            console.error("Error al iniciar sesion: ", error)
-            alert("Error al iniciar sesion")
+            console.error("Login error: ", error);
+            setErrorMessage("Error at login");
         }
-
-    }
-
+    };
 
     return (
-        <div className="h-[calc(100vh/7rem)] flex justify-center items-center">
+        <div className="flex h-[calc(100vh/7rem)] items-center justify-center">
             <form onSubmit={handleSubmit(onSubmit)} className="w-1/4">
-                <label className="text-slate-500 block">
-                    Username
-                </label>
+                <label className="text-slate-500 block">Username</label>
                 <input
                     type="text"
                     {...register("nickname", {
                         required: {
                             value: true,
-                            message: "Por favor, ingrese su usuario"
-                        }
-                    })
-                    }
-                    className="text-bg-dark-1 p-3 rounded-md block mb-2 bg-slate-200 text-slate-300 w-full"
+                            message: "Por favor, ingrese su usuario",
+                        },
+                    })}
+                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
                 />
                 {errors.nickname && (
                     <span className="text-error">
@@ -72,22 +69,32 @@ export default function LoginPage() {
                     {...register("password", {
                         required: {
                             value: true,
-                            message: "Por favor, ingrese su contraseña"
-                        }
+                            message: "Por favor, ingrese su contraseña",
+                        },
                     })}
                     id="password"
                     placeholder="********"
-                    className="text-bg-dark-1 p-3 rounded-md block mb-2 bg-slate-200 text-slate-300 w-full"
+                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
                 />
                 {errors.password && (
-                    <span className="text-error">{errors.password.message}</span>
+                    <span className="text-error">
+                        {errors.password.message}
+                    </span>
                 )}
 
                 <button
                     type="submit"
-                    className="bg-primary text-slate-200 w-full p-3 rounded-md"
-                >Sign In</button>
+                    className="text-slate-200 p-3 rounded-md w-full bg-primary"
+                >
+                    Sign In
+                </button>
+
+                {errorMessage ? (
+                    <span className="text-error underline">{errorMessage}</span>
+                ) : (
+                    <></>
+                )}
             </form>
         </div>
-    )
+    );
 }
