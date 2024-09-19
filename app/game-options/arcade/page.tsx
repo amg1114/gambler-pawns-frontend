@@ -10,34 +10,7 @@ import Link from "@/app/ui/icons/link-shared.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import BetOption from "@/app/game-options/components/bet-options";
-import ModifierOption from "@/app/game-options/components/modifier-options";
-
-const arrayArcadeModes = [
-    {
-        id: "option1",
-        title: "Blood Square",
-        explain:
-            "Randomly activated squares, players will have 2 turns to removepieces from that square, otherwise the piece will be lost.",
-    },
-    {
-        id: "option2",
-        title: "Random Freeze",
-        explain:
-            "Randomly activated squares, players will have 2 turns to removepieces from that square, otherwise the piece will be lost.",
-    },
-    {
-        id: "option3",
-        title: "Borders of Blood",
-        explain:
-            "Randomly activated squares, players will have 2 turns to removepieces from that square, otherwise the piece will be lost.",
-    },
-    {
-        id: "option4",
-        title: "BlooVengeful Rider",
-        explain:
-            "Randomly activated squares, players will have 2 turns to removepieces from that square, otherwise the piece will be lost.",
-    },
-];
+import ArcadeOptions from "@/app/game-options/components/modifier-options";
 
 export default function ClassicOptionPage() {
     return (
@@ -49,11 +22,7 @@ export default function ClassicOptionPage() {
                 Select Modifiers
             </StyledTitle>
 
-            <div className="space-y-4">
-                {arrayArcadeModes.map((mode) => {
-                    return ModifierOption(mode.title, mode.explain);
-                })}
-            </div>
+            <ArcadeOptions />
 
             <StyledTitle variant="h2" extraClasses="text-center">
                 Your bet
