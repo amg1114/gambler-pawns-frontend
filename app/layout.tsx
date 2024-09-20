@@ -1,13 +1,19 @@
-
+// lib
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
+// styles
+import { nunito } from "./ui/fonts";
+
 import "./globals.css";
-import Header from "./ui/components/shared/header";
+
+// components
 import Providers from "./ui/components/Providers";
+import Header from "./ui/components/shared/header";
+
 import Sidebar from "./ui/components/shared/Sidebar";
 import { useState } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
+//const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -28,8 +34,7 @@ export default function RootLayout({
                     content="width=device-width, initial-scale=1.0"
                 />
             </head>
-
-            <body className={inter.className + " bg-dark-1 text-light"}>
+            <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
                     <div className="flex">
                         <main className="flex-1 pt-[116px] min-h-screen w-full">
@@ -38,7 +43,6 @@ export default function RootLayout({
                         </main>
                     </div>
                 </Providers>
-
             </body>
         </html >
     );

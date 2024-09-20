@@ -1,7 +1,8 @@
-import NextAuth from "next-auth"
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { loginRequest } from "@/app/lib/services/auth";
 import { JWT } from "next-auth/jwt";
+import { decodeJwt } from "jose";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -9,45 +10,55 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             name: "Credentials",
             credentials: {
                 nickname: { label: "nickname", type: "text" },
-                password: { label: "password", type: "password" }
+                password: { label: "password", type: "password" },
             },
             async authorize(credentials, req: Request) {
-                if (!credentials || typeof credentials.nickname !== "string" || typeof credentials.password !== "string") {
-                    throw new Error("Credenciales no provistas o incorrectas");
+                if (
+                    !credentials ||
+                    typeof credentials.nickname !== "string" ||
+                    typeof credentials.password !== "string"
+                ) {
+                    throw new Error("Invalid credentials");
                 }
+
+                
                 try {
                     const res = await loginRequest({
                         nickname: credentials.nickname,
-                        password: credentials.password
-                    })
+                        password: credentials.password,
+                    });
 
                     if (res.status === 401) {
-                        return null
+                        return null;
                     }
-                    const user = res.data
-                    return user
+                   
+                    const token = decodeJwt(res.data.data.access_token);
+                    return token as JWT;
                 } catch (error) {
-                    return null
+                    return null;
                 }
-
             },
-
-        })],
+        }),
+    ],
+    pages: {
+        signIn: "/auth/login"
+    },
     session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
     callbacks: {
-        async jwt({ token, user }: { token: JWT, user?: any }) {
+        async jwt({ token, user }: { token: JWT; user?: any }) {
             if (user) {
-                return { ...token, ...user }
+                token.data = user;
             }
-            return token
+            return token;
         },
-        async session({ session, token }: { session: any , token: JWT }) {
-            session.data = token.data
-            session.timestamp = token.timestamp
+        async session({ session, token }: { session: any; token: JWT }) {
+            session.data = token.data;
+            session.timestamp = token.timestamp;
 
-            return session
-        }
+            return session;
+        },
+        authorized: async ({ auth }) => {
+            return !!auth;
+        },
     },
-
-
-})
+});

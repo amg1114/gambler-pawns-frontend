@@ -31,13 +31,16 @@ const config: Config = {
             warning: "#FFFFFF",
             light: "#EAE9FC",
             gray: "#333333",
+            "gray-2": "#D9D9D9",
+            "t-secondary": "#050316",
+            "transparent": "transparent",
             "green-board": "#427119",
             "green-hover": "#6B7119",
-            "transparent": "transparent",
         },
         borderRadius: {
             none: "0",
             "base": "0.25rem",
+            "full": "100%",
         },
         
         padding: spacing,
