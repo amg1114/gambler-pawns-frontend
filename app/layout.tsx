@@ -9,6 +9,11 @@ import "./globals.css";
 // components
 import Providers from "./ui/components/Providers";
 import Header from "./ui/components/shared/header";
+import Providers from "./ui/components/Providers";
+import Sidebar from "./ui/components/shared/Sidebar";
+import { useState } from "react";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -20,6 +25,7 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+
     return (
         <html lang="en">
             <head>
@@ -30,10 +36,13 @@ export default function RootLayout({
             </head>
             <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
-                    <header>
-                        <Header />
-                    </header>
-                    <main className="pt-2xl">{children}</main>
+                    <div className="flex">
+                        <main className="flex-1 pt-2x1 min-h-screen w-full">
+                            <Header />
+                            {children}
+                        </main>
+                    </div>
+                    
                 </Providers>
             </body>
         </html >

@@ -4,7 +4,7 @@ export default function StyleGuidePage({
     children: React.ReactNode;
 }) {
     return (
-        <main className="mx-auto w-full px-md md:w-4/5 md:max-w-screen-lg">
+        <main className="mx-auto  px-md md:w-4/5 md:max-w-screen-lg">
             {children}
         </main>
     );
