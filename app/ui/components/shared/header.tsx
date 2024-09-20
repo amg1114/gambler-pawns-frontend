@@ -11,7 +11,7 @@ import Coin from "@/app/ui/icons/coin.svg";
 import Fire from "@/app/ui/icons/fire.svg";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
-import Diversity1Rounded from "@mui/icons-material/Diversity1Rounded";
+
 
 function ConditionalRendering({
     coins,
