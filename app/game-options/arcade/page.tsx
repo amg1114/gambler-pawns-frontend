@@ -14,7 +14,7 @@ import ArcadeOptions from "@/app/game-options/components/modifier-options";
 
 export default function ClassicOptionPage() {
     return (
-        <div className="grid w-[715px] grid-cols-2 gap-12">
+        <div className="grid w-[715px] grid-cols-2 gap-12 max-lg:grid-cols-none max-lg:justify-center">
             <div className="w-[334px] space-y-lg">
                 <StyledTitle variant="h1" extraClasses="text-center !mb-sm">
                     Arcade Game Options
