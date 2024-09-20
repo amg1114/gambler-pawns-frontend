@@ -35,7 +35,7 @@ export default function ProfilePage() {
                     <figure className="relative mr-md aspect-square w-24 lg:w-28">
                         {session?.data ? (
                             <img
-                                src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${session?.data.fkUserAvatarImgId}`}
+                                src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${session?.data.userAvatarImg.fileName}`}
                                 alt="Avatar"
                                 className="aspect-square w-full rounded-full"
                                 width="112"
@@ -107,7 +107,9 @@ export default function ProfilePage() {
             {showProfileAvatarSelect && session?.data ? (
                 <ProfileAvatarSelect
                     onClose={() => setShowProfileAvatarSelect(false)}
-                    currentAvatarId={session?.data.fkUserAvatarImgId}
+                    currentAvatarId={
+                        session?.data.userAvatarImg.userAvatarImgId
+                    }
                 />
             ) : (
                 <></>
