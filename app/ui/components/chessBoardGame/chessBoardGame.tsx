@@ -14,7 +14,7 @@ export function ChessBoardGame({
     side = "white",
     position,
 }: ChessBoardGameProps) {
-    // obtener formato de las piezas del contexto
+    // TODO: obtener formato de las piezas del contexto
     const imgPieceFormat = "svg";
     const customPieces: { [key: string]: React.FC<{ squareWidth: number }> } =
         useMemo(() => {
