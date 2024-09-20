@@ -9,6 +9,7 @@ import Image from "next/image";
 import Logo from "@/app/ui/icons/logo.svg";
 import Coin from "@/app/ui/icons/coin.svg";
 import Fire from "@/app/ui/icons/fire.svg";
+import Diversity1Rounded from "@mui/icons-material/Diversity1Rounded";
 
 function ConditionalRendering({
     coins,
@@ -26,11 +27,9 @@ function ConditionalRendering({
     } else {
         return (
             <div className="flex w-1/3 justify-end max-[340px]:sr-only">
-                <text
-                    className={bungee.className + " pr-xs text-base text-light"}
-                >
+                <p className={bungee.className + " pr-xs text-base text-light"}>
                     {coins}
-                </text>
+                </p>
                 <Image
                     src={Coin}
                     alt=""
@@ -38,13 +37,13 @@ function ConditionalRendering({
                     height={20}
                     className="h-auto w-auto"
                 />
-                <text
+                <p
                     className={
                         bungee.className + " pl-sm pr-xs text-base text-light"
                     }
                 >
                     {streak}
-                </text>
+                </p>
                 <Image src={Fire} alt="" width={14.78} height={20} />
             </div>
         );
