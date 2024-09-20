@@ -64,7 +64,7 @@ export default function ProfilePage() {
 
                 <section>
                     <nav className="mx-auto w-full space-y-lg px-md lg:max-w-96 lg:px-none">
-                        <ProfileOptionRow href="/profile">
+                        <ProfileOptionRow href="/profile/edit">
                             <AccountCircleRoundedIcon /> Account Details
                         </ProfileOptionRow>
                         <ProfileOptionRow href="/profile">
