@@ -1,21 +1,37 @@
-"use client"
+"use client";
+
+import { useSession } from "next-auth/react";
+
+import { auth } from "@/auth";
+import { bungee } from "@/app/ui/fonts";
+
 import Image from "next/image";
-import { azeret_mono, bungee } from "@/app/ui/fonts";
-import Logo from "../../icons/logo.svg";
-import Coin from "../../icons/coin.svg";
-import Fire from "../../icons/fire.svg";
+import Logo from "@/app/ui/icons/logo.svg";
+import Coin from "@/app/ui/icons/coin.svg";
+import Fire from "@/app/ui/icons/fire.svg";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 
-function conditionalRendering() {
-    let userlogin = true;
-    if (userlogin) {
+function ConditionalRendering({
+    coins,
+    streak,
+    session,
+}: {
+    coins: number | undefined;
+    streak: number | undefined;
+    session: any;
+}) {
+    if (!session) {
+        return (
+            <div className="flex w-1/3 justify-end max-[340px]:sr-only"></div>
+        );
+    } else {
         return (
             <div className="flex w-1/3 justify-end max-[340px]:sr-only">
                 <text
                     className={bungee.className + " pr-xs text-base text-light"}
                 >
-                    200
+                    {coins}
                 </text>
                 <Image
                     src={Coin}
@@ -29,14 +45,10 @@ function conditionalRendering() {
                         bungee.className + " pl-sm pr-xs text-base text-light"
                     }
                 >
-                    14
+                    {streak}
                 </text>
                 <Image src={Fire} alt="" width={14.78} height={20} />
             </div>
-        );
-    } else {
-        return (
-            <div className="flex w-1/3 justify-end max-[340px]:sr-only"></div>
         );
     }
 }
@@ -56,6 +68,8 @@ export default function Header() {
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+    const { data: session } = useSession();
 
     return (
         <>
@@ -78,7 +92,11 @@ export default function Header() {
                     height={38.74}
                     className="h-auto w-auto max-[200px]:sr-only"
                 />
-                {conditionalRendering()}
+                <ConditionalRendering
+                    coins={session?.data.currentCoins}
+                    streak={session?.data.streakDays}
+                    session={session}
+                />
             </header>
 
                 <Sidebar isSidebarOpen={isSidebarOpen} isMounted={isMounted} />
