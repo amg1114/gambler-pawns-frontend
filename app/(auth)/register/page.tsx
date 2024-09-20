@@ -45,7 +45,7 @@ export default function RegisterPage() {
             setErrorMessage("Register Failed, please try again")
             setShowErrorAlert(true)
         }
-    }
+    };
 
     return (
         <>
