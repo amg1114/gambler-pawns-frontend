@@ -37,7 +37,7 @@ export default function RootLayout({
             <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
                     <div className="flex">
-                        <main className="flex-1 pt-2x1 min-h-screen w-full">
+                        <main className="flex-1 pt-[116px] min-h-screen w-full">
                             <Header />
                             {children}
                         </main>
