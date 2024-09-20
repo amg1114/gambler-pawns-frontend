@@ -47,9 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt({ token, user }: { token: JWT; user?: any }) {
             if (user) {
-                console.log("user check", user);
-                // Asigna los datos del usuario al token bajo una clave específica, como 'data'
-                token.data = user;// Añadir un timestamp si lo necesitas
+                token.data = user;
             }
             return token;
         },
