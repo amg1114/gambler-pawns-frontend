@@ -1,5 +1,5 @@
 import axios from '@/app/lib/_axios';
-import { LoginForm, RegisterForm } from '@/app/auth/_interfaces';
+import { LoginForm, RegisterForm } from '@/app/(auth)/_interfaces';
 
 
 

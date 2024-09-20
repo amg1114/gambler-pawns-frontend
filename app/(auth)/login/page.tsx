@@ -11,7 +11,6 @@ export default function LoginPage() {
     const router = useRouter()
 
     const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-        console.log(process.env.HOLA)
 
         try {
 

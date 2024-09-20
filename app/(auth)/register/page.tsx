@@ -21,10 +21,10 @@ export default function LoginPage() {
             })
 
             if (res.status === 201) {
-                router.push("/auth/login")
+                router.push("/login")
             }
         } catch (error) {
-
+            alert("Error al registrar usuario\n"+error)
         }
     }
 
