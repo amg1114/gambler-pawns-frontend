@@ -2,18 +2,19 @@
 
 import { SubmitHandler, useForm } from "react-hook-form"
 import { registerRequest } from "@/app/lib/services/auth"
-import { RegisterForm } from "../_interfaces"
 import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { registerSchema, RegisterForm } from "@/app/lib/interfaces/auth.interface"
+
 
 export default function LoginPage() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>()
+    const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
+        resolver: zodResolver(registerSchema)
+    })
+
     const router = useRouter()
     const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
-        if (data.password !== data.confirmpassword) {
-            return alert("Las contraseñas no coinciden")
-        }
-
         try {
             const res = await registerRequest({
                 nickname: data.nickname, email: data.email, password: data.password,
@@ -22,9 +23,11 @@ export default function LoginPage() {
 
             if (res.status === 201) {
                 router.push("/login")
+            } else {
+                alert("" + res.data.message)
             }
         } catch (error) {
-            alert("Error al registrar usuario\n"+error)
+            alert("Error al registrar usuario\n" + error)
         }
     }
 
@@ -36,12 +39,7 @@ export default function LoginPage() {
                 </label>
                 <input
                     type="text"
-                    {...register("nickname", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese un usuario valido"
-                        }
-                    })
+                    {...register("nickname")
                     }
                     className="text-bg-dark-1 p-3 rounded-md block mb-2 w-full"
                     placeholder="Gambler45"
@@ -59,12 +57,7 @@ export default function LoginPage() {
                 </label>
                 <input
                     type="email"
-                    {...register("email", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese su email"
-                        }
-                    })}
+                    {...register("email")}
                     id="email"
                     placeholder="user@gmail.com"
                     className="text-bg-dark-1 p-3 rounded-md block mb-2 bg-slate-200 text-slate-300 w-full"
@@ -81,12 +74,7 @@ export default function LoginPage() {
                 </label>
                 <input
                     type="password"
-                    {...register("password", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese una contraseña valida"
-                        }
-                    })
+                    {...register("password")
                     }
                     id="password"
                     placeholder="***********"
@@ -104,18 +92,13 @@ export default function LoginPage() {
                 </label>
                 <input
                     type="password"
-                    {...register("confirmpassword", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese una contraseña valida"
-                        }
-                    })}
+                    {...register("confirmpassword")}
                     id="confirmpassword"
                     placeholder="***********"
                     className="text-bg-dark-1 p-3 rounded-md block mb-2 bg-slate-200 text-slate-300 w-full"
                 />
 
-                {errors.password && (
+                {errors.confirmpassword && (
                     <span className="text-error">
                         {errors.confirmpassword?.message}
                     </span>
