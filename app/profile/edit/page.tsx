@@ -4,6 +4,8 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
+import { z, ZodError } from "zod";
+
 import axios from "@/app/lib/_axios";
 
 import { Country } from "@/app/lib/interfaces/countries-res.interface";
@@ -25,9 +27,22 @@ import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import { UpdateUserResponse } from "@/app/lib/interfaces/updateUser-res.interface";
+import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
+import { set } from "react-hook-form";
+
+const schema = z.object({
+    nickname: z
+        .string()
+        .min(3, { message: "Nickname is too short" })
+        .optional(),
+    email: z.string().email().optional(),
+    countryCode: z.string().min(2, { message: "Invalid country" }).optional(),
+    dateOfBirth: z.string().date().optional(),
+});
 
 export default function ProfileEditPage() {
-    const { data: session, update } = useSession();
+    const { data: session, status, update } = useSession();
+
     const [form, setForm] = useState<User | null>(null);
     const [changes, setChanges] = useState<Partial<User> | null>(null);
 
@@ -37,6 +52,9 @@ export default function ProfileEditPage() {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [validationErrors, setValidationError] = useState<{
+        [key: string]: string[];
+    } | null>(null);
 
     const [countryList, setCountryList] = useState<StyledSelectOption[]>([]);
 
@@ -88,10 +106,6 @@ export default function ProfileEditPage() {
 
         if (!property || Object.keys(session!.data).indexOf(property) === -1) {
             throw new Error(`Property '${property}' not found`);
-        } else if (!value) {
-            throw new Error("Value is empty");
-        } else if (session?.data[property] === value) {
-            return;
         }
 
         setForm((prev) =>
@@ -102,6 +116,32 @@ export default function ProfileEditPage() {
                   }
                 : prev,
         );
+
+        try {
+            schema.parse({
+                [property]: value,
+            });
+            setValidationError((prev) => ({
+                ...prev,
+                [property]: [],
+            }));
+        } catch (err: ZodError | any) {
+            if (err instanceof ZodError) {
+                const messages = err.errors.map((error) => error.message);
+                setValidationError((prev) => {
+                    return {
+                        ...prev,
+                        [property]: messages,
+                    };
+                });
+                return;
+            }
+            return;
+        }
+
+        if (session?.data[property] === value) {
+            return;
+        }
 
         setChanges((prev) =>
             prev === null
@@ -141,6 +181,10 @@ export default function ProfileEditPage() {
             });
     };
 
+    if (status === "loading") {
+        return <PageLoadSpinner />;
+    }
+
     return (
         <>
             <section className="mx-auto w-full space-y-xl px-md py-xl lg:max-w-96 lg:px-none">
@@ -157,6 +201,7 @@ export default function ProfileEditPage() {
                             type="text"
                             name="nickname"
                             id="nickname"
+                            errorMessages={validationErrors?.nickname ?? []}
                             placeholder="johndoe"
                             value={form?.nickname || ""}
                             onInput={handleChange}
@@ -167,7 +212,8 @@ export default function ProfileEditPage() {
                             name="email"
                             id="email"
                             placeholder="example@mailer.com"
-                            value={session?.user?.email || ""}
+                            errorMessages={validationErrors?.email ?? []}
+                            value={form?.email || ""}
                             onInput={handleChange}
                         />
                         <div className="grid lg:grid-cols-2 lg:gap-md">
@@ -188,6 +234,9 @@ export default function ProfileEditPage() {
                                 name="dateOfBirth"
                                 id="dateOfBirth"
                                 placeholder="1990-01-01"
+                                errorMessages={
+                                    validationErrors?.dateOfBirth ?? []
+                                }
                                 onInput={handleChange}
                                 value={form?.dateOfBirth || ""}
                             />

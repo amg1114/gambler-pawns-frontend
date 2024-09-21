@@ -12,7 +12,11 @@ export default function PageLoadSpinner() {
                     height={40}
                     className="drop-shadow-1 animate-bounce text-primary"
                 />
-                <StyledTitle variant="h4" extraClasses="text-primary">
+                <StyledTitle
+                    variant="h4"
+                    fontFamily="bungee"
+                    extraClasses="text-primary"
+                >
                     Loading...
                 </StyledTitle>
             </div>
