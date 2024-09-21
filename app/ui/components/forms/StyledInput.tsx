@@ -6,6 +6,7 @@ interface StyledInputProps {
     value?: string;
     name?: string;
     id?: string;
+    errorMessages?: string[];
     onInput?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -22,6 +23,7 @@ const StyledInput= forwardRef<HTMLInputElement, StyledInputProps> (function Styl
     wrapperExtraClasses,
     inputExtraClasses,
     labelExtraClasses,
+    errorMessages,
     onInput,
     onBlur,
     onFocus,
@@ -45,6 +47,13 @@ const StyledInput= forwardRef<HTMLInputElement, StyledInputProps> (function Styl
                 ref={ref}
                 {...props}
             />
+            {errorMessages && (
+                <div className="py-sm text-sm text-error">
+                    {errorMessages.map((errorMessage, index) => (
+                        <span key={`erro-lb-${index}`}>{errorMessage}</span>
+                    ))}
+                </div>
+            )}
         </div>
     );
 } );
