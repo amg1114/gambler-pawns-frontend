@@ -20,6 +20,9 @@ const config: Config = {
         "./app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
+        dropShadow: {
+            "1": "0 0 0.3rem #ffffff70",
+        },
         colors: {
             "dark-1": "#00161F",
             "dark-2": "#1C3A47",

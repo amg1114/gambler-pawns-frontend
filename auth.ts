@@ -45,11 +45,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
     callbacks: {
-        async jwt({ token, user }: { token: JWT; user?: any }) {
+        async jwt({ token, user, trigger, session }: { token: JWT; user?: any, trigger?:"signIn" | "signUp" | "update", session?: any }) {
+            if (trigger === "update" && session) {
+                token.data = session.data;
+                return token;
+            }
+
             if (user) {
                 token.data = user;
+                return token;
             }
+
             return token;
+
         },
         async session({ session, token }: { session: any; token: JWT }) {
             session.data = token.data;
