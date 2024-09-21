@@ -14,7 +14,8 @@ export function ChessBoardGame({
     side = "white",
     position,
 }: ChessBoardGameProps) {
-    // TODO: obtener formato de las piezas del contexto
+    // TODO: obtener datos sobre las piezas de un contexto
+    const chessSet = "defaultChessSet";
     const imgPieceFormat = "svg";
     const customPieces: { [key: string]: React.FC<{ squareWidth: number }> } =
         useMemo(() => {
@@ -41,7 +42,7 @@ export function ChessBoardGame({
                         style={{
                             width: squareWidth,
                             height: squareWidth,
-                            backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}/../../productAssets/defaultChessSet/pieces/${piece}.${imgPieceFormat})`,
+                            backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}/../../productAssets/${chessSet}/pieces/${piece}.${imgPieceFormat})`,
                             backgroundRepeat: "no-repeat",
                             backgroundPosition: "center",
                             backgroundSize: "80%",
