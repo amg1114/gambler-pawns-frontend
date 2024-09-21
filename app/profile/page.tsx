@@ -68,7 +68,9 @@ export default function ProfilePage() {
                             extraClasses="flex items-center !mb-sm"
                         >
                             {session?.data.nickname}
-                            <span className="fi fi-ps ml-md text-xl"></span>
+                            <span
+                                className={`fi fi-${session?.data.countryCode.toLowerCase()} ml-md text-xl`}
+                            ></span>
                         </StyledTitle>
                     </div>
                 </header>
