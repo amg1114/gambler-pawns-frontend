@@ -2,7 +2,7 @@ export interface User {
     userId:                 number;
     nickname:               string;
     email:                  string;
-    dateOfBirth:            null;
+    dateOfBirth:            string;
     countryCode:            string;
     aboutText:              string;
     eloRapid:               number;

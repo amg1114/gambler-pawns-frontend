@@ -1,9 +1,146 @@
+"use client";
+
+// Libs
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+
+import axios from "@/app/lib/_axios";
+
+import { Country } from "@/app/lib/interfaces/countries-res.interface";
+import { User } from "@/app/lib/interfaces/user.interface";
+
+// Components
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
+import GameAlert from "@/app/ui/components/modals/GameAlert";
+
 import StyledInput from "@/app/ui/components/forms/StyledInput";
+import StyledSelect, {
+    StyledSelectOption,
+} from "@/app/ui/components/forms/StyledSelect";
+
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+import { UpdateUserResponse } from "@/app/lib/interfaces/updateUser-res.interface";
 
 export default function ProfileEditPage() {
+    const { data: session, update } = useSession();
+    const [form, setForm] = useState<User | null>(null);
+    const [changes, setChanges] = useState<Partial<User> | null>(null);
+
+    const [isFormChanged, setIsFormChanged] = useState(false);
+    const [isPasswordChanged, setIsPasswordChanged] = useState(false);
+
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const [countryList, setCountryList] = useState<StyledSelectOption[]>([]);
+
+    useEffect(() => {
+        if (session) {
+            setForm(session.data);
+            console.log(session.data);
+        }
+    }, [session]);
+
+    useEffect(() => {
+        if (countryList.length > 0) {
+            return;
+        }
+        axios
+            .get<Country[]>("https://restcountries.com/v3.1/all")
+            .then((res) => {
+                setCountryList(
+                    res.data
+                        .map((country) => ({
+                            value: country.cca2,
+                            label: country.name.common,
+                        }))
+                        .sort((a, b) => a.label.localeCompare(b.label)),
+                );
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [countryList]);
+
+    const updateSession = async () => {
+        const newSession = {
+            ...session,
+            data: {
+                ...session!.data,
+                ...form,
+            },
+        };
+
+        await update(newSession);
+    };
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    ) => {
+        const property = e && (e.target.name as keyof User);
+        const value = e.target.value;
+
+        if (!property || Object.keys(session!.data).indexOf(property) === -1) {
+            throw new Error(`Property '${property}' not found`);
+        } else if (!value) {
+            throw new Error("Value is empty");
+        } else if (session?.data[property] === value) {
+            return;
+        }
+
+        setForm((prev) =>
+            prev
+                ? {
+                      ...prev,
+                      [property]: value,
+                  }
+                : prev,
+        );
+
+        setChanges((prev) =>
+            prev === null
+                ? { [property]: value }
+                : {
+                      ...prev,
+                      [property]: value,
+                  },
+        );
+
+        setIsFormChanged(true);
+    };
+
+    const handleSubmit = () => {
+        if (!changes) {
+            setErrorMessage("No changes detected");
+            setShowErrorAlert(true);
+
+            return;
+        }
+
+        axios
+            .patch<UpdateUserResponse>(`/user/${session?.data.userId}`, changes)
+            .then((res) => {
+                updateSession()
+                    .then(() => {
+                        setShowSuccessAlert(true);
+                    })
+                    .catch((err) => {
+                        throw new Error(err);
+                    });
+            })
+            .catch((err) => {
+                console.error("Error updating user", err);
+                setErrorMessage(err.response.data.data.message);
+                setShowErrorAlert(true);
+            });
+    };
+
     return (
         <>
             <section className="mx-auto w-full space-y-xl px-md py-xl lg:max-w-96 lg:px-none">
@@ -18,23 +155,41 @@ export default function ProfileEditPage() {
                         <StyledInput
                             label="Nickname"
                             type="text"
+                            name="nickname"
+                            id="nickname"
                             placeholder="johndoe"
+                            value={form?.nickname || ""}
+                            onInput={handleChange}
                         />
                         <StyledInput
                             label="E-mail"
                             type="text"
+                            name="email"
+                            id="email"
                             placeholder="example@mailer.com"
+                            value={session?.user?.email || ""}
+                            onInput={handleChange}
                         />
                         <div className="grid lg:grid-cols-2 lg:gap-md">
-                            <StyledInput
+                            <StyledSelect
                                 label="Country"
-                                type="text"
-                                placeholder="Colombia"
+                                name="countryCode"
+                                options={countryList}
+                                onChange={handleChange}
+                                defaultOption={{
+                                    label: "Select a country",
+                                    value: "",
+                                }}
+                                value={form?.countryCode || ""}
                             />
                             <StyledInput
                                 label="Birth Date"
                                 type="date"
+                                name="dateOfBirth"
+                                id="dateOfBirth"
                                 placeholder="1990-01-01"
+                                onInput={handleChange}
+                                value={form?.dateOfBirth || ""}
                             />
                         </div>
                     </form>
@@ -61,7 +216,14 @@ export default function ProfileEditPage() {
                 </section>
 
                 <section className="flex justify-end gap-md lg:justify-center">
-                    <StyledButton extraClasses="min-w-32">Save</StyledButton>
+                    <StyledButton
+                        extraClasses="min-w-32"
+                        onClick={() => {
+                            handleSubmit();
+                        }}
+                    >
+                        Save
+                    </StyledButton>
                     <StyledLink
                         extraClasses="min-w-32"
                         style="outlined"
@@ -71,6 +233,31 @@ export default function ProfileEditPage() {
                     </StyledLink>
                 </section>
             </section>
+            {showSuccessAlert && (
+                <GameAlert
+                    close={() => setShowSuccessAlert(false)}
+                    size="large"
+                >
+                    <StyledTitle extraClasses="text-center">
+                        <CheckCircleIcon className="!text-4xl text-primary" />{" "}
+                        Success
+                    </StyledTitle>
+                    <StyledParagraph extraClasses="text-center">
+                        Your profile has been successfully updated
+                    </StyledParagraph>
+                </GameAlert>
+            )}
+
+            {showErrorAlert && (
+                <GameAlert close={() => setShowErrorAlert(false)}>
+                    <StyledTitle extraClasses="text-center !flex items-center justify-center gap-sm">
+                        <ErrorIcon className="!text-4xl text-error" /> Error
+                    </StyledTitle>
+                    <StyledParagraph extraClasses="text-center">
+                        {errorMessage}
+                    </StyledParagraph>
+                </GameAlert>
+            )}
         </>
     );
 }
