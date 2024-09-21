@@ -8,9 +8,9 @@ import { z, ZodError } from "zod";
 
 import axios from "@/app/lib/_axios";
 
-import { Country } from "@/app/lib/interfaces/countries-res.interface";
-import { User } from "@/app/lib/interfaces/user.interface";
-import { UpdateUserResponse } from "@/app/lib/interfaces/updateUser-res.interface";
+import { Country } from "@/app/lib/interfaces/responses/countries-res.interface";
+import { User } from "@/app/lib/interfaces/models/user.interface";
+import { UpdateUserResponse } from "@/app/lib/interfaces/responses/updateUser-res.interface";
 
 // Components
 import ErrorIcon from "@mui/icons-material/Error";
