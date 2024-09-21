@@ -1,3 +1,4 @@
+"use client";
 // libs
 import clsx from "clsx";
 import { useEffect, useState } from "react";
@@ -5,17 +6,25 @@ import axios from "@/app/lib/_axios";
 
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import { Avatar, AvatarRes } from "@/app/lib/interfaces/avatars-res.interface";
+import {
+    Avatar,
+    AvatarRes,
+} from "@/app/lib/interfaces/responses/avatars-res.interface";
+import { UpdateAvatarResponse } from "@/app/lib/interfaces/responses/updateAvatar-res.interface";
+import { useSession } from "next-auth/react";
 
 interface ProfileAvatarSelectProps {
     onClose: () => void;
+    userId: number;
     currentAvatarId: string | number;
 }
 
 export function ProfileAvatarSelect({
     onClose,
+    userId,
     currentAvatarId,
 }: ProfileAvatarSelectProps) {
+    const { data: session, update } = useSession();
     const [isClosing, setIsClosing] = useState(false);
     const [avatars, setAvatars] = useState<Avatar[]>([]);
 
@@ -24,6 +33,31 @@ export function ProfileAvatarSelect({
     ) => {
         if (event instanceof KeyboardEvent && event.key !== "Escape") return;
         setIsClosing(true);
+    };
+
+    const changeHandler = (filename: string) => {
+        axios
+            .patch<UpdateAvatarResponse>(`/user/${userId}/avatar`, { filename })
+            .then((res) => {
+                if (res.data.status) {
+                    const newSession = {
+                        ...session,
+                        data: {
+                            ...session!.data,
+                            userAvatarImg: res.data.data.userAvatarImg,
+                        },
+                    };
+
+                    return update(newSession);
+                }
+                throw new Error("Error updating avatar");
+            })
+            .then(() => {
+                onClose();
+            })
+            .catch((error) => {
+                console.error("Error updating avatar: ", error);
+            });
     };
 
     useEffect(() => {
@@ -98,6 +132,7 @@ export function ProfileAvatarSelect({
                             <figure
                                 className="cursor-pointer transition-transform hover:scale-110"
                                 key={`avatar-${avatar.userAvatarImgId}`}
+                                onClick={() => changeHandler(avatar.fileName)}
                             >
                                 <img
                                     src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${avatar.userAvatarImgId}`}

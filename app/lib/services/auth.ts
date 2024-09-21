@@ -1,6 +1,6 @@
 import axios from '@/app/lib/_axios';
 import { LoginForm, RegisterForm } from '@/app/auth/_interfaces';
-import { LoginResponse } from '../interfaces/login-res.interface';
+import { LoginResponse } from '../interfaces/responses/login-res.interface';
 
 
 

@@ -120,6 +120,7 @@ export default function ProfilePage() {
             {showProfileAvatarSelect && session?.data ? (
                 <ProfileAvatarSelect
                     onClose={() => setShowProfileAvatarSelect(false)}
+                    userId={session?.data.userId}
                     currentAvatarId={
                         session?.data.userAvatarImg.userAvatarImgId
                     }
