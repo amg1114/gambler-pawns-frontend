@@ -10,6 +10,7 @@ import axios from "@/app/lib/_axios";
 
 import { Country } from "@/app/lib/interfaces/countries-res.interface";
 import { User } from "@/app/lib/interfaces/user.interface";
+import { UpdateUserResponse } from "@/app/lib/interfaces/updateUser-res.interface";
 
 // Components
 import ErrorIcon from "@mui/icons-material/Error";
@@ -26,9 +27,7 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
-import { UpdateUserResponse } from "@/app/lib/interfaces/updateUser-res.interface";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
-import { set } from "react-hook-form";
 
 const schema = z.object({
     nickname: z
