@@ -31,7 +31,8 @@ export default function StyledInput({
         <div className={`flex flex-col ${wrapperExtraClasses}`}>
             {label && (
                 <label
-                    className={`pb-sm text-base font-bold ${azeret_mono.className} ${labelExtraClasses}`}
+                    className={`pb-sm text-base font-bold ${azeret_mono.className} ${labelExtraClasses} cursor-pointer`}
+                    htmlFor={props.id}
                 >
                     {label}
                 </label>

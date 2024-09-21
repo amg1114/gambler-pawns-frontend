@@ -3,7 +3,7 @@
 // Libs
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // Components
 import Link from "next/link";
 
@@ -19,14 +19,25 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
 import SupervisedUserCircleRoundedIcon from "@mui/icons-material/SupervisedUserCircleRounded";
-import StyledButton from "../ui/components/typography/StyledButton";
+import StyledButton from "@/app/ui/components/typography/StyledButton";
+import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 
 export default function ProfilePage() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
 
     const [showProfileAvatarSelect, setShowProfileAvatarSelect] =
         useState(false);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+    useEffect(() => {
+        if (!session) {
+            return;
+        }
+    }, [session]);
+
+    if (status === "loading") {
+        return <PageLoadSpinner />;
+    }
 
     return (
         <>
