@@ -19,12 +19,17 @@ export default function LoginPage() {
 
         try {
             const res = await registerRequest({
-                nickname: data.nickname, email: data.email, password: data.password,
-                confirmpassword: "", countryCode: "CO"
-            })
+                nickname: data.nickname,
+                email: data.email,
+                password: data.password,
+                confirmpassword: "",
+                countryCode: "CO",
+            });
 
             if (res.status === 201) {
-                router.push("/login")
+                router.push("/login");
+            } else {
+                alert(res.data.message);
             }
         } catch (error) {
             alert("Error al registrar usuario\n" + error);

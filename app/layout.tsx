@@ -2,17 +2,13 @@
 import type { Metadata } from "next";
 
 // styles
-import { nunito } from "./ui/fonts";
-
 import "./globals.css";
 
-// components
-import Header from "./ui/components/shared/header";
-import Providers from "./ui/components/Providers";
-import Sidebar from "./ui/components/shared/Sidebar";
-import { useState } from "react";
+import { nunito } from "./ui/fonts";
 
-const inter = Inter({ subsets: ["latin"] });
+// components
+import Providers from "./ui/components/Providers";
+import Header from "./ui/components/shared/header";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -24,7 +20,6 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
     return (
         <html lang="en">
             <head>
@@ -33,18 +28,16 @@ export default function RootLayout({
                     content="width=device-width, initial-scale=1.0"
                 />
             </head>
-
             <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
                     <div className="flex">
-                        <main className="flex-1 pt-[116px] min-h-screen w-full">
+                        <main className="min-h-screen w-full flex-1 pt-[116px]">
                             <Header />
                             {children}
                         </main>
                     </div>
                 </Providers>
-
             </body>
-        </html >
+        </html>
     );
 }
