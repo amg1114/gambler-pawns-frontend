@@ -147,9 +147,7 @@ export default function HomePage() {
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-gray-400">
-                                        No friends found.
-                                    </p>
+                                   <StyledParagraph>You have no friends</StyledParagraph> 
                                 )}
                                 {(totalFriends > 5) ? (
                                 <StyledButton variant="primary" style="outlined" extraClasses="w-16 h-16 text-white rounded-full !text-yellow">{totalFriends - 5} + </StyledButton>):(
