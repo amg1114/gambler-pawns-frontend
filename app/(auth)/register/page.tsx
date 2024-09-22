@@ -38,7 +38,7 @@ export default function RegisterPage() {
             if (res.status === 201) {
                 router.push("/login")
             } else {
-                setErrorMessage("Username or email already exists")
+                setErrorMessage("Username or email already exists, please try again")
                 setShowErrorAlert(true)
             }
         } catch (error) {
