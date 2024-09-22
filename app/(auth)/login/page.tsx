@@ -77,8 +77,7 @@ export default function LoginPage() {
                         <StyledInput label="Nickname" type="text"
                             inputExtraClasses="bg-secondary mb-md"
                             wrapperExtraClasses="mb-md min-[700px]:px-md"
-                            {...register("nickname",
-                                { required: { value: true, message: 'Hola' } })
+                            {...register("nickname",)
                             }
                             id="nickname"
                             placeholder="Gambler23"
@@ -88,7 +87,7 @@ export default function LoginPage() {
                                 {errors.nickname.message}
                             </span>
                         )}
-                        <StyledInput label="Password" type="text"
+                        <StyledInput label="Password" type="password"
                             inputExtraClasses="bg-secondary mb-md"
                             wrapperExtraClasses="mb-md min-[700px]:px-md"
                             {...register("password")}
