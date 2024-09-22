@@ -8,9 +8,11 @@ import Check from "@/app/ui/icons/check.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 
 //Import component
+import { azeret_mono } from "@/app/ui/fonts";
+import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import { azeret_mono } from "@/app/ui/fonts";
+import exp from "constants";
 
 const arrayArcadeModes = [
     {
@@ -85,11 +87,11 @@ function ModifierOption({ modifier }: arcadeOptionsProps) {
                             ></Image>
                         </div>
                     </label>
-                    <text
+                    <p
                         className={`pl-md text-xl font-semibold ${azeret_mono.className}`}
                     >
                         {modifier.title}
-                    </text>
+                    </p>
                 </div>
 
                 <div>
