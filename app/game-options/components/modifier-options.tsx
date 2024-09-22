@@ -8,7 +8,6 @@ import Check from "@/app/ui/icons/check.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 
 //Import component
-import { azeret_mono } from "@/app/ui/fonts";
 import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -68,9 +67,9 @@ function ModifierOption({ modifier }: arcadeOptionsProps) {
             className="w-full rounded-base bg-dark-2 px-md pb-xs pt-md"
             key={modifier.id}
         >
-            <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                    <label className="hover:cursor-pointer">
+            <div className="flex justify-between">
+                <div className="flex">
+                    <label className="flex justify-between">
                         <input
                             type="checkbox"
                             id="checkbox1"
@@ -87,25 +86,24 @@ function ModifierOption({ modifier }: arcadeOptionsProps) {
                             ></Image>
                         </div>
                     </label>
-                    <p
-                        className={`pl-md text-xl font-semibold ${azeret_mono.className}`}
-                    >
+                    <StyledTitle variant="h3" extraClasses="pl-md">
                         {modifier.title}
-                    </p>
+                    </StyledTitle>
                 </div>
-
-                <div>
+                <div className="flex" onClick={toggleText}>
+                    <StyledLink href="#" extraClasses="pr-sm">
+                        explain
+                    </StyledLink>
                     <Image
                         src={ArrowDown}
                         alt=""
-                        width={16}
-                        height={16}
-                        className={`hover:cursor-pointer ${isTextVisible ? "rotate-180" : ""}`}
-                        onClick={toggleText}
+                        width={15}
+                        height={15}
+                        className="pb-md"
                     />
                 </div>
             </div>
-            <div className="h-[12px]" />
+
             <StyledParagraph
                 extraClasses={`text-sm pl-lg ${isTextVisible ? "" : "hidden"}`}
             >

@@ -22,10 +22,9 @@ export function useChessGame(mode: Mode = "valid") {
                 return true;
             }
         } else {
-            // This is the way we can force "invalid" moves for arcade moves
-            // see this thread https://github.com/jhlywa/chess.js/issues/309
-            gameCopy.put(game.get(sourceSquare), targetSquare);
-            gameCopy.remove(sourceSquare);
+            // Modo de movimientos inválidos (forzados)
+            gameCopy.put(game.get(sourceSquare), targetSquare); // Forzar movimiento sin validación
+            gameCopy.remove(sourceSquare); // Eliminar la pieza de la casilla original
             setGame(gameCopy);
             return true;
         }
@@ -37,3 +36,6 @@ export function useChessGame(mode: Mode = "valid") {
         onDrop, // Función para manejar el drop
     };
 }
+
+// TODO: para permitir movimientos no validos
+// ver hilo https://github.com/jhlywa/chess.js/issues/309
