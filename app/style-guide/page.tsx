@@ -3,6 +3,7 @@
 // Importing React
 import { useState } from "react";
 import { azeret_mono, bungee } from "@/app/ui/fonts";
+import { ChessBoardGame } from "@components/chessBoardGame/chessBoardGame";
 
 // Importing components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -27,9 +28,18 @@ export default function StyleGuidePage() {
             <article className="border-b border-light pb-md">
                 <StyledTitle variant="h2">Typography:</StyledTitle>
                 <StyledParagraph>
-                    After much deliberation, we’ve come to the conclusion of using <span className={bungee.className}>Bungee</span> as our primary font, as it evokes a playful, game-like aesthetic. For our secondary font, we chose <span className={`${azeret_mono.className} font-bold`}>Azeret_Mono</span>, which brings a retro and arcade-inspired vibe. Lastly, we opted for <span className="underline">Nunito</span> as our flat font due to its simplicity and clean design.
+                    After much deliberation, we’ve come to the conclusion of
+                    using <span className={bungee.className}>Bungee</span> as
+                    our primary font, as it evokes a playful, game-like
+                    aesthetic. For our secondary font, we chose{" "}
+                    <span className={`${azeret_mono.className} font-bold`}>
+                        Azeret_Mono
+                    </span>
+                    , which brings a retro and arcade-inspired vibe. Lastly, we
+                    opted for <span className="underline">Nunito</span> as our
+                    flat font due to its simplicity and clean design.
                 </StyledParagraph>
-                <div className="gap-md grid grid-cols-2">
+                <div className="grid grid-cols-2 gap-md">
                     <article>
                         <StyledTitle variant="h1">Heading 1</StyledTitle>
                         <StyledTitle variant="h2">Heading 2</StyledTitle>
@@ -50,7 +60,7 @@ export default function StyleGuidePage() {
                 <StyledTitle variant="h2" extraClasses="!mb-md">
                     Buttons:
                 </StyledTitle>
-                <div className="gap-sm flex flex-wrap">
+                <div className="flex flex-wrap gap-sm">
                     <StyledButton>Primary Filled</StyledButton>
                     <StyledButton variant="secondary">
                         Secondary Filled
@@ -105,6 +115,7 @@ export default function StyleGuidePage() {
                     </StoreModal>
                 ) : null}
             </article>
+            <ChessBoardGame />
         </section>
     );
 }
