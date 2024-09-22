@@ -2,9 +2,9 @@
 import type { Metadata } from "next";
 
 // styles
-import { nunito } from "./ui/fonts";
-
 import "./globals.css";
+
+import { nunito } from "./ui/fonts";
 
 // components
 import Providers from "./ui/components/Providers";
@@ -25,7 +25,6 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
     return (
         <html lang="en">
             <head>
@@ -37,13 +36,13 @@ export default function RootLayout({
             <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
                     <div className="flex">
-                        <main className="flex-1 pt-[116px] min-h-screen w-full">
+                        <main className="min-h-screen w-full flex-1 pt-[116px]">
                             <Header />
                             {children}
                         </main>
                     </div>
                 </Providers>
             </body>
-        </html >
+        </html>
     );
 }

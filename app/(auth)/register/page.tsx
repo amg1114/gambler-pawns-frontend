@@ -31,9 +31,12 @@ export default function RegisterPage() {
     const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
         try {
             const res = await registerRequest({
-                nickname: data.nickname, email: data.email, password: data.password,
-                confirmpassword: "", countryCode: "CO"
-            })
+                nickname: data.nickname,
+                email: data.email,
+                password: data.password,
+                confirmpassword: "",
+                countryCode: "CO",
+            });
 
             if (res.status === 201) {
                 router.push("/login")
