@@ -1,5 +1,5 @@
 "use client";
-import { azeret_mono, bungee } from "@/app/ui/fonts";
+import StatsCard from "./Components/StatsCard";
 import Image from "next/image";
 import Board from "../ui/icons/board.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -9,58 +9,159 @@ import Fire from "../ui/icons/fire.svg";
 import Arcade from "../ui/icons/arcade.svg";
 import Classic from "../ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
-import { JWT } from "next-auth/jwt";
-import React, { use } from "react";
+import FriendModal from "./Components/FriendModal";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { User } from "../lib/interfaces/user.interface";
+import { ProfileAvatarSelect } from "../profile/components/ProfileAvatarSelect";
+import aguacate from "../ui/icons/aguacate.png";
+
 
 export default function HomePage() {
-    let friends: String[]; /*arreglo de tipo user*/
-    const {data:session} = useSession();
-    if (session && session.user) {
-        console.log(session)
+    const { data: session } = useSession();
+    const [friends, setFriends] = useState<User[]>([]);
+    const [totalFriends, setTotalFriends] = useState<number>(0);
+
+    useEffect(() => {
+        const fetchFriends = async () => {
+            try {
+                const response = await axios.get(
+                    `http://[::1]:8000/api/v1/user/${session?.data.userId}/friends`,
+                );
+                console.log("Response data:", response.data);
+                console.log("Friends:", response.data.data.friendsList);
+                setFriends(response.data.data.friendsList); // Ajusta la estructura según tu API
+                setTotalFriends(response.data.data.totalFriends);
+            } catch (error) {
+                console.error("Error fetching friends:", error);
+            }
+        };
+
+        if (session) {
+            fetchFriends();
+        }
+    }, [session]);
+
     return (
-        
-        <div className=" lg:grid grid-cols-2 w-auto gap-14">
-            <div className="space-y-5  my-3xl w-auto ">
-                <div className="bg-dark-2 w-auto h-auto p-md  "> 
-                    <StyledTitle variant="h2" extraClasses="text-left text-slate-500 ">{session?.data.nickname}</StyledTitle>
-                    <StyledParagraph extraClasses="text-left text-slate-500">Enjoy chess with our new features, learn more in about</StyledParagraph>
-                </div >
-                <Image src={Board} alt=""  className="w-full"/>
-            </div>
-            <div className="space-y-5  my-3xl w-auto ">
-                <StyledTitle variant="h1" extraClasses="text-left text-center">SELECT GAME MODE</StyledTitle>
-                <StyledButton variant="primary" style="outlined" extraClasses="w-full ">Single Player</StyledButton>
-                <StyledButton variant="primary" style="filled" extraClasses="w-full ">Arcade</StyledButton>
-                <StyledButton variant="primary" style="outlined" extraClasses="w-full ">Against AI</StyledButton>
-                <StyledButton variant="primary" style="outlined" extraClasses="w-full ">Puzzles</StyledButton>
-                 {/*Stats section*/}
-                <div className="bg-dark-2 w-auto h-auto p-md">
-                    <StyledTitle variant="h2" extraClasses="text-left text-lg ">My stats</StyledTitle>
-                    <div className="flex space-x-5">
-                        <div className="bg-dark-1 rounded-lg p-4 w-32 h-40 flex flex-col items-center justify-center shadow-lg">
-                        <StyledTitle variant="h3" >Streak</StyledTitle>
-                        <Image src={Fire} alt="" className="w-9 h-12"/>
-                        <p className="text-slate-300 text-lg">14 days</p>
-                        </div>
-                        <div className="bg-dark-1 rounded-lg p-4 w-32 h-40 flex flex-col items-center justify-center shadow-lg">
-                        <StyledTitle variant="h3" >Classic</StyledTitle>
-                        <Image src={Classic} alt="" className="w-9 h-12"/>
-                        <p className="text-slate-300 text-lg">14 days</p>
-                        </div>
-                        <div className="bg-dark-1 rounded-lg p-4 w-32 h-40 flex flex-col items-center justify-center shadow-lg">
-                        <StyledTitle variant="h3" >Arcade</StyledTitle>
-                        <Image src={Arcade} alt="" className="w-9 h-12"/>
-                        <p className="text-slate-300 text-lg">14 days</p>
-                        </div>
-                    </div>
+        <div className="w-auto grid-cols-2 gap-14 lg:grid">
+            <div className="my-3xl w-auto space-y-8">
+                <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
+                    <StyledTitle
+                        variant="h2"
+                        extraClasses="text-left text-slate-500 text-xl"
+                    >
+                        Welcome to gambler pawns {session?.data.nickname}
+                    </StyledTitle>
+                    <StyledParagraph extraClasses="text-left text-slate-500 ">
+                        Enjoy chess with our new features, learn more in about
+                    </StyledParagraph>
                 </div>
-                {/*Friends section*/}
-                <div className="bg-dark-2 w-auto h-auto p-md">
-                    <StyledTitle variant="h2" extraClasses="text-left text-lg ">Friends</StyledTitle>
-                </div>
+                <Image src={Board} alt="" className="w-full" />
             </div>
-            
+            <div className="my-3xl w-auto space-y-8">
+                <StyledTitle
+                    variant="h1"
+                    extraClasses="text-left text-center space-y-6"
+                >
+                    SELECT GAME MODE
+                </StyledTitle>
+                <div className="space-y-4">
+                    <StyledButton
+                        variant="primary"
+                        style="outlined"
+                        extraClasses="w-full !text-light !h-12"
+                    >
+                        Single Player
+                    </StyledButton>
+                    <StyledButton
+                        variant="primary"
+                        style="filled"
+                        extraClasses="w-full !text-dark-1 !h-12"
+                    >
+                        Arcade
+                    </StyledButton>
+                    <StyledButton
+                        variant="primary"
+                        style="outlined"
+                        extraClasses="w-full !text-light !h-12"
+                    >
+                        Against AI
+                    </StyledButton>
+                    <StyledButton
+                        variant="primary"
+                        style="outlined"
+                        extraClasses="w-full !text-light !h-12"
+                    >
+                        Puzzles
+                    </StyledButton>
+                </div>
+                {session?.data ? (
+                    <section className="space-y-8">
+                        <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
+                            <StyledTitle
+                                variant="h3"
+                                extraClasses="text-left text-base "
+                            >
+                                My stats
+                            </StyledTitle>
+                            <div className="grid grid-cols-3 justify-items-center">
+                                <StatsCard
+                                    title="Streak"
+                                    imgSrc={Fire}
+                                    imgAlt="Fire Streak Icon"
+                                    statValue={session.data.streakDays}
+                                    description="Days"
+                                />
+                                <StatsCard
+                                    title="Classic"
+                                    imgSrc={Classic}
+                                    imgAlt="Classic Mode Icon"
+                                    statValue={session.data.eloRapid}
+                                    description=""
+                                />
+                                <StatsCard
+                                    title="Arcade"
+                                    imgSrc={Arcade}
+                                    imgAlt="Arcade Mode Icon"
+                                    statValue={session.data.eloArcade}
+                                    description="XP"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
+                            <StyledTitle
+                                variant="h2"
+                                extraClasses="text-left text-lg"
+                            >
+                                Friends
+                            </StyledTitle>
+                            <div className=" grid grid-flow-col">
+                                {friends.length  ? (
+                                    friends.map((friend, index) => (
+                                        <div
+                                            key={index}
+                                            className="p-2 bg-dark-3 rounded-md flex items-center space-x-4"
+                                        >
+                                            <FriendModal avatar={aguacate} profileAvatar={aguacate} flag={aguacate} name={friend.nickname} desc={friend.about} classic={friend.eloRapid} arcade={friend.eloArcade}/>                                       
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-400">
+                                        No friends found.
+                                    </p>
+                                )}
+                                {(totalFriends > 5) ? (
+                                <StyledButton variant="primary" style="outlined" extraClasses="w-16 h-16 text-white rounded-full !text-yellow">{totalFriends - 5} + </StyledButton>):(
+                                    <></>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                ) : (
+                    <></>
+                )}
+            </div>
         </div>
-    );}
-    return ( <h1>Sesion no iniciada</h1>)
+    );
 }
