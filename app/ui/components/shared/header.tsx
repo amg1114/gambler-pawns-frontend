@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 
-import { auth } from "@/auth";
 import { bungee } from "@/app/ui/fonts";
 
 import Image from "next/image";
@@ -109,7 +108,7 @@ export default function Header() {
                 />
             </header>
 
-            <Sidebar isSidebarOpen={isSidebarOpen} isMounted={isMounted} />
+            <Sidebar isSidebarOpen={isSidebarOpen} isMounted={isMounted} session={session}/>
         </>
     );
 }

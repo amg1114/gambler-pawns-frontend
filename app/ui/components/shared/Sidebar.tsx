@@ -18,7 +18,7 @@ import notification from "@/app/ui/icons/notification.svg";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import { useRouter } from "next/navigation";
 
-export default function Sidebar({ isSidebarOpen, isMounted,  }: { isSidebarOpen: boolean, isMounted: boolean }) {
+export default function Sidebar({ isSidebarOpen, isMounted, session  }: { isSidebarOpen: boolean, isMounted: boolean, session: any }) {
     
     const router = useRouter();
     const sideBarOptions = [
@@ -62,7 +62,6 @@ export default function Sidebar({ isSidebarOpen, isMounted,  }: { isSidebarOpen:
         }
     ]
 
-    const session = false;
 
     if (session) {
         sideBarOptions.push(
