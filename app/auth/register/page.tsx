@@ -23,7 +23,7 @@ export default function LoginPage() {
                 email: data.email,
                 password: data.password,
                 confirmpassword: "",
-                countryCode: "COL",
+                countryCode: "CO",
             });
 
             if (res.status === 200) {
