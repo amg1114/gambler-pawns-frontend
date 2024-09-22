@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 import { azeret_mono, nunito } from "../../fonts";
 
 interface StyledInputProps {
@@ -17,7 +17,7 @@ interface StyledInputProps {
     inputExtraClasses?: string;
     labelExtraClasses?: string;
 }
-export default function StyledInput({
+const StyledInput= forwardRef<HTMLInputElement, StyledInputProps> (function StyledInput({
     label,
     wrapperExtraClasses,
     inputExtraClasses,
@@ -26,7 +26,7 @@ export default function StyledInput({
     onBlur,
     onFocus,
     ...props
-}: StyledInputProps) {
+},ref ) {
     return (
         <div className={`flex flex-col ${wrapperExtraClasses}`}>
             {label && (
@@ -41,8 +41,10 @@ export default function StyledInput({
                 onInput={onInput}
                 onBlur={onBlur}
                 onFocus={onFocus}
+                ref={ref}
                 {...props}
             />
         </div>
     );
-}
+} );
+export default StyledInput;

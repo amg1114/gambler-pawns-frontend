@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema, RegisterForm } from "@/app/lib/interfaces/auth.interface"
 
 
-export default function LoginPage() {
+export default function RegisterPage() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
         resolver: zodResolver(registerSchema)

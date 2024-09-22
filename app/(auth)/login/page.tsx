@@ -1,9 +1,25 @@
 'use client'
-import {useForm, SubmitHandler} from "react-hook-form"
+
+//libs
+import { useForm, SubmitHandler } from "react-hook-form"
 import { signIn, SignInResponse } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema, LoginForm } from "@/app/lib/interfaces/auth.interface"
+import { useState } from "react"
+
+//components
+import StyledInput from "@/app/ui/components/forms/StyledInput"
+import StyledTitle from "@/app/ui/components/typography/StyledTitle"
+import GameAlert from "@/app/ui/components/modals/GameAlert"
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+
+//icons
+import peon from "@/app/ui/icons/peon_logo.svg"
+import Image from "next/image"
+import Board from "@/app/ui/icons/board.svg"
+import Link from "next/link"
+import ErrorIcon from "@mui/icons-material/Error";
 
 
 export default function LoginPage() {
@@ -11,6 +27,9 @@ export default function LoginPage() {
         resolver: zodResolver(loginSchema)
     })
     const router = useRouter()
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
     const onSubmit: SubmitHandler<LoginForm> = async (data) => {
         try {
             const res: SignInResponse | undefined = await signIn("credentials", {
@@ -20,58 +39,95 @@ export default function LoginPage() {
             })
             console.log(res)
             if (!res) {
-                alert("Error al iniciar sesion, intente de nuevo")
+                setErrorMessage("Login Failed, please try again")
+                setShowErrorAlert(true)
                 return
             }
             if (res.error) {
-                console.log("hola a todo el mundo", res.error)
-                alert("Error al iniciar sesión")
-                
+                setErrorMessage("Username or password incorrect")
+                setShowErrorAlert(true)
+                return
             } else {
                 router.push("/")
             }
         } catch (error) {
-            console.error("Error al iniciar sesion: ", error)
-            alert("Error al iniciar sesion")
+            setErrorMessage("Login Failed, please try again")
+            setShowErrorAlert(true)
         }
     }
     return (
-        <div className=" flex justify-center items-center bg-secondary">
-            <div className="h-[calc(100vh/7rem)] flex justify-center bg-primary">
-                <form onSubmit={handleSubmit(onSubmit)} className="w-1/4">
-                    <label className="text-slate-500 block">
-                        Username
-                    </label>
-                    <input
-                        type="text"
-                        {...register("nickname")
-                        }
-                        className="text-dark-1 p-3 rounded-md block mb-2 bg-slate-200 text-slate-300 w-full"
-                    />
-                    {errors.nickname && (
-                        <span className="text-error">
-                            {errors.nickname.message}
-                        </span>
-                    )}
-                    <label className="text-slate-500 block">Password</label>
-                    <input
-                        type="text"
-                        {...register("password")}
-                        id="password"
-                        placeholder="********"
-                        className="text-bg-dark-1 p-3 rounded-md block mb-2 bg-slate-200 text-slate-300 w-full"
-                    />
-                    {errors.password && (
-                        <span className="text-error">{errors.password.message}</span>
-                    )}
+        <>
+            <div className="relative z-0 p-lg min-[1200px]:ml-[300px] min-[1200px]:mr-[200px] mx-lg mt-lg min-[700px]:grid grid-cols-2 bg-secondary overflow-clip">
+                <div className="absolute right-0 h-80 bg-primary -z-10 transform rotate-3" style={{ bottom: '-40px', width: '1500px', left: '-20px' }}></div>
+                <div className="p-xl hidden z-10 min-[700px]:block flex-col items-center justify-center col-span-1 bg-secondary">
+                    <StyledTitle fontFamily="bungee" extraClasses="text-4xl flex justify-center items-center">
+                        <Image src={peon} alt="Peon logo" width={50} height={50} className="w-auto mt-sm items-center justify-center" />
+                        <span>Welcome Again!!</span>
+                    </StyledTitle>
+                    <div className="flex items-center justify-center">
+                        <Image src={Board} alt="Chess board" width={400} height={400} className="w-auto" />
+                    </div>
+                </div>
+                <div className="bg-dark-2 min-h-[520px] z-10 w-full col-span-1 p-xl">
+                    <form onSubmit={handleSubmit(onSubmit)} className="">
+                        <StyledTitle fontFamily="bungee" extraClasses="text-4xl flex justify-center items-center">
+                            <Image src={peon} alt="Peon logo" width={50} height={50} className="w-auto mt-sm" />
+                            <span>Login</span>
+                        </StyledTitle>
+                        <StyledInput label="Nickname" type="text"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md min-[700px]:px-md"
+                            {...register("nickname",
+                                { required: { value: true, message: 'Hola' } })
+                            }
+                            id="nickname"
+                            placeholder="Gambler23"
+                        />
+                        {errors.nickname && (
+                            <span className="text-error pb-md">
+                                {errors.nickname.message}
+                            </span>
+                        )}
+                        <StyledInput label="Password" type="text"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md min-[700px]:px-md"
+                            {...register("password")}
+                            id="password"
+                            placeholder="********"
+                        />
+                        {errors.password && (
+                            <span className="text-error pb-sm">{errors.password.message}</span>
+                        )}
+                        <Link href="/forgot-password" className="flex justify-end py-sm ">
+                            <p className="hover:underline underline-offset-4 hover:text-primary">
+                                Forgot password?
+                            </p>
+                        </Link>
+                        <div className="flex items-center justify-center pt-lg">
+                            <button
+                                type="submit"
+                                className="w-fit p-sm mx-lg hover:rounded-md underline underline-offset-8 font-extrabold text-xl text-primary hover:bg-secondary"
+                            >Sign In</button>
+                            <Link href={"/register"} className="w-fit flex items-center justify-center">
+                                <p className="p-sm rounded-md text-xl mx-md underline underline-offset-8 font-extrabold text-primary hover:bg-secondary">
+                                    Sign Up
+                                </p>
+                            </Link>
+                        </div>
 
-                    <button
-                        type="submit"
-                        className="bg-primary text-slate-200 w-full p-3 rounded-md"
-                    >Sign In</button>
-                </form>
+                    </form>
+                </div>
             </div>
-            
-        </div>
+            {showErrorAlert && (
+                <GameAlert close={() => setShowErrorAlert(false)}>
+                    <StyledTitle extraClasses="text-center !flex items-center justify-center gap-sm">
+                        <ErrorIcon className="!text-4xl text-error" /> Error
+                    </StyledTitle>
+                    <StyledParagraph extraClasses="text-center">
+                        {errorMessage}
+                    </StyledParagraph>
+                </GameAlert>
+            )}
+        </>
     )
 }
