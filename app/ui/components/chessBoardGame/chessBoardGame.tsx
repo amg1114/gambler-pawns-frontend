@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
 
 interface ChessBoardGameProps {
@@ -6,6 +7,7 @@ interface ChessBoardGameProps {
     bgLightSquaresColor?: string;
     side?: "white" | "black";
     position?: string; // FEN
+    onDrop?: (sourceSquare: Square, targetSquare: Square) => boolean;
 }
 
 export function ChessBoardGame({
@@ -13,6 +15,7 @@ export function ChessBoardGame({
     bgLightSquaresColor = "#edeed1",
     side = "white",
     position,
+    onDrop,
 }: ChessBoardGameProps) {
     // TODO: obtener datos sobre las piezas de un contexto
     const chessSet = "defaultChessSet";
@@ -70,6 +73,7 @@ export function ChessBoardGame({
                     backgroundColor: bgLightSquaresColor,
                 }}
                 customPieces={customPieces}
+                onPieceDrop={onDrop}
             />
         </div>
     );
