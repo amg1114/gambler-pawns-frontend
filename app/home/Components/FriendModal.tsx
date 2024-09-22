@@ -53,14 +53,14 @@ export default function FriendModal({ avatar,profileAvatar,name, desc, classic, 
           className="absolute min-w-64 w-auto p-4 bg-dark-1 text-white rounded-lg shadow-lg "
           style={{ bottom: '120%', left: '50%', transform: 'translateX(-0%)' }}
         >
-          <div className="flex items-center m-sm">
+          <div className="flex items-center m-sm ">
             <Image
               src={profileAvatar}
               alt="Profile Avatar"
-              className="w-12 h-12 rounded-full mr-2"
+              className="w-12 h-12 rounded-full ms-sm "
             />
             <div className='m-sm'>
-              <StyledTitle variant='h3'>{name}</StyledTitle>
+              <StyledTitle variant='h4' extraClasses='!my-xs'>{name}</StyledTitle>
               <StyledParagraph>{classic} | {arcade}xp</StyledParagraph>
             </div>
             <Image
@@ -69,7 +69,7 @@ export default function FriendModal({ avatar,profileAvatar,name, desc, classic, 
               className="w-6 h-4 ml-2 m-sm"
             />
           </div>
-          <StyledParagraph>{desc}</StyledParagraph>
+          <StyledParagraph extraClasses='m-sm'>{desc}</StyledParagraph>
           <div className="flex space-x-2 m-sm">
             <StyledButton >
               Play

@@ -12,14 +12,14 @@ import { useSession } from "next-auth/react";
 import FriendModal from "./Components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { User } from "../lib/interfaces/user.interface";
 import { ProfileAvatarSelect } from "../profile/components/ProfileAvatarSelect";
 import aguacate from "../ui/icons/aguacate.png";
+import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 
 
 export default function HomePage() {
     const { data: session } = useSession();
-    const [friends, setFriends] = useState<User[]>([]);
+    const [friends, setFriends] = useState<FriendsHome[]>([]);
     const [totalFriends, setTotalFriends] = useState<number>(0);
 
     useEffect(() => {
@@ -143,7 +143,7 @@ export default function HomePage() {
                                             key={index}
                                             className="p-2 bg-dark-3 rounded-md flex items-center space-x-4"
                                         >
-                                            <FriendModal avatar={aguacate} profileAvatar={aguacate} flag={aguacate} name={friend.nickname} desc={friend.about} classic={friend.eloRapid} arcade={friend.eloArcade}/>                                       
+                                            <FriendModal avatar={aguacate} profileAvatar={aguacate} flag={aguacate} name={friend.nickname} desc={friend.aboutText} classic={friend.eloRapid} arcade={friend.eloArcade}/>                                       
                                         </div>
                                     ))
                                 ) : (
