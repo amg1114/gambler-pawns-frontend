@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import { JWT } from "next-auth/jwt";
-import { LoginResponse } from "../app/lib/interfaces/login-res.interface";
-import { User } from "../app/lib/interfaces/user.interface";
+import { LoginResponse } from "../app/lib/interfaces/responses/login-res.interface";
+import { User } from "../app/lib/interfaces/models/user.interface";
 
 declare module "next-auth" {
     interface Session {
@@ -10,5 +10,5 @@ declare module "next-auth" {
 }
 
 declare module "next-auth/jwt" {
-    interface JWT extends LoginResponse {}
+    interface JWT extends User {}
 }

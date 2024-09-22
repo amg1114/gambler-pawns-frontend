@@ -37,7 +37,7 @@ export default function StyledLink({
     return (
         <Link
             href={href}
-            className={`${styleClasses[props.style || "plain"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm ${nunito.className} transition-colors hover:text-secondary ${extraClasses}`}
+            className={`${styleClasses[props.style || "plain"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm text-center ${nunito.className} transition-colors hover:text-secondary ${extraClasses}`}
         >
             {children}
         </Link>

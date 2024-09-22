@@ -45,13 +45,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
     callbacks: {
-        async jwt({ token, user }: { token: JWT; user?: any }) {
-            if (user) {
-                console.log("user check", user);
-                // Asigna los datos del usuario al token bajo una clave específica, como 'data'
-                token.data = user;// Añadir un timestamp si lo necesitas
+        async jwt({ token, user, trigger, session }: { token: JWT; user?: any, trigger?:"signIn" | "signUp" | "update", session?: any }) {
+            if (trigger === "update" && session) {
+                token.data = session.data;
+                return token;
             }
+
+            if (user) {
+                token.data = user;
+                return token;
+            }
+
             return token;
+
         },
         async session({ session, token }: { session: any; token: JWT }) {
             session.data = token.data;

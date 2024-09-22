@@ -3,7 +3,7 @@
 // Libs
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // Components
 import Link from "next/link";
 
@@ -19,14 +19,25 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
 import SupervisedUserCircleRoundedIcon from "@mui/icons-material/SupervisedUserCircleRounded";
-import StyledButton from "../ui/components/typography/StyledButton";
+import StyledButton from "@/app/ui/components/typography/StyledButton";
+import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 
 export default function ProfilePage() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
 
     const [showProfileAvatarSelect, setShowProfileAvatarSelect] =
         useState(false);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+    useEffect(() => {
+        if (!session) {
+            return;
+        }
+    }, [session]);
+
+    if (status === "loading") {
+        return <PageLoadSpinner />;
+    }
 
     return (
         <>
@@ -35,7 +46,7 @@ export default function ProfilePage() {
                     <figure className="relative mr-md aspect-square w-24 lg:w-28">
                         {session?.data ? (
                             <img
-                                src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${session?.data.fkUserAvatarImgId}`}
+                                src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${session?.data.userAvatarImg.fileName}`}
                                 alt="Avatar"
                                 className="aspect-square w-full rounded-full"
                                 width="112"
@@ -57,14 +68,16 @@ export default function ProfilePage() {
                             extraClasses="flex items-center !mb-sm"
                         >
                             {session?.data.nickname}
-                            <span className="fi fi-ps ml-md text-xl"></span>
+                            <span
+                                className={`fi fi-${session?.data.countryCode.toLowerCase()} ml-md text-xl`}
+                            ></span>
                         </StyledTitle>
                     </div>
                 </header>
 
                 <section>
                     <nav className="mx-auto w-full space-y-lg px-md lg:max-w-96 lg:px-none">
-                        <ProfileOptionRow href="/profile">
+                        <ProfileOptionRow href="/profile/edit">
                             <AccountCircleRoundedIcon /> Account Details
                         </ProfileOptionRow>
                         <ProfileOptionRow href="/profile">
@@ -107,7 +120,10 @@ export default function ProfilePage() {
             {showProfileAvatarSelect && session?.data ? (
                 <ProfileAvatarSelect
                     onClose={() => setShowProfileAvatarSelect(false)}
-                    currentAvatarId={session?.data.fkUserAvatarImgId}
+                    userId={session?.data.userId}
+                    currentAvatarId={
+                        session?.data.userAvatarImg.userAvatarImgId
+                    }
                 />
             ) : (
                 <></>

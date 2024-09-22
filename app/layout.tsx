@@ -2,9 +2,9 @@
 import type { Metadata } from "next";
 
 // styles
-import { nunito } from "./ui/fonts";
-
 import "./globals.css";
+
+import { nunito } from "./ui/fonts";
 
 // components
 import Providers from "./ui/components/Providers";
@@ -30,10 +30,12 @@ export default function RootLayout({
             </head>
             <body className={nunito.className + " bg-dark-1 text-light"}>
                 <Providers>
-                    <header>
-                        <Header />
-                    </header>
-                    <main className="pt-2xl">{children}</main>
+                    <div className="flex">
+                        <main className="min-h-screen w-full flex-1 pt-[116px]">
+                            <Header />
+                            {children}
+                        </main>
+                    </div>
                 </Providers>
             </body>
         </html>

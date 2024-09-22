@@ -15,6 +15,7 @@ interface StyledButtonProps {
     style?: "filled" | "outlined";
     extraClasses?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    disabled?: boolean;
 }
 
 const styleClasses = {
@@ -37,6 +38,7 @@ export default function StyledButton(props: StyledButtonProps) {
     return (
         <button
             className={`${styleClasses[props.style || "filled"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm ${nunito.className} cursor-pointer font-bold transition-colors ${extraClasses}`}
+            disabled={props.disabled}
             onClick={onClick}
         >
             {children}
