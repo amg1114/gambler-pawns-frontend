@@ -26,8 +26,8 @@ export default function LoginPage() {
                 countryCode: "CO",
             });
 
-            if (res.status === 200) {
-                router.push("/auth/login");
+            if (res.status === 201) {
+                router.push("/login");
             } else {
                 alert(res.data.message);
             }

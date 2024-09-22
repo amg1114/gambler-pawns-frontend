@@ -37,6 +37,8 @@ const config: Config = {
             "gray-2": "#D9D9D9",
             "t-secondary": "#050316",
             "transparent": "transparent",
+            "green-board": "#427119",
+            "green-hover": "#6B7119",
         },
         borderRadius: {
             none: "0",
