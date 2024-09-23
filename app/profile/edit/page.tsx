@@ -11,6 +11,7 @@ import axios from "@/app/lib/_axios";
 import { Country } from "@/app/lib/interfaces/responses/countries-res.interface";
 import { User } from "@/app/lib/interfaces/models/user.interface";
 import { UpdateUserResponse } from "@/app/lib/interfaces/responses/updateUser-res.interface";
+import { useRouter } from "next/navigation";
 
 // Components
 import ErrorIcon from "@mui/icons-material/Error";
@@ -24,7 +25,6 @@ import StyledSelect, {
 } from "@/app/ui/components/forms/StyledSelect";
 
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
@@ -40,6 +40,7 @@ const schema = z.object({
 });
 
 export default function ProfileEditPage() {
+    const router = useRouter();
     const { data: session, status, update } = useSession();
 
     const [form, setForm] = useState<User | null>(null);
@@ -60,7 +61,6 @@ export default function ProfileEditPage() {
     useEffect(() => {
         if (session) {
             setForm(session.data);
-            console.log(session.data);
         }
     }, [session]);
 
@@ -81,7 +81,7 @@ export default function ProfileEditPage() {
                 );
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
             });
     }, [countryList]);
 
@@ -272,13 +272,18 @@ export default function ProfileEditPage() {
                     >
                         Save
                     </StyledButton>
-                    <StyledLink
+                    <StyledButton
                         extraClasses="min-w-32"
                         style="outlined"
-                        href="/profile"
+                        onClick={() => {
+                            setForm(null);
+                            setChanges(null);
+                            setIsFormChanged(false);
+                            router.back();
+                        }}
                     >
                         Discard
-                    </StyledLink>
+                    </StyledButton>
                 </section>
             </section>
             {showSuccessAlert && (
