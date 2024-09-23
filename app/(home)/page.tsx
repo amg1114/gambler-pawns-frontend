@@ -16,7 +16,6 @@ import { ProfileAvatarSelect } from "../profile/components/ProfileAvatarSelect";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 
-
 export default function HomePage() {
     const { data: session } = useSession();
     const [friends, setFriends] = useState<FriendsHome[]>([]);
@@ -43,8 +42,8 @@ export default function HomePage() {
     }, [session]);
 
     return (
-        <div className="w-auto grid-cols-2 gap-14 lg:grid">
-            <div className="my-3xl w-auto space-y-8">
+        <div className="mt-xl w-auto grid-cols-2 gap-14 lg:grid">
+            <div className="w-auto space-y-8">
                 <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
                     <StyledTitle
                         variant="h2"
@@ -58,7 +57,7 @@ export default function HomePage() {
                 </div>
                 <Image src={Board} alt="" className="w-full" />
             </div>
-            <div className="my-3xl w-auto space-y-8">
+            <div className="w-auto space-y-8">
                 <StyledTitle
                     variant="h1"
                     extraClasses="text-left text-center space-y-6"
@@ -136,21 +135,38 @@ export default function HomePage() {
                             >
                                 Friends
                             </StyledTitle>
-                            <div className=" grid grid-flow-col">
-                                {friends.length  ? (
+                            <div className="grid grid-flow-col">
+                                {friends.length ? (
                                     friends.map((friend, index) => (
                                         <div
                                             key={index}
                                             className="p-2 bg-dark-3 rounded-md flex items-center space-x-4"
                                         >
-                                            <FriendModal avatar={aguacate} profileAvatar={aguacate} flag={aguacate} name={friend.nickname} desc={friend.aboutText} classic={friend.eloRapid} arcade={friend.eloArcade}/>                                       
+                                            <FriendModal
+                                                avatar={aguacate}
+                                                profileAvatar={aguacate}
+                                                flag={aguacate}
+                                                name={friend.nickname}
+                                                desc={friend.aboutText}
+                                                classic={friend.eloRapid}
+                                                arcade={friend.eloArcade}
+                                            />
                                         </div>
                                     ))
                                 ) : (
-                                   <StyledParagraph>You have no friends</StyledParagraph> 
+                                    <StyledParagraph>
+                                        You have no friends
+                                    </StyledParagraph>
                                 )}
-                                {(totalFriends > 5) ? (
-                                <StyledButton variant="primary" style="outlined" extraClasses="w-16 h-16 text-white rounded-full !text-yellow">{totalFriends - 5} + </StyledButton>):(
+                                {totalFriends > 5 ? (
+                                    <StyledButton
+                                        variant="primary"
+                                        style="outlined"
+                                        extraClasses="w-16 h-16 text-white rounded-full !text-yellow"
+                                    >
+                                        {totalFriends - 5} +{" "}
+                                    </StyledButton>
+                                ) : (
                                     <></>
                                 )}
                             </div>
