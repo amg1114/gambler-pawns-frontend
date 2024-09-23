@@ -39,6 +39,7 @@ export default function GamePage({ id = "" }) {
     const { gameState, makeMove } = useChessWebSocket(
         socket,
         playerId as string,
+        chessGame.updateGameFromOpponent,
     );
     // es muy importante no renderizar el otro componente si loading es true
     // esto estaba dando un error muy paila :(
@@ -49,7 +50,8 @@ export default function GamePage({ id = "" }) {
     return (
         <section className="space-y-xl py-xl">
             <ChessBoardGame
-                position={chessGame.position}
+                // show local position of opponent's one
+                position={gameState ? gameState.position : chessGame.position}
                 onDrop={chessGame.onDrop}
             />
         </section>

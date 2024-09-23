@@ -12,17 +12,23 @@ interface GameState {
  *
  * @param socket - The WebSocket connection object.
  * @param playerId - The ID of the player.
+ * @param updateGameFromOpponent - Function to update the game state with opponent's move.
  * @returns An object containing the game state and a function to make a move.
  */
-export function useChessWebSocket(socket: Socket | null, playerId: string) {
+export function useChessWebSocket(
+    socket: Socket | null,
+    playerId: string,
+    updateGameFromOpponent: (fen: string) => void, // Función para actualizar el juego
+) {
     const [gameState, setGameState] = useState<GameState | null>(null);
 
     useEffect(() => {
         if (!socket) return;
-
         // listening for game updates
         socket.on("moveMade", (data: any) => {
             setGameState(data);
+            updateGameFromOpponent(data.position); // Update local game state with opponent's FEN
+            console.log("Move Made", data);
         });
 
         socket.on("gameOver", (data: any) => {
@@ -33,7 +39,7 @@ export function useChessWebSocket(socket: Socket | null, playerId: string) {
             socket.off("moveMade");
             socket.off("gameOver");
         };
-    }, [socket]);
+    }, [socket, updateGameFromOpponent]);
 
     // function to make a move
     const makeMove = (from: string, to: string) => {
