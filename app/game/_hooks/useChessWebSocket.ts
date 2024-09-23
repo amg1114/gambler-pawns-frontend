@@ -27,7 +27,7 @@ export function useChessWebSocket(
         // listening for game updates
         socket.on("moveMade", (data: any) => {
             setGameState(data);
-            updateGameFromOpponent(data.position); // Update local game state with opponent's FEN
+            updateGameFromOpponent(data.board); // Update local game state with opponent's FEN
             console.log("Move Made", data);
         });
 

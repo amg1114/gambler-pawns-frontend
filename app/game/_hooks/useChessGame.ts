@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Chess, Square } from "chess.js"; // Importar la librería chess.js
+import { Chess, Square } from "chess.js";
 
-type Mode = "valid" | "invalid" | "rapid" | "arcade"; // Dos modos: movimientos válidos e inválidos
+type Mode = "valid" | "invalid" | "rapid" | "arcade"; // TODO: refactor here with game modes
 
 export function useChessGame(
     mode: Mode = "rapid",
@@ -39,7 +39,7 @@ export function useChessGame(
                     }
                     // TODO: implement fifty moves rule
 
-                    return true; // Movimiento válido
+                    return true; // valid move
                 }
             } catch {
                 console.error("Invalid move");
@@ -53,7 +53,7 @@ export function useChessGame(
             setGame(gameCopy);
             return true;
         }
-        return false;
+        return false; // invalid move
     };
 
     const updateGameFromOpponent = (fen: string) => {

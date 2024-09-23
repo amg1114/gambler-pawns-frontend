@@ -51,7 +51,7 @@ export default function GamePage({ id = "" }) {
         <section className="space-y-xl py-xl">
             <ChessBoardGame
                 // show local position of opponent's one
-                position={gameState ? gameState.position : chessGame.position}
+                position={chessGame.position}
                 onDrop={chessGame.onDrop}
             />
         </section>
