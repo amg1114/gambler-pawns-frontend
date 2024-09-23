@@ -32,7 +32,7 @@ const gameOptionsSchema = z.object({
 // TODO: refactor this in a separate file
 type GameOptionsFormData = z.infer<typeof gameOptionsSchema>;
 
-export function useGameOptionsForm() {
+function useGameOptionsForm() {
     const form = useForm<GameOptionsFormData>({
         resolver: zodResolver(gameOptionsSchema),
         defaultValues: {

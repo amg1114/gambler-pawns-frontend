@@ -1,24 +1,27 @@
 import { useState } from "react";
 import { Chess, Square } from "chess.js"; // Importar la librería chess.js
 
-type Mode = "valid" | "invalid"; // Dos modos: movimientos válidos e inválidos
+type Mode = "valid" | "invalid" | "rapid"; // Dos modos: movimientos válidos e inválidos
 
-export function useChessGame(mode: Mode = "valid") {
-    const [game, setGame] = useState(new Chess()); // Estado del juego
+export function useChessGame(
+    mode: Mode = "rapid",
+    makeMove: (from: string, to: string) => void,
+) {
+    const [game, setGame] = useState(new Chess());
 
-    // Función para manejar un movimiento
     const onDrop = (sourceSquare: Square, targetSquare: Square) => {
         const gameCopy = new Chess(game.fen());
 
-        if (mode === "valid") {
-            // Modo de movimientos válidos
+        if (mode === "rapid") {
+            // mode with valid moves
             const move = gameCopy.move({
                 from: sourceSquare,
                 to: targetSquare,
                 promotion: "q", // Promoción por defecto
             });
             if (move) {
-                setGame(gameCopy); // Solo si el movimiento es válido actualizamos el juego
+                setGame(gameCopy);
+                makeMove(sourceSquare, targetSquare); // Emite el movimiento a través de WebSockets
                 return true;
             }
         } else {
@@ -29,11 +32,11 @@ export function useChessGame(mode: Mode = "valid") {
             setGame(gameCopy);
             return true;
         }
-        return false; // Movimiento no permitido
+        return false;
     };
 
     return {
-        position: game.fen(), // Devuelve la posición actual en formato FEN
-        onDrop, // Función para manejar el drop
+        position: game.fen(), // return current position in FEN format
+        onDrop, // function to handle the drop of a piece
     };
 }
