@@ -7,142 +7,136 @@ import axios from "@/app/lib/_axios";
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import {
-    Avatar,
-    AvatarRes,
+  Avatar,
+  AvatarRes,
 } from "@/app/lib/interfaces/responses/avatars-res.interface";
 import { UpdateAvatarResponse } from "@/app/lib/interfaces/responses/updateAvatar-res.interface";
 import { useSession } from "next-auth/react";
 
 interface ProfileAvatarSelectProps {
-    onClose: () => void;
-    userId: number;
-    currentAvatarId: string | number;
+  onClose: () => void;
+  userId: number;
+  currentAvatarId: string | number;
 }
 
 export function ProfileAvatarSelect({
-    onClose,
-    userId,
-    currentAvatarId,
+  onClose,
+  userId,
+  currentAvatarId,
 }: ProfileAvatarSelectProps) {
-    const { data: session, update } = useSession();
-    const [isClosing, setIsClosing] = useState(false);
-    const [avatars, setAvatars] = useState<Avatar[]>([]);
+  const { data: session, update } = useSession();
+  const [isClosing, setIsClosing] = useState(false);
+  const [avatars, setAvatars] = useState<Avatar[]>([]);
 
-    const closeHandler = (
-        event: KeyboardEvent | React.MouseEvent<HTMLButtonElement>,
-    ) => {
-        if (event instanceof KeyboardEvent && event.key !== "Escape") return;
-        setIsClosing(true);
-    };
+  const closeHandler = (
+    event: KeyboardEvent | React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    if (event instanceof KeyboardEvent && event.key !== "Escape") return;
+    setIsClosing(true);
+  };
 
-    const changeHandler = (filename: string) => {
-        axios
-            .patch<UpdateAvatarResponse>(`/user/${userId}/avatar`, { filename })
-            .then((res) => {
-                if (res.data.status) {
-                    const newSession = {
-                        ...session,
-                        data: {
-                            ...session!.data,
-                            userAvatarImg: res.data.data.userAvatarImg,
-                        },
-                    };
+  const changeHandler = (filename: string) => {
+    axios
+      .patch<UpdateAvatarResponse>(`/user/${userId}/avatar`, { filename })
+      .then((res) => {
+        if (res.data.status) {
+          const newSession = {
+            ...session,
+            data: {
+              ...session!.data,
+              userAvatarImg: res.data.data.userAvatarImg,
+            },
+          };
 
-                    return update(newSession);
-                }
-                throw new Error("Error updating avatar");
-            })
-            .then(() => {
-                onClose();
-            })
-            .catch((error) => {
-                console.error("Error updating avatar: ", error);
-            });
-    };
-
-    useEffect(() => {
-        document.addEventListener("keydown", closeHandler);
-
-        axios
-            .get<AvatarRes>("/assets/avatars")
-            .then((res) => {
-                if (res.data.status) {
-                    setAvatars(res.data.data);
-                    return;
-                }
-                throw new Error("Error fetching avatars");
-            })
-            .catch((error) => {
-                console.error("Error fetching avatars: ", error);
-            });
-
-        return () => {
-            document.removeEventListener("keydown", closeHandler);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (isClosing) {
-            const timeout = setTimeout(() => {
-                onClose();
-            }, 500);
-
-            return () => clearTimeout(timeout);
+          return update(newSession);
         }
-    }, [isClosing]);
+        throw new Error("Error updating avatar");
+      })
+      .then(() => {
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Error updating avatar: ", error);
+      });
+  };
 
-    return (
-        <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">
-            <div
-                className={clsx(`w-4/5 max-w-lg`, {
-                    "animate-fade-out-up": isClosing,
-                    "animate-fade-in-down": !isClosing,
-                })}
-            >
-                <header className="flex justify-end">
-                    <button
-                        className="text-xl"
-                        onClick={(e) => closeHandler(e)}
-                    >
-                        &times;
-                    </button>
-                </header>
-                <div
-                    className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary p-lg lg:max-h-none lg:overflow-y-auto`}
-                >
-                    <StyledTitle
-                        extraClasses="!text-secondary text-center"
-                        variant="h3"
-                    >
-                        Select yor Avatar
-                    </StyledTitle>
+  useEffect(() => {
+    document.addEventListener("keydown", closeHandler);
 
-                    <figure className="mx-auto mb-lg block w-28">
-                        <img
-                            src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${currentAvatarId}`}
-                            alt="Avatar"
-                            className="aspect-square w-full rounded-full border-4 border-secondary"
-                            width="112"
-                            height="112"
-                        />
-                    </figure>
+    axios
+      .get<AvatarRes>("/assets/avatars")
+      .then((res) => {
+        if (res.data.status) {
+          setAvatars(res.data.data);
+          return;
+        }
+        throw new Error("Error fetching avatars");
+      })
+      .catch((error) => {
+        console.error("Error fetching avatars: ", error);
+      });
 
-                    <div className="grid grid-cols-3 gap-md lg:grid-cols-5">
-                        {avatars.map((avatar) => (
-                            <figure
-                                className="cursor-pointer transition-transform hover:scale-110"
-                                key={`avatar-${avatar.userAvatarImgId}`}
-                                onClick={() => changeHandler(avatar.fileName)}
-                            >
-                                <img
-                                    src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${avatar.userAvatarImgId}`}
-                                    alt={`Avatar ${avatar.userAvatarImgId}`}
-                                />
-                            </figure>
-                        ))}
-                    </div>
-                </div>
-            </div>
+    return () => {
+      document.removeEventListener("keydown", closeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isClosing) {
+      const timeout = setTimeout(() => {
+        onClose();
+      }, 500);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isClosing]);
+
+  return (
+    <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">
+      <div
+        className={clsx(`w-4/5 max-w-lg`, {
+          "animate-fade-out-up": isClosing,
+          "animate-fade-in-down": !isClosing,
+        })}
+      >
+        <header className="flex justify-end">
+          <button className="text-xl" onClick={(e) => closeHandler(e)}>
+            &times;
+          </button>
+        </header>
+        <div
+          className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary p-lg lg:max-h-none lg:overflow-y-auto`}
+        >
+          <StyledTitle extraClasses="!text-secondary text-center" variant="h3">
+            Select yor Avatar
+          </StyledTitle>
+
+          <figure className="mx-auto mb-lg block w-28">
+            <img
+              src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${currentAvatarId}`}
+              alt="Avatar"
+              className="aspect-square w-full rounded-full border-4 border-secondary"
+              width="112"
+              height="112"
+            />
+          </figure>
+
+          <div className="grid grid-cols-3 gap-md lg:grid-cols-5">
+            {avatars.map((avatar) => (
+              <figure
+                className="cursor-pointer transition-transform hover:scale-110"
+                key={`avatar-${avatar.userAvatarImgId}`}
+                onClick={() => changeHandler(avatar.fileName)}
+              >
+                <img
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${avatar.userAvatarImgId}`}
+                  alt={`Avatar ${avatar.userAvatarImgId}`}
+                />
+              </figure>
+            ))}
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
