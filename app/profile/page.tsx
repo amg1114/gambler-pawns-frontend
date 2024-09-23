@@ -21,6 +21,7 @@ import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
 import SupervisedUserCircleRoundedIcon from "@mui/icons-material/SupervisedUserCircleRounded";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
+import UserAvatar from "../ui/components/user/UserAvatar";
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
@@ -44,17 +45,9 @@ export default function ProfilePage() {
             <section className="space-y-xl">
                 <header className="flex flex-col flex-wrap items-center gap-md px-md py-xl pb-md lg:bg-secondary lg:py-md">
                     <figure className="relative mr-md aspect-square w-24 lg:w-28">
-                        {session?.data ? (
-                            <img
-                                src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${session?.data.userAvatarImg.fileName}`}
-                                alt="Avatar"
-                                className="aspect-square w-full rounded-full"
-                                width="112"
-                                height="112"
-                            />
-                        ) : (
-                            <span className="block aspect-square w-full rounded-full bg-dark-1"></span>
-                        )}
+                        <UserAvatar
+                            filename={session?.data.userAvatarImg.fileName}
+                        />
                         <button
                             className="absolute bottom-0 left-2 aspect-square rounded-full bg-gray-2 p-xs text-sm"
                             onClick={() => setShowProfileAvatarSelect(true)}
@@ -121,9 +114,7 @@ export default function ProfilePage() {
                 <ProfileAvatarSelect
                     onClose={() => setShowProfileAvatarSelect(false)}
                     userId={session?.data.userId}
-                    currentAvatarId={
-                        session?.data.userAvatarImg.userAvatarImgId
-                    }
+                    currentAvatar={session?.data.userAvatarImg.fileName}
                 />
             ) : (
                 <></>
