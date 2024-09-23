@@ -1,100 +1,132 @@
-"use client";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { LoginForm } from "../_interfaces";
-import { signIn, SignInResponse } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import GameAlert from "@/app/ui/components/modals/GameAlert";
+'use client'
+
+//libs
+import { useForm, SubmitHandler } from "react-hook-form"
+import { signIn, SignInResponse } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema, LoginForm } from "@/app/lib/interfaces/auth.interface"
+import { useState } from "react"
+
+//components
+import StyledInput from "@/app/ui/components/forms/StyledInput"
+import StyledTitle from "@/app/ui/components/typography/StyledTitle"
+import GameAlert from "@/app/ui/components/modals/GameAlert"
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+
+//icons
+import peon from "@/app/ui/icons/peon_logo.svg"
+import Image from "next/image"
+import Board from "@/app/ui/icons/board.svg"
+import Link from "next/link"
+import ErrorIcon from "@mui/icons-material/Error";
+
 
 export default function LoginPage() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginForm>();
-    const router = useRouter();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+        resolver: zodResolver(loginSchema)
+    })
+    const router = useRouter()
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
     const onSubmit: SubmitHandler<LoginForm> = async (data) => {
         try {
-            const res: SignInResponse | undefined = await signIn(
-                "credentials",
-                {
-                    nickname: data.nickname,
-                    password: data.password,
-                    redirect: false,
-                },
-            );
-
+            const res: SignInResponse | undefined = await signIn("credentials", {
+                nickname: data.nickname,
+                password: data.password,
+                redirect: false,
+            })
+            console.log(res)
             if (!res) {
-                setErrorMessage("Error at login");
-                console.error("response is undefined");
-                return;
+                setErrorMessage("Login Failed, please try again")
+                setShowErrorAlert(true)
+                return
             }
-
             if (res.error) {
-                console.error(res.error);
-                setErrorMessage(res.error);
-                return;
+                setErrorMessage("Username or password incorrect")
+                setShowErrorAlert(true)
+                return
+            } else {
+                router.push("/")
             }
-
-            router.push("/");
         } catch (error) {
-            console.error("Login error: ", error);
-            setErrorMessage("Error at login");
+            setErrorMessage("Login Failed, please try again")
+            setShowErrorAlert(true)
         }
-    };
-
+    }
     return (
-        <div className="flex h-[calc(100vh/7rem)] items-center justify-center">
-            <form onSubmit={handleSubmit(onSubmit)} className="w-1/4">
-                <label className="text-slate-500 block">Username</label>
-                <input
-                    type="text"
-                    {...register("nickname", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese su usuario",
-                        },
-                    })}
-                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
-                />
-                {errors.nickname && (
-                    <span className="text-error">
-                        {errors.nickname.message}
-                    </span>
-                )}
-                <label className="text-slate-500 block">Password</label>
-                <input
-                    type="text"
-                    {...register("password", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese su contraseña",
-                        },
-                    })}
-                    id="password"
-                    placeholder="********"
-                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
-                />
-                {errors.password && (
-                    <span className="text-error">
-                        {errors.password.message}
-                    </span>
-                )}
+        <>
+            <div className="relative z-0 p-lg min-[1200px]:ml-[300px] min-[1200px]:mr-[200px] mx-lg mt-lg min-[700px]:grid grid-cols-2 bg-secondary overflow-clip">
+                <div className="absolute right-0 h-80 bg-primary -z-10 transform rotate-3" style={{ bottom: '-40px', width: '1500px', left: '-20px' }}></div>
+                <div className="p-xl hidden z-10 min-[700px]:block flex-col items-center justify-center col-span-1 bg-secondary">
+                    <StyledTitle fontFamily="bungee" extraClasses="text-4xl flex justify-center items-center">
+                        <Image src={peon} alt="Peon logo" width={50} height={50} className="w-auto mt-sm items-center justify-center" />
+                        <span>Welcome Again!!</span>
+                    </StyledTitle>
+                    <div className="flex items-center justify-center">
+                        <Image src={Board} alt="Chess board" width={400} height={400} className="w-auto" />
+                    </div>
+                </div>
+                <div className="bg-dark-2 min-h-[520px] z-10 w-full col-span-1 p-xl">
+                    <form onSubmit={handleSubmit(onSubmit)} className="">
+                        <StyledTitle fontFamily="bungee" extraClasses="text-4xl flex justify-center items-center">
+                            <Image src={peon} alt="Peon logo" width={50} height={50} className="w-auto mt-sm" />
+                            <span>Login</span>
+                        </StyledTitle>
+                        <StyledInput label="Nickname" type="text"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md min-[700px]:px-md"
+                            {...register("nickname",)
+                            }
+                            id="nickname"
+                            placeholder="Gambler23"
+                        />
+                        {errors.nickname && (
+                            <span className="text-error pb-md">
+                                {errors.nickname.message}
+                            </span>
+                        )}
+                        <StyledInput label="Password" type="password"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md min-[700px]:px-md"
+                            {...register("password")}
+                            id="password"
+                            placeholder="********"
+                        />
+                        {errors.password && (
+                            <span className="text-error pb-sm">{errors.password.message}</span>
+                        )}
+                        <Link href="/forgot-password" className="flex justify-end py-sm ">
+                            <p className="hover:underline underline-offset-4 hover:text-primary">
+                                Forgot password?
+                            </p>
+                        </Link>
+                        <div className="flex items-center justify-center pt-lg">
+                            <button
+                                type="submit"
+                                className="w-fit p-sm mx-lg hover:rounded-md underline underline-offset-8 font-extrabold text-xl text-primary hover:bg-secondary"
+                            >Sign In</button>
+                            <Link href={"/register"} className="w-fit flex items-center justify-center">
+                                <p className="p-sm rounded-md text-xl mx-md underline underline-offset-8 font-extrabold text-primary hover:bg-secondary">
+                                    Sign Up
+                                </p>
+                            </Link>
+                        </div>
 
-                <button
-                    type="submit"
-                    className="text-slate-200 p-3 rounded-md w-full bg-primary"
-                >
-                    Sign In
-                </button>
-
-                {errorMessage ? (
-                    <span className="text-error underline">{errorMessage}</span>
-                ) : (
-                    <></>
-                )}
-            </form>
-        </div>
-    );
+                    </form>
+                </div>
+            </div>
+            {showErrorAlert && (
+                <GameAlert close={() => setShowErrorAlert(false)}>
+                    <StyledTitle extraClasses="text-center !flex items-center justify-center gap-sm">
+                        <ErrorIcon className="!text-4xl text-error" /> Error
+                    </StyledTitle>
+                    <StyledParagraph extraClasses="text-center">
+                        {errorMessage}
+                    </StyledParagraph>
+                </GameAlert>
+            )}
+        </>
+    )
 }

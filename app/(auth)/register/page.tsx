@@ -1,22 +1,34 @@
-"use client";
+'use client'
+//libs
+import { SubmitHandler, useForm } from "react-hook-form"
+import { registerRequest } from "@/app/lib/services/auth"
+import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { registerSchema, RegisterForm } from "@/app/lib/interfaces/auth.interface"
+import { useState } from "react"
+//components
+import StyledInput from "@/app/ui/components/forms/StyledInput"
+import StyledTitle from "@/app/ui/components/typography/StyledTitle"
+import GameAlert from "@/app/ui/components/modals/GameAlert"
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph"
 
-import { SubmitHandler, useForm } from "react-hook-form";
-import { registerRequest } from "@/app/lib/services/auth";
-import { RegisterForm } from "../_interfaces";
-import { useRouter } from "next/navigation";
+//icons
+import ErrorIcon from "@mui/icons-material/Error";
+import Image from "next/image"
+import peon from "@/app/ui/icons/peon_logo.svg"
+import Board from "@/app/ui/icons/board.svg"
+import Link from "next/link"
 
-export default function LoginPage() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<RegisterForm>();
-    const router = useRouter();
+export default function RegisterPage() {
+
+    const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
+        resolver: zodResolver(registerSchema)
+    })
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    
+    const router = useRouter()
     const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
-        if (data.password !== data.confirmpassword) {
-            return alert("Las contraseñas no coinciden");
-        }
-
         try {
             const res = await registerRequest({
                 nickname: data.nickname,
@@ -27,103 +39,121 @@ export default function LoginPage() {
             });
 
             if (res.status === 201) {
-                router.push("/login");
+                router.push("/login")
             } else {
-                alert(res.data.message);
+                setErrorMessage("Username or email already exists, please try again")
+                setShowErrorAlert(true)
             }
         } catch (error) {
-            alert("Error al registrar usuario\n" + error);
+            setErrorMessage("Register Failed, please try again")
+            setShowErrorAlert(true)
         }
     };
 
     return (
-        <div className="flex h-[calc(100vh/7rem)] items-center justify-center">
-            <form onSubmit={handleSubmit(onSubmit)} className="w-1/4">
-                <label className="text-slate-500 block">Username</label>
-                <input
-                    type="text"
-                    {...register("nickname", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese un usuario valido",
-                        },
-                    })}
-                    className="text-bg-dark-1 p-3 rounded-md mb-2 block w-full"
-                    placeholder="Gambler45"
-                    id="username"
-                />
+        <>
+            <div className="relative z-0 p-lg min-[1200px]:ml-[300px] min-[1200px]:mr-[200px] mx-lg mt-lg min-[700px]:grid grid-cols-2 bg-secondary overflow-clip">
+                <div className="absolute right-0 h-80 bg-dark-2 -z-10 transform -rotate-3" style={{ bottom: '-40px', width: '1500px', left: '-20px' }}></div>
+                <div className="bg-primary min-h-[520px] z-10 w-full col-span-1 p-xl">
+                    <form onSubmit={handleSubmit(onSubmit)} className="">
+                        <StyledTitle fontFamily="bungee" extraClasses="text-4xl flex text-dark-2 justify-center items-center">
+                            <Image src={peon} alt="Peon logo" width={50} height={50} className="w-auto mt-sm" />
+                            <span>Register</span>
+                        </StyledTitle>
+                        <StyledInput label="Nickname" type="text"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
+                            {...register("nickname")
+                            }
+                            id="nickname"
+                            placeholder="Gambler23"
+                        />
 
-                {errors.nickname && (
-                    <span className="text-error">
-                        {errors.nickname.message}
-                    </span>
-                )}
+                        {errors.nickname && (
+                            <span className="text-error">
+                                {errors.nickname.message}
+                            </span>
+                        )}
+                        
+                        <StyledInput label="Email" type="email"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
+                            {...register("email")
+                            }
+                            id="email"
+                            placeholder="user@gmail.com"
+                        />
 
-                <label className="text-slate-500 block">Email</label>
-                <input
-                    type="email"
-                    {...register("email", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese su email",
-                        },
-                    })}
-                    id="email"
-                    placeholder="user@gmail.com"
-                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
-                />
+                        {errors.email && (
+                            <span className="text-error">
+                                {errors.email.message}
+                            </span>
+                        )}
 
-                {errors.email && (
-                    <span className="text-error">{errors.email.message}</span>
-                )}
+                        <StyledInput label="Password" type="password"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
+                            {...register("password")
+                            }
+                            id="password"
+                            placeholder="********"
+                        />
 
-                <label className="text-slate-500 block">Password</label>
-                <input
-                    type="password"
-                    {...register("password", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese una contraseña valida",
-                        },
-                    })}
-                    id="password"
-                    placeholder="***********"
-                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
-                />
+                        {errors.password && (
+                            <span className="text-error">
+                                {errors.password.message}
+                            </span>
+                        )}
 
-                {errors.password && (
-                    <span className="text-error">
-                        {errors.password.message}
-                    </span>
-                )}
+                        <StyledInput label="Confirm Password" type="password"
+                            inputExtraClasses="bg-secondary mb-md"
+                            wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
+                            {...register("password")
+                            }
+                            id="confirmpassword"
+                            placeholder="*********"
+                        />
 
-                <label className="text-slate-500 block">Confirm Password</label>
-                <input
-                    type="password"
-                    {...register("confirmpassword", {
-                        required: {
-                            value: true,
-                            message: "Por favor, ingrese una contraseña valida",
-                        },
-                    })}
-                    id="confirmpassword"
-                    placeholder="***********"
-                    className="text-bg-dark-1 p-3 rounded-md mb-2 bg-slate-200 text-slate-300 block w-full"
-                />
+                        {errors.confirmpassword && (
+                            <span className="text-error">
+                                {errors.confirmpassword?.message}
+                            </span>
+                        )}
 
-                {errors.password && (
-                    <span className="text-error">
-                        {errors.confirmpassword?.message}
-                    </span>
-                )}
-
-                <button
-                    type="submit"
-                    className="text-slate-200 p-3 rounded-md w-full bg-primary"
-                >
-                    Sign Up
-                </button>
-            </form>
-        </div>
-    );
+                        <div className="flex items-center justify-center pt-lg">
+                            <button
+                                type="submit"
+                                className="w-fit p-sm mx-lg hover:rounded-md underline underline-offset-8 font-extrabold text-xl text-dark-2 hover:text-2xl"
+                            >Sign Up</button>
+                            <Link href={"/login"} className="w-fit flex items-center justify-center">
+                                <p className="p-sm rounded-md text-xl mx-md underline underline-offset-8 font-extrabold text-dark-2 hover:text-2xl">
+                                    Sign In
+                                </p>
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+                
+                <div className="p-xl hidden z-10 min-[700px]:block flex-col items-center justify-center col-span-1 bg-secondary">
+                    <StyledTitle fontFamily="bungee" extraClasses="text-4xl flex justify-center items-center">
+                        <span className="text-center">Redy for first check Mate?</span>
+                    </StyledTitle>
+                    <div className="flex items-center justify-center">
+                        <Image src={Board} alt="Chess board" width={400} height={400} className="w-auto" />
+                    </div>
+                </div>
+            </div>
+            {showErrorAlert && (
+                <GameAlert close={() => setShowErrorAlert(false)}>
+                    <StyledTitle extraClasses="text-center !flex items-center justify-center gap-sm">
+                        <ErrorIcon className="!text-4xl text-error" /> Error
+                    </StyledTitle>
+                    <StyledParagraph extraClasses="text-center">
+                        {errorMessage}
+                    </StyledParagraph>
+                </GameAlert>
+            )}
+        </>
+        
+    )
 }

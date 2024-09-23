@@ -21,9 +21,11 @@ import { useRouter } from "next/navigation";
 export default function Sidebar({
     isSidebarOpen,
     isMounted,
+    session,
 }: {
     isSidebarOpen: boolean;
     isMounted: boolean;
+    session: any;
 }) {
     const router = useRouter();
     const sideBarOptions = [
@@ -67,7 +69,6 @@ export default function Sidebar({
         },
     ];
 
-    const session = false;
 
     if (session) {
         sideBarOptions.push(
