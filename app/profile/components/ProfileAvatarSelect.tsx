@@ -12,17 +12,18 @@ import {
 } from "@/app/lib/interfaces/responses/avatars-res.interface";
 import { UpdateAvatarResponse } from "@/app/lib/interfaces/responses/updateAvatar-res.interface";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 interface ProfileAvatarSelectProps {
     onClose: () => void;
     userId: number;
-    currentAvatarId: string | number;
+    currentAvatar: string;
 }
 
 export function ProfileAvatarSelect({
     onClose,
     userId,
-    currentAvatarId,
+    currentAvatar,
 }: ProfileAvatarSelectProps) {
     const { data: session, update } = useSession();
     const [isClosing, setIsClosing] = useState(false);
@@ -118,8 +119,8 @@ export function ProfileAvatarSelect({
                     </StyledTitle>
 
                     <figure className="mx-auto mb-lg block w-28">
-                        <img
-                            src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${currentAvatarId}`}
+                        <Image
+                            src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${currentAvatar}`}
                             alt="Avatar"
                             className="aspect-square w-full rounded-full border-4 border-secondary"
                             width="112"
@@ -135,7 +136,7 @@ export function ProfileAvatarSelect({
                                 onClick={() => changeHandler(avatar.fileName)}
                             >
                                 <img
-                                    src={`${process.env.NEXT_PUBLIC_API_URL}/assets/avatars/${avatar.userAvatarImgId}`}
+                                    src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${avatar.fileName}`}
                                     alt={`Avatar ${avatar.userAvatarImgId}`}
                                 />
                             </figure>
