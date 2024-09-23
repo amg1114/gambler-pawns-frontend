@@ -5,6 +5,8 @@ interface GameState {
     position: string; // FEN string
 }
 
+// TODO: implement resign and draw offers
+
 /**
  * Custom hook to manage moves and other events / messages for chess game
  *

@@ -61,7 +61,6 @@ export function ChessBoardGame({
                 id="StyledBoard"
                 boardOrientation={side}
                 position={position}
-                // onPieceDrop={onDrop}
                 customBoardStyle={{
                     borderRadius: "8px",
                     boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",

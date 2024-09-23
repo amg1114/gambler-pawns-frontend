@@ -1,12 +1,10 @@
 "use client";
 
-import { useSearchParams, useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ChessBoardGame } from "../ui/components/chessBoardGame/chessBoardGame";
-import { useGameConnection } from "./_hooks/useGameConnection"; // Unifica el hook de conexión
+import { useGameConnection } from "./_hooks/useGameConnection";
 import { useChessWebSocket } from "./_hooks/useChessWebSocket";
 import { useChessGame } from "./_hooks/useChessGame";
-import { useEffect } from "react";
-import path from "path";
 
 export default function GamePage({ id = "" }) {
     // get searchParams from URL
@@ -22,7 +20,7 @@ export default function GamePage({ id = "" }) {
         gameId = id;
     }
 
-    // Hook unificado para manejar la conexión inicial o reconexión
+    // Hook to manage conection and reconnection
     const { socket, loading } = useGameConnection({
         gameId: gameId as string | undefined,
         playerId: playerId as string,
@@ -31,26 +29,27 @@ export default function GamePage({ id = "" }) {
         eloRating,
     });
 
-    // Hook para manejar el tablero de ajedrez
+    //Hook to validate and handle moves
     const chessGame = useChessGame("valid", (from, to) => {
-        // Aquí manejas el movimiento
+        // handling move
         makeMove(from, to);
     });
 
-    // Hook para manejar los WebSockets
+    // Hook to manage in-game events
     const { gameState, makeMove } = useChessWebSocket(
         socket,
         playerId as string,
     );
-
+    // es muy importante no renderizar el otro componente si loading es true
+    // esto estaba dando un error muy paila :(
     if (loading) {
-        return <div>Loading...</div>; // Mostrar un mensaje de carga mientras esperamos el ID del juego
+        return <div>Loading...</div>;
     }
 
     return (
         <section className="space-y-xl py-xl">
             <ChessBoardGame
-                position={gameState?.position || chessGame.position}
+                position={chessGame.position}
                 onDrop={chessGame.onDrop}
             />
         </section>
