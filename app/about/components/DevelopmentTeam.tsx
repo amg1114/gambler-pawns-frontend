@@ -1,9 +1,13 @@
-import React from 'react';
+//icons
 import githubIcon from '../../ui/icons/githubIcon.svg';
-import Image from 'next/image';
 import aguacate from '../../ui/icons/aguacate.png';
+
+//components
 import StyledTitle from '@/app/ui/components/typography/StyledTitle';
 import StyledParagraph from '@/app/ui/components/typography/StyledParagraph';
+
+
+import Image from 'next/image';
 
 interface Developer {
   username: string;
@@ -15,7 +19,7 @@ interface DeveloperCardProps {
   avatar: any;
 }
 
-const DeveloperCard: React.FC<DeveloperCardProps> = ({ username, avatar }) => (
+const DeveloperCard = ({ username, avatar }:DeveloperCardProps) => (
   <div className="flex flex-col items-center">
     <Image src={avatar} alt={username} className="w-xl h-xl md:w-2xl md:h-2xl lg:w-3xl lg:h-3xl rounded-full mb-2 " />
     <div className="flex items-center">
@@ -29,7 +33,7 @@ const DeveloperCard: React.FC<DeveloperCardProps> = ({ username, avatar }) => (
   </div>
 );
 
-const DevelopmentTeam: React.FC = () => {
+const DevelopmentTeam = () => {
 const developers: Developer[] = [
     { username: "jfmonsa", avatar: aguacate },
     { username: "Ramsterb", avatar: aguacate },
