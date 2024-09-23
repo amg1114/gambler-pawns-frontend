@@ -1,4 +1,4 @@
-export default function StyleGuidePage({
+export default function HomePage({
     children,
 }: {
     children: React.ReactNode;

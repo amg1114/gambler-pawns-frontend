@@ -12,7 +12,6 @@ import { useSession } from "next-auth/react";
 import FriendModal from "./Components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ProfileAvatarSelect } from "../profile/components/ProfileAvatarSelect";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 
