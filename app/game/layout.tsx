@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 
 export default function LayoutGame({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return <Suspense>{children}</Suspense>;
+  return <Suspense>{children}</Suspense>;
 }
