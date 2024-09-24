@@ -1,9 +1,9 @@
-import GamePage from "app/game/page";
+import ActualGamePage from "../_components/ActualGamePage";
 
 export default function DynamicGamePage({
     params,
 }: {
     params: { id: string };
 }) {
-    return <GamePage id={params.id} />;
+    return <ActualGamePage id={params.id} />;
 }

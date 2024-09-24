@@ -12,6 +12,21 @@ export function useChessGame(
     const onDrop = (sourceSquare: Square, targetSquare: Square) => {
         const gameCopy = new Chess(game.fen());
 
+        // Validate turn (color)
+        const mySide = JSON.parse(
+            localStorage.getItem("gameData") as string,
+        ).color;
+        console.log(
+            "gameData",
+            JSON.parse(localStorage.getItem("gameData") as string),
+        );
+        console.log("mySide", mySide, "and turn ", game.turn());
+        if (
+            (game.turn() === "b" && mySide === "white") ||
+            (game.turn() === "w" && mySide === "black")
+        )
+            return false;
+
         if (mode !== "arcade") {
             // mode with valid moves
             try {
