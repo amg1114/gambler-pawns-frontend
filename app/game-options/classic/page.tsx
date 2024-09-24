@@ -12,6 +12,39 @@ import ChessTile from "@/app/ui/icons/chess-tile.svg";
 import Dice from "@/app/ui/icons/dice.svg";
 import Link from "@/app/ui/icons/link-shared.svg";
 
+// =========  Zod Schema =======
+// TODO: refactor this in a separate file
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const gameOptionsSchema = z.object({
+  // TODO: validate if is in enum, and refactor selection options as a
+  gameMode: z.string().nonempty("Game mode is required"),
+  // TODO: validate if is in enum
+  bet: z.string().nonempty("Bet amount is required"),
+  opponent: z.string().nonempty("Opponent selection is required"),
+});
+// =========  Zod Schema =======
+
+// =========  custom hook to use React Hook Form with this schema =======
+// TODO: refactor this in a separate file
+type GameOptionsFormData = z.infer<typeof gameOptionsSchema>;
+
+function useGameOptionsForm() {
+  const form = useForm<GameOptionsFormData>({
+    resolver: zodResolver(gameOptionsSchema),
+    defaultValues: {
+      gameMode: "",
+      bet: "",
+      opponent: "",
+    },
+  });
+
+  return form;
+}
+// =========  custom hook to use React Hook Form with this schema =======
+
 export default function ClassicOptionPage() {
   return (
     <section className="w-[334px] content-center space-y-xl">
