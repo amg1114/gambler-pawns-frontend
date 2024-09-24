@@ -13,9 +13,9 @@ import { nunito } from "@/app/ui/fonts";
 
 export default function AboutPage() {
     return (
-        <div className="text- flex w-full justify-center space-x-8 space-y-8">
-            <div className="w-auto grid-cols-1 p-md text-center">
-                <div className="m-xl max-w-2xl">
+        <div className="text-center w-auto  space-x-8 space-y-8">
+            <div className="w-auto grid grid-col-1 justify-center p-md text-center ">
+                <div className="m-xl max-w-2xl mx-auto ">
                     <StyledTitle variant="h1" extraClasses="text-center">
                         WHO WE ARE
                     </StyledTitle>
@@ -36,7 +36,7 @@ export default function AboutPage() {
                 <div className="grid-flow-row text-start space-x-md">
                     <div>
                         <StyledTitle variant="h2" extraClasses="!m-sm !space-x-md">
-                            Notas de version
+                        Release Notes
                         </StyledTitle>
                     </div>
                     <div>
