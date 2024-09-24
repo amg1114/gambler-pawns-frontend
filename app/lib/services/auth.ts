@@ -19,7 +19,5 @@ export const sendForgotPasswordEmailRequest = async (
   data: ForgotPasswordForm,
 ) => axios.post("/auth/forgot-password", data);
 
-export const resetPasswordRequest = async (data: ResetPasswordForm) => {
-  const { confirmPassword, ...rest } = data;
-  return axios.patch("/auth/reset-password", rest);
-};
+export const resetPasswordRequest = async (data: ResetPasswordForm) =>
+  axios.patch("/auth/reset-password", data);

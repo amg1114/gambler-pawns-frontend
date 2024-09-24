@@ -40,7 +40,6 @@ export default function LoginPage() {
         password: data.password,
         redirect: false,
       });
-      console.log(res);
       if (!res) {
         setErrorMessage("Login Failed, please try again");
         setShowErrorAlert(true);

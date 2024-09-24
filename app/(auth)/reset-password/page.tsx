@@ -50,12 +50,15 @@ export default function ResetPasswordPage() {
         confirmPassword: "",
       });
       if (res.status === 200) {
-        setSuccessMessage("Password has been reset successfully.");
+        setSuccessMessage("Password has been reset successfully");
         setShowSuccessAlert(true);
-      } else {
-        setErrorMessage("Failed to reset password, please try again");
+        return;
+      } else if (res.status === 401) {
+        setErrorMessage("Invalid token");
         setShowErrorAlert(true);
+        return;
       }
+      throw new Error();
     } catch (error) {
       setErrorMessage("Failed to reset password, please try again");
       setShowErrorAlert(true);

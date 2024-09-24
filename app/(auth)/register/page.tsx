@@ -46,10 +46,13 @@ export default function RegisterPage() {
 
       if (res.status === 201) {
         router.push("/login");
-      } else {
+        return;
+      } else if (res.status === 409) {
         setErrorMessage("Username or email already exists, please try again");
         setShowErrorAlert(true);
+        return;
       }
+      throw new Error();
     } catch (error) {
       setErrorMessage("Register Failed, please try again");
       setShowErrorAlert(true);

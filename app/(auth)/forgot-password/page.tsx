@@ -37,12 +37,11 @@ export default function ForgotPasswordPage() {
     try {
       const res = await sendForgotPasswordEmailRequest({ email: data.email });
       if (res.status === 200) {
-        setSuccessMessage("The recovery email has been sent successfully.");
+        setSuccessMessage("The recovery email has been sent successfully");
         setShowSuccessAlert(true);
-      } else {
-        setErrorMessage("Failed to send recovery email, please try again");
-        setShowErrorAlert(true);
+        return;
       }
+      throw new Error();
     } catch (error) {
       setErrorMessage("Failed to send recovery email, please try again");
       setShowErrorAlert(true);
