@@ -3,7 +3,7 @@
 //libs
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 //components
@@ -20,7 +20,7 @@ import {
   resetPasswordSchema,
 } from "@/app/lib/interfaces/auth.interface";
 
-export default function ResetPasswordPage() {
+function ResetPasswordPage() {
   const {
     register,
     handleSubmit,
@@ -140,5 +140,13 @@ export default function ResetPasswordPage() {
         </GameAlert>
       )}
     </>
+  );
+}
+
+export default function PageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordPage />
+    </Suspense>
   );
 }
