@@ -54,12 +54,12 @@ export default function HomePage() {
                         Enjoy chess with our new features, learn more in about
                     </StyledParagraph>
                 </div>
-                <Image src={Board} alt="" className="w-full" />
+                <Image src={Board} alt="" className="w-full " />
             </div>
             <div className="w-auto space-y-8">
                 <StyledTitle
                     variant="h1"
-                    extraClasses="text-left text-center space-y-6"
+                    extraClasses="text-left text-center space-y-6 mt-lg"
                 >
                     SELECT GAME MODE
                 </StyledTitle>
