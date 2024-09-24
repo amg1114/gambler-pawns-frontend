@@ -8,10 +8,8 @@ import Check from "@/app/ui/icons/check.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 
 //Import component
-import StyledLink from "@/app/ui/components/typography/StyledLink";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
-import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import exp from "constants";
+import { azeret_mono } from "@/app/ui/fonts";
 
 const arrayArcadeModes = [
   {
@@ -67,9 +65,9 @@ function ModifierOption({ modifier }: arcadeOptionsProps) {
       className="w-full rounded-base bg-dark-2 px-md pb-xs pt-md"
       key={modifier.id}
     >
-      <div className="flex justify-between">
-        <div className="flex">
-          <label className="flex justify-between">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <label className="hover:cursor-pointer">
             <input type="checkbox" id="checkbox1" className="peer hidden" />
             <div
               className="rounded-sm flex h-4 w-4 border-spacing-1 justify-center border border-dark-1 bg-primary peer-checked:border-dark-2"
@@ -82,24 +80,23 @@ function ModifierOption({ modifier }: arcadeOptionsProps) {
               ></Image>
             </div>
           </label>
-          <StyledTitle variant="h3" extraClasses="pl-md">
+          <p className={`pl-md text-xl font-semibold ${azeret_mono.className}`}>
             {modifier.title}
-          </StyledTitle>
+          </p>
         </div>
-        <div className="flex" onClick={toggleText}>
-          <StyledLink href="#" extraClasses="pr-sm">
-            explain
-          </StyledLink>
+
+        <div>
           <Image
             src={ArrowDown}
             alt=""
-            width={15}
-            height={15}
-            className="pb-md"
+            width={16}
+            height={16}
+            className={`hover:cursor-pointer ${isTextVisible ? "rotate-180" : ""}`}
+            onClick={toggleText}
           />
         </div>
       </div>
-
+      <div className="h-[12px]" />
       <StyledParagraph
         extraClasses={`text-sm pl-lg ${isTextVisible ? "" : "hidden"}`}
       >
