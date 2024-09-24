@@ -125,7 +125,7 @@ export default function RegisterPage() {
               type="password"
               inputExtraClasses="bg-secondary mb-md"
               wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
-              {...register("password")}
+              {...register("confirmpassword")}
               id="confirmpassword"
               placeholder="*********"
             />

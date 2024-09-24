@@ -77,6 +77,51 @@ export const forgotPasswordSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email" }),
 });
 
+export const resetPasswordSchema = z
+  .object({
+    token: z.string(),
+    newPassword: z
+      .string()
+      .min(8, {
+        message: "Please enter a valid password, more than 8 characters",
+      })
+      .refine((password) => /[A-Z]/.test(password), {
+        message: "Please enter a valid password, at least one uppercase letter",
+      })
+      .refine((password) => /[a-z]/.test(password), {
+        message: "Please enter a valid password, at least one lowercase letter",
+      })
+      .refine((password) => /[0-9]/.test(password), {
+        message: "Please enter a valid password, at least one number",
+      })
+      .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
+        message:
+          "Please enter a valid password, at least one special character",
+      }),
+    confirmPassword: z
+      .string()
+      .min(8, {
+        message: "Please enter a valid password, more than 8 characters",
+      })
+      .refine((password) => /[A-Z]/.test(password), {
+        message: "Please enter a valid password, at least one uppercase letter",
+      })
+      .refine((password) => /[a-z]/.test(password), {
+        message: "Please enter a valid password, at least one lowercase letter",
+      })
+      .refine((password) => /[0-9]/.test(password), {
+        message: "Please enter a valid password, at least one number",
+      })
+      .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
+        message:
+          "Please enter a valid password, at least one special character",
+      }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export interface RegisterForm {
   nickname: string;
   email: string;
@@ -92,6 +137,12 @@ export interface LoginForm {
 
 export interface ForgotPasswordForm {
   email: string;
+}
+
+export interface ResetPasswordForm {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export interface user {
