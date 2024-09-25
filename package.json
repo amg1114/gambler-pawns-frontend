@@ -22,6 +22,7 @@
     "chess.js": "1.0.0-beta.8",
     "clsx": "^2.1.1",
     "flag-icons": "^7.2.3",
+    "gambler-pawns-frontend": "link:",
     "jose": "^5.9.2",
     "next": "14.2.7",
     "next-auth": "5.0.0-beta.20",

@@ -9,6 +9,7 @@ import { nunito } from "./ui/fonts";
 // components
 import Providers from "./ui/components/Providers";
 import Header from "./ui/components/shared/header";
+import Footer from "./ui/components/shared/footer";
 
 import Sidebar from "./ui/components/shared/Sidebar";
 import { useState } from "react";
