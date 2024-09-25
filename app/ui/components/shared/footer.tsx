@@ -9,7 +9,7 @@ export default function Footer(): JSX.Element {
     return(
     <footer className="w-full text-light mx-auto mt-2xl">
           <div className="flex flex-col items-center mb-none w-full">
-              <StyledLink href="/about" extraClasses="!p-xs hover:text-primary transition-colors mx-[50%] w-[100px]">
+              <StyledLink href="/about" extraClasses="!p-xs hover:text-primary transition-colors mx-[50%] w-[120px]">
                 About Us
               </StyledLink>
               <a 
