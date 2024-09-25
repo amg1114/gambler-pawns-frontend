@@ -23,6 +23,9 @@ export default function HomePage() {
   const [firstTime, setFirstTime] = useState<boolean>(true);
 
   useEffect(() => {
+    if (session) {
+      return;
+    }
     if (sessionStorage.getItem("firstTime") === null) {
       setFirstTime(true);
       sessionStorage.setItem("firstTime", "false");
