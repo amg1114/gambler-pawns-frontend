@@ -57,7 +57,7 @@ export function ChessBoardGame({
       return pieceComponents;
     }, []);
   return (
-    <div className="max-w-screen-board mx-auto">
+    <div className="mx-auto max-w-screen-board">
       <StyledTitle variant="h2" fontFamily="bungee" extraClasses="text-center">
         Chess Board
       </StyledTitle>
