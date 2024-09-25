@@ -1,11 +1,11 @@
 export default function ClassicOptionPage({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <main className="mx-auto flex w-full justify-center px-md md:w-4/5 md:max-w-screen-sm">
-            {children}
-        </main>
-    );
+  return (
+    <main className="mx-auto flex w-full justify-center px-md md:w-4/5 md:max-w-screen-sm">
+      {children}
+    </main>
+  );
 }
