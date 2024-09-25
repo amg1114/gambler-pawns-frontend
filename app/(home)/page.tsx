@@ -17,20 +17,19 @@ import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interfa
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
 
 export default function HomePage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [friends, setFriends] = useState<FriendsHome[]>([]);
   const [totalFriends, setTotalFriends] = useState<number>(0);
-  const [firstTime, setFirstTime] = useState<boolean>(true);
+  const [firstTime, setFirstTime] = useState<boolean>(false);
 
   useEffect(() => {
-    if (session) {
+    if (status === "loading") {
       return;
     }
-    if (sessionStorage.getItem("firstTime") === null) {
+    if (!session || !session.data) {
       setFirstTime(true);
-      sessionStorage.setItem("firstTime", "false");
     }
-  }, []);
+  }, [session, status]);
 
   useEffect(() => {
     const fetchFriends = async () => {
