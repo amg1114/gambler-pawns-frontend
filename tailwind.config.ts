@@ -80,7 +80,10 @@ const config: Config = {
                 "fade-in-down": "fade-in-down 0.5s ease-out",
                 "fade-out-up": "fade-out-up 0.5s ease-out",
             },
-            spacing
+            spacing,
+            screens: {
+                "board": "398px",
+            }
         },
     },
     plugins: [],
