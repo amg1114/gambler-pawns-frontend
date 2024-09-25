@@ -64,7 +64,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 z-50 flex w-full items-center justify-between border-b-2 border-primary bg-dark-1 p-md">
+      <header className="sticky top-0 z-50 flex w-full items-center justify-between border-b-2 border-primary bg-dark-1 p-md">
         <div className="flex w-1/3 bg-dark-1 px-sm py-sm max-[370px]:w-1/4">
           <div className="flex items-center justify-start rtl:justify-end">
             <button
