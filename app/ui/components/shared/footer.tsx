@@ -1,4 +1,3 @@
-import StyledTitle from "../typography/StyledTitle";
 import githubIcon from "../../icons/githubIcon.svg";
 import StyledLink from "../typography/StyledLink";
 import Image from "next/image";
@@ -10,7 +9,7 @@ export default function Footer(): JSX.Element {
       <div className="mb-none flex w-full flex-col items-center">
         <StyledLink
           href="/about"
-          extraClasses="!p-xs hover:text-primary transition-colors mx-[50%] w-[120px]"
+          extraClasses="!p-xs hover:text-primary transition-colors mx-[50%] w-[130px]"
         >
           About Us
         </StyledLink>
