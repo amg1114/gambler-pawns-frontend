@@ -9,7 +9,7 @@ export default function Footer(): JSX.Element {
       <div className="mb-none flex w-full flex-col items-center">
         <StyledLink
           href="/about"
-          extraClasses="!p-xs hover:text-primary transition-colors mx-[50%] w-[130px]"
+          extraClasses="!p-xs hover:text-primary transition-colors"
         >
           About Us
         </StyledLink>
@@ -25,7 +25,7 @@ export default function Footer(): JSX.Element {
           </StyledParagraph>
         </a>
       </div>
-      <div className="mt-md border-t text-center text-sm text-dark-2">
+      <div className="mt-md border-t pt-md text-center text-sm text-dark-2">
         © {new Date().getFullYear()} Gambler Pawns. All rights reserved.
       </div>
     </footer>
