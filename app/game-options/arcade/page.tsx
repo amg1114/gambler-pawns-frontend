@@ -14,8 +14,8 @@ import ArcadeOptions from "@/app/game-options/components/modifier-options";
 
 export default function ClassicOptionPage() {
   return (
-    <div className="grid w-[715px] grid-cols-2 gap-12">
-      <div className="w-[334px] space-y-lg">
+    <div className="mt-lg grid w-[715px] grid-cols-1 gap-12 lg:grid-cols-2">
+      <div className="space-y-lg">
         <StyledTitle variant="h1" extraClasses="text-center !mb-sm">
           Arcade Game Options
         </StyledTitle>
@@ -40,7 +40,7 @@ export default function ClassicOptionPage() {
           {BetOption("1000")}
         </fieldset>
       </div>
-      <div className="w-[334px] space-y-xl">
+      <div className="space-y-xl">
         <StyledTitle variant="h1" extraClasses="text-center">
           Against Who?
         </StyledTitle>
