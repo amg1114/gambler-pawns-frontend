@@ -35,9 +35,7 @@ export function useGameConnection({
 
   useLayoutEffect(() => {
     // Conectar al servidor WebSocket
-    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
-      secure: process.env.NEXT_PUBLIC_WS_SSL === "true",
-    });
+    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
     setSocket(newSocket);
 
     if (gameId !== undefined) {
