@@ -94,7 +94,7 @@ export default function Sidebar({
     <div className="flex">
       <aside
         id="default-sidebar"
-        className={`fixed h-screen ${nunito.className} left-0 top-[82px] z-40 w-52 transform border-r-2 border-t-secondary bg-dark-2 transition-transform min-[1200px]:translate-x-0 ${
+        className={`fixed h-full ${nunito.className} left-0 top-[82px] z-40 w-max transform border-r-2 border-t-secondary bg-dark-2 transition-transform min-[1200px]:translate-x-0 ${
           isMounted
             ? isSidebarOpen
               ? "translate-x-0"
@@ -151,7 +151,7 @@ export default function Sidebar({
                 </a>
               </li>
             ))}
-            <div className="flex h-full flex-col overflow-y-auto pb-md pt-3xl">
+            <div className="flex h-full flex-col overflow-y-auto pb-md">
               {gameOptions.map((option) => (
                 <li key={option.name} className="flex items-center px-lg pb-md">
                   <Image

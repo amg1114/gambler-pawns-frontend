@@ -14,11 +14,22 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
+import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
 
 export default function HomePage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [friends, setFriends] = useState<FriendsHome[]>([]);
   const [totalFriends, setTotalFriends] = useState<number>(0);
+  const [firstTime, setFirstTime] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (status === "loading") {
+      return;
+    }
+    if (!session || !session.data) {
+      setFirstTime(true);
+    }
+  }, [session, status]);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -167,6 +178,11 @@ export default function HomePage() {
           <></>
         )}
       </div>
+      {firstTime ? (
+        <FirstTimeModal close={() => setFirstTime(false)}> </FirstTimeModal>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
