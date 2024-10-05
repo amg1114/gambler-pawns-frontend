@@ -1,4 +1,3 @@
-"use client";
 //icons
 import gear from "../ui/icons/gear.svg";
 import aguacate from "../ui/icons/aguacate.png";
@@ -10,6 +9,12 @@ import StyledTitle from "../ui/components/typography/StyledTitle";
 
 import Image from "next/image";
 import { nunito } from "@/app/ui/fonts";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "The team behind Gambler Pawns",
+};
 
 export default function AboutPage() {
   return (
