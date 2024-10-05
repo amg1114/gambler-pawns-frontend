@@ -44,8 +44,11 @@ export default function UserProfilePage({
       axios
         .get<UserRes>(`/user/${params.nickname}`)
         .then((res) => {
-          setUser(res.data.data);
           setLoading(false);
+          if (res.data.statusCode === 404) {
+            throw new Error("User not found");
+          }
+          setUser(res.data.data);
         })
         .catch((err) => {
           router.push("/404");
