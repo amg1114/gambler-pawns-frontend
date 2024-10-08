@@ -10,7 +10,6 @@ import StyledTitle from "../ui/components/typography/StyledTitle";
 import Image from "next/image";
 import { nunito } from "@/app/ui/fonts";
 import { Metadata } from "next";
-import StreakModal from "../ui/components/modals/StreakModal";
 
 export const metadata: Metadata = {
   title: "About",
@@ -20,7 +19,6 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="w-auto space-x-8 space-y-8 text-center">
-      <StreakModal />
       <div className="grid-col-1 grid w-auto justify-center p-md text-center">
         <div className="m-xl mx-auto max-w-2xl">
           <StyledTitle variant="h1" extraClasses="text-center">

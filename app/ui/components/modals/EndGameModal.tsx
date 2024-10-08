@@ -7,13 +7,12 @@ import { useState, useEffect } from "react";
 import StyledButton from "../typography/StyledButton";
 import StyledTitle from "../typography/StyledTitle";
 // Icons
-import Fire from "../../icons/fire.svg";
 import Image from "next/image";
 import Coin from "../../icons/coin.svg";
 
-const StreakModal = () => {
+const EndGameModal = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const [isClosing] = useState(false);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -21,13 +20,6 @@ const StreakModal = () => {
     setIsOpen(true);
   }, []);
 
-  const closeModal = () => {
-    setIsClosing(true);
-    // Espera 500ms para completar la animación antes de cerrar completamente el modal
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 500);
-  };
   return (
     <>
       {session?.data && isOpen && (
@@ -43,35 +35,36 @@ const StreakModal = () => {
             <div
               className={`mx-auto h-auto w-auto ${
                 !isClosing ? "animate-fade-in-down" : "animate-fade-out-up"
-              } items-center justify-center rounded-base bg-dark-1 p-sm shadow-lg`}
+              } items-center justify-center rounded-base bg-dark-1 px-2xl py-lg shadow-lg`}
             >
-              <StyledTitle variant="h1" extraClasses="pt-md ">
-                Streak +1
+              <StyledTitle variant="h1" extraClasses="pt-md mb-xs ">
+                White Won
               </StyledTitle>
-              <Image
-                src={Fire}
-                alt="fire"
-                className="mx-auto mb-md flex h-3xl w-3xl"
-              />
-              <StyledTitle
-                variant="h3"
-                extraClasses="pt-md max-w-60 lg:max-w-80 md:max-w-80 sm:max-w-80"
-              >
-                you’ve been playing for {session?.data.streakDays} days
-              </StyledTitle>
+              <StyledTitle extraClasses="mt-xs">By resign</StyledTitle>
               <div className="grid grid-cols-2">
                 <StyledTitle variant="h3" extraClasses="text-right my-xs">
-                  +2
+                  +20
                 </StyledTitle>
                 <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
               </div>
-              <StyledButton
-                variant="primary"
-                extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
-                onClick={closeModal}
-              >
-                Accept
-              </StyledButton>
+              <StyledTitle variant="h3" extraClasses="text-center my-xs  ">
+                +20 ELO
+              </StyledTitle>
+              <div className="grid grid-cols-1 pt-md">
+                <StyledButton
+                  variant="primary"
+                  extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
+                >
+                  New Game
+                </StyledButton>
+                <StyledButton
+                  variant="primary"
+                  style="outlined"
+                  extraClasses="mx-auto !w-36"
+                >
+                  Watch Again
+                </StyledButton>
+              </div>
             </div>
           </div>
         </div>
@@ -80,4 +73,4 @@ const StreakModal = () => {
   );
 };
 
-export default StreakModal;
+export default EndGameModal;
