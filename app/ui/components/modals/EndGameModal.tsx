@@ -1,8 +1,7 @@
 "use client";
 
 // Libs
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // Components
 import StyledButton from "../typography/StyledButton";
 import StyledTitle from "../typography/StyledTitle";
@@ -13,16 +12,14 @@ import Coin from "../../icons/coin.svg";
 const EndGameModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing] = useState(false);
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    // Mostrar el modal automáticamente cuando la página se carga
-    setIsOpen(true);
-  }, []);
+  const openModal = () => setIsOpen(true);
 
   return (
     <>
-      {session?.data && isOpen && (
+      <StyledButton variant="primary" style="outlined" onClick={openModal}>
+        Resign
+      </StyledButton>
+      {isOpen && (
         <div className="fixed inset-0 mx-auto flex items-center">
           <div
             className={`mx-auto transition-transform duration-500 ${
