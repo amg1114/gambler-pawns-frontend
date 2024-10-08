@@ -21,8 +21,6 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="w-auto space-x-8 space-y-8 text-center">
-      <EndGameModal />
-      <DrawModal />
       <div className="grid-col-1 grid w-auto justify-center p-md text-center">
         <div className="m-xl mx-auto max-w-2xl">
           <StyledTitle variant="h1" extraClasses="text-center">
