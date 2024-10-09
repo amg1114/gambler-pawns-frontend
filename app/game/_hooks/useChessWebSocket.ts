@@ -1,43 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 
-interface GameState {
-  position: string; // FEN string
-}
-
 // TODO: implement resign and draw offers
-
-/**
- * Custom hook to manage moves and other events / messages for chess game
- *
- * @param socket - The WebSocket connection object.
- * @param playerId - The ID of the player.
- * @param updateGameFromOpponent - Function to update the game state with opponent's move.
- * @returns An object containing the game state and a function to make a move.
- */
 export function useChessWebSocket(
   socket: Socket | null,
   playerId: string,
-  updateGameFromOpponent: (fen: string) => void, // Función para actualizar el juego
+  updateGameFromOpponent: (fen: string) => void,
+  onTimerUpdate: (times: {
+    playerOneTime: number;
+    playerTwoTime: number;
+  }) => void,
 ) {
-  const [gameState, setGameState] = useState<GameState | null>(null);
-
   useEffect(() => {
     if (!socket) return;
     // listening for game updates
     socket.on("moveMade", (data: any) => {
-      setGameState(data);
-      updateGameFromOpponent(data.board); // Update local game state with opponent's FEN
-      console.log("Move Made", data);
+      updateGameFromOpponent(data.moveResult.board); // Update local game state with opponent's FEN
     });
 
+    // Listen for game over event
     socket.on("gameOver", (data: any) => {
       console.log("Game Over", data);
+    });
+
+    // Listen for timer updates
+    socket.on("timerUpdate", (data: any) => {
+      onTimerUpdate({
+        playerOneTime: data.playerOneTime,
+        playerTwoTime: data.playerTwoTime,
+      });
     });
 
     return () => {
       socket.off("moveMade");
       socket.off("gameOver");
+      socket.off("timerUpdate");
     };
   }, [socket, updateGameFromOpponent]);
 
@@ -49,7 +46,6 @@ export function useChessWebSocket(
   };
 
   return {
-    gameState,
     makeMove,
   };
 }

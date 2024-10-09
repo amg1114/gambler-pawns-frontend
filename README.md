@@ -1,4 +1,3 @@
-
 # Gambler Pawns
 
 Gambler Pawns is a web platform to enjoy a Chess game with friends online. This project adds some features to the classic Chess game, such as:
@@ -9,13 +8,11 @@ Gambler Pawns is a web platform to enjoy a Chess game with friends online. This 
 - Club: Find or create your own community to share with other chess players.
 - Leadboard: Climb to the top of the player rankings and be the best.
 
-This project was developed as academic product for the Universidad del Valle. 
+This project was developed as academic product for the Universidad del Valle.
 
 ## Repository
 
 This repo contains the Gambler Pawns frontend code, developed with [NextJS](https://nextjs.org/).
-
-
 
 ## Run Locally
 
@@ -43,7 +40,6 @@ Start the server
   npm run start
 ```
 
-
 ## Authors
 
 - [@amg1114](https://www.github.com/amg1114)
@@ -51,5 +47,4 @@ Start the server
 - [@JSebastianMarin](https://www.github.com/JSebastianMarin)
 - [@RamSterB](https://www.github.com/RamSterB)
 - [@JuanPidarraga](https://www.github.com/JuanPidarraga)
-- [@MonsaveAKAdictador](https://www.github.com/JuanPidarraga)
-
+- [@jfmonsa](https://www.github.com/jfmonsa)
