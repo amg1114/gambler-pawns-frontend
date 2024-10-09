@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
 
@@ -14,6 +14,8 @@ interface UseGameConnectionProps {
   gameMode: string;
   bet: number;
   eloRating: number;
+  timeMinutes: number;
+  timeIncSeconds: number;
 }
 
 /**
@@ -28,12 +30,14 @@ export function useGameConnection({
   gameMode,
   bet,
   eloRating,
+  timeMinutes,
+  timeIncSeconds,
 }: UseGameConnectionProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // Conectar al servidor WebSocket
     const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
     setSocket(newSocket);
@@ -59,6 +63,8 @@ export function useGameConnection({
         mode: gameMode,
         bet,
         eloRating,
+        initialTime: timeMinutes,
+        incrementTime: timeIncSeconds,
       });
 
       // listen to server response
@@ -77,7 +83,16 @@ export function useGameConnection({
       // Desconnect socket when component unmounts
       newSocket.disconnect();
     };
-  }, [gameId, playerId, gameMode, bet, eloRating, router]);
+  }, [
+    gameId,
+    playerId,
+    gameMode,
+    bet,
+    eloRating,
+    router,
+    timeIncSeconds,
+    timeMinutes,
+  ]);
 
   return { socket, loading };
 }
