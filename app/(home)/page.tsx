@@ -37,8 +37,6 @@ export default function HomePage() {
         const response = await axios.get(
           `http://[::1]:8000/api/v1/user/${session?.data.userId}/friends`,
         );
-        console.log("Response data:", response.data);
-        console.log("Friends:", response.data.data.friendsList);
         setFriends(response.data.data.friendsList); // Ajusta la estructura según tu API
         setTotalFriends(response.data.data.totalFriends);
       } catch (error) {

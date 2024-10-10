@@ -160,7 +160,9 @@ export default function ProfileEditPage() {
     }
 
     axios
-      .patch<UpdateUserResponse>(`/user/${session?.data.userId}`, changes)
+      .patch<UpdateUserResponse>(`/user/${session?.data.userId}`, changes, {
+        headers: { Authorization: `Bearer ${session?.data.token}` },
+      })
       .then((res) => {
         updateSession()
           .then(() => {
