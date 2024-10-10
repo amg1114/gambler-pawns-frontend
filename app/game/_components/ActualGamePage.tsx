@@ -7,6 +7,12 @@ import { useChessWebSocket } from "../_hooks/useChessWebSocket";
 import { useChessGame } from "../_hooks/useChessGame";
 import { useState } from "react";
 import { formatTimeMs } from "../utils/formatTimeMs";
+import StyledButton from "@/app/ui/components/typography/StyledButton";
+// Modals
+import OpponentDrawOfferModal from "./OpponentDrawOfferModal";
+import OfferDrawModal from "./OfferDrawModal";
+import ResignGameModal from "./ResignGameModal";
+import { set } from "zod";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   // get searchParams from URL
@@ -15,7 +21,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const playerId = searchParams.get("playerId");
   const bet = +(searchParams.get("bet") as string);
   const eloRating = 1200; // TODO: get this from token next-auth
-  const timeMinutes = 5;
+  const timeMinutes = 10;
   const timeIncSeconds = 2;
   let gameId = undefined;
 
@@ -35,9 +41,9 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     timeIncSeconds,
   });
 
-  // Estado para almacenar el tiempo de los relojes
-  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000); // 5 minutos en ms
-  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000); // 5 minutos en ms
+  // Save timers (miliseconds)
+  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
+  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
 
   // Manejar actualización del reloj
   const handleTimerUpdate = (times: {
@@ -48,6 +54,18 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     setPlayerTwoTime(times.playerTwoTime);
   };
 
+  // Handle opponent draw offer
+  const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
+  const handleOpponentDrawOffer = () => {
+    setOpponentDrawOffer(true);
+  };
+
+  // Handle current player draw offer
+  const [isDrawOffer, setDrawOffer] = useState(false);
+
+  // handle resign confirmation modal
+  const [isResignModalOpen, setResignModalOpen] = useState(false);
+
   //Hook to validate and handle moves
   const chessGame = useChessGame("rapid", (from, to) => {
     // handling move
@@ -55,31 +73,86 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   });
 
   // Hook to manage in-game events
-  const { makeMove } = useChessWebSocket(
-    socket,
-    playerId as string,
-    chessGame.updateGameFromOpponent,
-    handleTimerUpdate,
-  );
+  const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
+    useChessWebSocket(
+      socket,
+      playerId as string,
+      chessGame.updateGameFromOpponent,
+      handleTimerUpdate,
+      handleOpponentDrawOffer,
+    );
 
   // muy importante esta condición, si se cambia comienza dar errores inesperados
-  // TODO: dentro del if loading, mostrar el skeleton
+  // TODO: dentro del if loading, mostrar el skeleton (importar el componente, no declararlo porque es muy grande)
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <section className="space-y-xl py-xl">
-      <div>
-        <div>Player 1 Time: {formatTimeMs(playerOneTime)}</div>
-        <div>Player 2 Time: {formatTimeMs(playerTwoTime)}</div>
-      </div>
-      <ChessBoardGame
-        // show local position of opponent's one
-        position={chessGame.position}
-        onDrop={chessGame.onDrop}
-        side={JSON.parse(localStorage.getItem("gameData") as string).color}
+    <>
+      <section className="mx-auto max-w-screen-board">
+        <div>
+          <div>Player 1 Time: {formatTimeMs(playerOneTime)}</div>
+          <div>Player 2 Time: {formatTimeMs(playerTwoTime)}</div>
+        </div>
+        <p>
+          {chessGame.gameHistoryMoves.map(
+            (move, index) =>
+              `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
+          )}
+        </p>
+        <ChessBoardGame
+          position={chessGame.position}
+          onDrop={chessGame.onDrop}
+          side={JSON.parse(localStorage.getItem("gameData") as string).color}
+        />
+        <StyledButton
+          onClick={() => {
+            setDrawOffer(true);
+          }}
+        >
+          Offer Draw
+        </StyledButton>
+        <StyledButton
+          onClick={() => {
+            setResignModalOpen(true);
+          }}
+        >
+          Resign
+        </StyledButton>
+      </section>
+      {/* Modals */}
+      <ResignGameModal
+        isOpen={isResignModalOpen}
+        handleNo={() => {
+          setResignModalOpen(false);
+        }}
+        handleYes={() => {
+          setResignModalOpen(false);
+          resignGame();
+        }}
       />
-    </section>
+      <OfferDrawModal
+        isOpen={isDrawOffer}
+        handleNo={() => {
+          setDrawOffer(false);
+        }}
+        handleYes={() => {
+          offerDraw();
+          setDrawOffer(false);
+        }}
+      />
+      <OpponentDrawOfferModal
+        isOpen={isOpponentDrawOffer}
+        acceptDraw={() => {
+          setOpponentDrawOffer(false);
+          acceptDraw();
+        }}
+        rejectDraw={() => {
+          setOpponentDrawOffer(false);
+          rejectDraw();
+        }}
+      />
+    </>
   );
 }

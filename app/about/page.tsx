@@ -10,8 +10,8 @@ import StyledTitle from "../ui/components/typography/StyledTitle";
 import Image from "next/image";
 import { nunito } from "@/app/ui/fonts";
 import { Metadata } from "next";
-import DrawModal from "../ui/components/modals/DrawModal";
-import EndGameModal from "../ui/components/modals/EndGameModal";
+import DrawModal from "../game/_components/OpponentDrawOfferModal";
+import EndGameModal from "../game/_components/EndGameModal";
 
 export const metadata: Metadata = {
   title: "About",

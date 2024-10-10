@@ -8,6 +8,7 @@ export function useChessGame(
   makeMove: (from: string, to: string) => void,
 ) {
   const [game, setGame] = useState(new Chess());
+  const [movesHistory, setMovesHistory] = useState<string[]>([]);
 
   /** Handle piece drop, val moves, make move and emit to ws server */
   const onDrop = useCallback(
@@ -42,7 +43,10 @@ export function useChessGame(
             // Check if the game has ended
             if (gameCopy.isCheckmate()) {
               alert("Checkmate! The game is over.");
-            } else if (gameCopy.isDraw()) {
+            }
+            // check draw cases
+            // TODO: revisar si en el backend se estan chekeando estos casos
+            else if (gameCopy.isDraw()) {
               alert("It's a draw! The game is over.");
             } else if (gameCopy.isStalemate()) {
               alert("Stalemate! The game is over.");
@@ -72,13 +76,18 @@ export function useChessGame(
   );
 
   /** Update game from opponent moves */
-  const updateGameFromOpponent = useCallback((fen: string) => {
-    const gameCopy = new Chess(fen);
-    setGame(gameCopy);
-  }, []);
+  const updateGameFromOpponent = useCallback(
+    (fen: string, moveHistory: string[]) => {
+      const gameCopy = new Chess(fen);
+      setMovesHistory(moveHistory);
+      setGame(gameCopy);
+    },
+    [],
+  );
 
   return {
     position: game.fen(),
+    gameHistoryMoves: movesHistory,
     onDrop,
     updateGameFromOpponent,
   };

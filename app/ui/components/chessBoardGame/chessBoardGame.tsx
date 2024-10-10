@@ -58,9 +58,6 @@ export function ChessBoardGame({
     }, []);
   return (
     <div className="mx-auto max-w-screen-board">
-      <StyledTitle variant="h2" fontFamily="bungee" extraClasses="text-center">
-        Chess Board
-      </StyledTitle>
       <Chessboard
         id="StyledBoard"
         boardOrientation={side}
