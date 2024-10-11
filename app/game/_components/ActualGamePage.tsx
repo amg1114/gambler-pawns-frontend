@@ -17,6 +17,7 @@ import OfferDrawModal from "./OfferDrawModal";
 import ResignGameModal from "./ResignGameModal";
 import EndGameModal, { endGameDataInterface } from "./EndGameModal";
 import StreakModal from "./StreakModal";
+
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
 
@@ -75,19 +76,21 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
     null,
   );
+  const [endGameStreakModalOpen, setEndGameStreakModalOpen] = useState(false);
   const [gameEndModalOpen, setGameEndModalOpen] = useState(false);
+
   const handleEndGame = (data: endGameDataInterface) => {
     setEndGameData(data);
+
     if (data.winner === "You") {
-      setGameEndModalOpen(true);
+      setEndGameStreakModalOpen(true);
     }
-    setGameEndModalOpen(false);
   };
 
   //Hook to validate and handle moves
-  const chessGame = useChessGame("rapid", (from, to) => {
+  const chessGame = useChessGame("rapid", (from, to, promotion) => {
     // handling move
-    makeMove(from, to);
+    makeMove(from, to, promotion);
   });
 
   // Hook to manage in-game events
@@ -172,35 +175,22 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           rejectDraw();
         }}
       />
-      {!!endGameData && endGameData.winner === "You" && !!session?.data ? (
-        <>
-          <StreakModal
-            isOpen={!!endGameData}
-            streakNumber={session?.data?.streakDays || 0}
-            moneyGameGiftForWinner={endGameData?.moneyGameGiftForWinner || 0}
-            onClose={() => {
-              setGameEndModalOpen(true);
-            }}
-          />
-          {
-            /* TODO: pasar el game mode dinamicamente */
-            console.log("endGameData", gameEndModalOpen)
-          }
-          <EndGameModal
-            isOpen={gameEndModalOpen}
-            gameData={endGameData as endGameDataInterface | null}
-            gameMode={"rapid"}
-            gameId={id as string}
-          />
-        </>
-      ) : (
-        <EndGameModal
-          isOpen={!!endGameData || true}
-          gameData={endGameData as endGameDataInterface | null}
-          gameMode={"rapid"}
-          gameId={id as string}
-        />
-      )}
+      <StreakModal
+        isOpen={endGameStreakModalOpen}
+        streakNumber={session?.data?.streakDays || 0}
+        moneyGameGiftForWinner={endGameData?.moneyGameGiftForWinner || 0}
+        onClose={() => {
+          setEndGameStreakModalOpen(false);
+          setGameEndModalOpen(true);
+        }}
+      />
+      {/* TODO: pasar el modod de juego dinamicamente */}
+      <EndGameModal
+        isOpen={gameEndModalOpen}
+        gameData={endGameData as endGameDataInterface | null}
+        gameMode={"rapid"}
+        gameId={id as string}
+      />
     </>
   );
 }

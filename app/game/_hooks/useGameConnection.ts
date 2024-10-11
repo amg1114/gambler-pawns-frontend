@@ -49,7 +49,6 @@ export function useGameConnection({
         gameId,
         playerId,
       });
-      console.log("Reconnecting to game", gameId);
 
       // listen to server response
       newSocket.on("game:reconnected", (data: any) => {
@@ -71,7 +70,6 @@ export function useGameConnection({
       newSocket.on("game:started", (data: GameJoinResponse) => {
         // Cambiar la URL sin redirigir
         // TODO: get playerId from token next-auth, also game info should be stored in the local storage
-        console.log(data);
         localStorage.setItem("gameData", JSON.stringify(data));
         router.replace(`/game/${data.gameId}?playerId=${playerId}`);
         setLoading(false);
