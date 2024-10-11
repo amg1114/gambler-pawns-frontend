@@ -38,7 +38,11 @@ export function ProfileAvatarSelect({
 
   const changeHandler = (filename: string) => {
     axios
-      .patch<UpdateAvatarResponse>(`/user/${userId}/avatar`, { filename })
+      .patch<UpdateAvatarResponse>(
+        `/user/${userId}/avatar`,
+        { filename },
+        { headers: { Authorization: `Bearer ${session?.data.token}` } },
+      )
       .then((res) => {
         if (res.data.status) {
           const newSession = {

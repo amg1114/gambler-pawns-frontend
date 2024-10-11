@@ -15,6 +15,7 @@ export interface User {
   streakDays: number;
   isDeleted: boolean;
   userAvatarImg: UserAvatarImg;
+  token: string;
 }
 
 export interface UserAvatarImg {
