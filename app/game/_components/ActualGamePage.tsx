@@ -1,20 +1,25 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { formatTimeMs } from "../utils/formatTimeMs";
+
+// custom hooks
 import { useSearchParams } from "next/navigation";
 import { ChessBoardGame } from "../../ui/components/chessBoardGame/chessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
 import { useChessGame } from "../_hooks/useChessGame";
-import { useState } from "react";
-import { formatTimeMs } from "../utils/formatTimeMs";
+// components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-// Modals
 import OpponentDrawOfferModal from "./OpponentDrawOfferModal";
 import OfferDrawModal from "./OfferDrawModal";
 import ResignGameModal from "./ResignGameModal";
-import { set } from "zod";
-
+import EndGameModal, { endGameDataInterface } from "./EndGameModal";
+import StreakModal from "./StreakModal";
 export default function ActualGamePage({ id }: { id: string | undefined }) {
+  const { data: session } = useSession();
+
   // get searchParams from URL
   const searchParams = useSearchParams();
   const gameMode = searchParams.get("mode");
@@ -66,6 +71,19 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   // handle resign confirmation modal
   const [isResignModalOpen, setResignModalOpen] = useState(false);
 
+  // handle gameEnd
+  const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
+    null,
+  );
+  const [gameEndModalOpen, setGameEndModalOpen] = useState(false);
+  const handleEndGame = (data: endGameDataInterface) => {
+    setEndGameData(data);
+    if (data.winner === "You") {
+      setGameEndModalOpen(true);
+    }
+    setGameEndModalOpen(false);
+  };
+
   //Hook to validate and handle moves
   const chessGame = useChessGame("rapid", (from, to) => {
     // handling move
@@ -80,6 +98,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       chessGame.updateGameFromOpponent,
       handleTimerUpdate,
       handleOpponentDrawOffer,
+      handleEndGame,
     );
 
   // muy importante esta condición, si se cambia comienza dar errores inesperados
@@ -153,6 +172,35 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           rejectDraw();
         }}
       />
+      {!!endGameData && endGameData.winner === "You" && !!session?.data ? (
+        <>
+          <StreakModal
+            isOpen={!!endGameData}
+            streakNumber={session?.data?.streakDays || 0}
+            moneyGameGiftForWinner={endGameData?.moneyGameGiftForWinner || 0}
+            onClose={() => {
+              setGameEndModalOpen(true);
+            }}
+          />
+          {
+            /* TODO: pasar el game mode dinamicamente */
+            console.log("endGameData", gameEndModalOpen)
+          }
+          <EndGameModal
+            isOpen={gameEndModalOpen}
+            gameData={endGameData as endGameDataInterface | null}
+            gameMode={"rapid"}
+            gameId={id as string}
+          />
+        </>
+      ) : (
+        <EndGameModal
+          isOpen={!!endGameData || true}
+          gameData={endGameData as endGameDataInterface | null}
+          gameMode={"rapid"}
+          gameId={id as string}
+        />
+      )}
     </>
   );
 }

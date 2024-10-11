@@ -39,23 +39,6 @@ export function useChessGame(
           if (move) {
             setGame(gameCopy);
             makeMove(sourceSquare, targetSquare); // Emit move thorugh WebSockets
-
-            // Check if the game has ended
-            if (gameCopy.isCheckmate()) {
-              alert("Checkmate! The game is over.");
-            }
-            // check draw cases
-            // TODO: revisar si en el backend se estan chekeando estos casos
-            else if (gameCopy.isDraw()) {
-              alert("It's a draw! The game is over.");
-            } else if (gameCopy.isStalemate()) {
-              alert("Stalemate! The game is over.");
-            } else if (gameCopy.isThreefoldRepetition()) {
-              alert("Threefold repetition! The game is over.");
-            } else if (gameCopy.isInsufficientMaterial()) {
-              alert("Insufficient material! The game is over.");
-            }
-
             return true; // valid move
           }
         } catch {

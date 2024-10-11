@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Socket } from "socket.io-client";
+import { endGameDataInterface } from "../_components/EndGameModal";
 
 // TODO: implement resign and draw offers
 export function useChessWebSocket(
@@ -11,6 +12,7 @@ export function useChessWebSocket(
     playerTwoTime: number;
   }) => void,
   setDrawOffer: (value: boolean) => void,
+  onGameEnd: (data: endGameDataInterface) => void,
 ) {
   useEffect(() => {
     if (!socket) return;
@@ -39,19 +41,55 @@ export function useChessWebSocket(
 
     // Liste for draw offers
     socket.on("drawOffered", (data: any) => {
-      // on draw offer
       setDrawOffer(true);
       console.log("Draw offered", data);
     });
 
     socket.on("drawAccepted", (data: any) => {
-      // on draw accepted
       console.log("Draw accepted", data);
     });
 
     socket.on("drawRejected", (data: any) => {
-      // on draw rejected
+      // TODO: mostrar modal cuando la rechazan
       console.log("Draw rejected", data);
+    });
+
+    socket.on("gameEnd", (data) => {
+      console.log("Game end", data);
+
+      // set winner
+      const mySide = JSON.parse(
+        localStorage.getItem("gameData") as string,
+      ).color;
+
+      let winner;
+      if (
+        (data.winner === "w" && mySide === "white") ||
+        (data.winner === "b" && mySide === "black")
+      ) {
+        winner = "You";
+      } else if (data.winner === "w") {
+        winner = "White";
+      } else if (data.winner === "b") {
+        winner = "Black";
+      } else {
+        winner = "Draw";
+      }
+
+      // set elo change
+      let eloChange;
+      if (mySide === "white") {
+        eloChange = data.eloWhitesAfterGameVariation;
+      } else {
+        eloChange = data.eloBlacksAfterGameVariation;
+      }
+
+      onGameEnd({
+        winner: winner,
+        reason: data.resultType,
+        eloChange,
+        moneyGameGiftForWinner: data.gameGiftForWin,
+      });
     });
 
     return () => {
@@ -62,8 +100,9 @@ export function useChessWebSocket(
       socket.off("drawOffered");
       socket.off("drawAccepted");
       socket.off("drawRejected");
+      socket.off("gameEnd");
     };
-  }, [socket, updateGameFromOpponent, onTimerUpdate, setDrawOffer]);
+  }, [socket, updateGameFromOpponent, onTimerUpdate, setDrawOffer, onGameEnd]);
 
   // function to make a move
   const makeMove = (from: string, to: string) => {
