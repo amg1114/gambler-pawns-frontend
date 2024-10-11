@@ -55,8 +55,6 @@ export function useChessWebSocket(
     });
 
     socket.on("gameEnd", (data) => {
-      console.log("Game end", data);
-
       // set winner
       const mySide = JSON.parse(
         localStorage.getItem("gameData") as string,
@@ -105,9 +103,9 @@ export function useChessWebSocket(
   }, [socket, updateGameFromOpponent, onTimerUpdate, setDrawOffer, onGameEnd]);
 
   // function to make a move
-  const makeMove = (from: string, to: string) => {
+  const makeMove = (from: string, to: string, promotion: string) => {
     if (socket) {
-      socket.emit("game:makeMove", { playerId, from, to });
+      socket.emit("game:makeMove", { playerId, from, to, promotion });
     }
   };
   // oppontent offers a draw

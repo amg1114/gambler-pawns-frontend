@@ -66,9 +66,9 @@ const EndGameModal = ({
                 extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
                 onClick={() => {
                   if (gameMode === "arcade") {
-                    router.push("/arcade-options");
+                    router.push("game-options/arcade");
                   }
-                  router.push("/game-options");
+                  router.push("/game-options/classic");
                 }}
               >
                 New Game

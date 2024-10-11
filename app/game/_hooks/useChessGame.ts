@@ -5,7 +5,7 @@ type GameModeType = "rapid" | "blitz" | "bullet" | "arcade";
 
 export function useChessGame(
   mode: GameModeType = "rapid",
-  makeMove: (from: string, to: string) => void,
+  makeMove: (from: string, to: string, promotion: string) => void,
 ) {
   const [game, setGame] = useState(new Chess());
   const [movesHistory, setMovesHistory] = useState<string[]>([]);
@@ -38,7 +38,7 @@ export function useChessGame(
 
           if (move) {
             setGame(gameCopy);
-            makeMove(sourceSquare, targetSquare); // Emit move thorugh WebSockets
+            makeMove(sourceSquare, targetSquare, "q"); // Emit move thorugh WebSockets
             return true; // valid move
           }
         } catch {
