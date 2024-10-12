@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { formatTimeMs } from "../utils/formatTimeMs";
+import { formatTimeMs } from "../_utils/formatTimeMs";
 
 // custom hooks
 import { useSearchParams } from "next/navigation";
@@ -184,7 +184,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           setGameEndModalOpen(true);
         }}
       />
-      {/* TODO: pasar el modod de juego dinamicamente */}
+      {/* TODO: pasar el modo de juego dinamicamente */}
       <EndGameModal
         isOpen={gameEndModalOpen}
         gameData={endGameData as endGameDataInterface | null}
