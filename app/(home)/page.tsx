@@ -74,18 +74,19 @@ export default function HomePage() {
           <StyledLink
             variant="primary"
             style="outlined"
-            extraClasses="block !w-full !text-light !h-12"
+            extraClasses="flex items-center justify-center w-full !text-light !h-12"
             href="/game-options/classic"
           >
             Single Player
           </StyledLink>
-          <StyledButton
+          <StyledLink
             variant="primary"
             style="filled"
-            extraClasses="w-full !text-dark-1 !h-12"
+            extraClasses="flex items-center justify-center w-full !text-dark-1 !h-12"
+            href="/game-options/arcade"
           >
             Arcade
-          </StyledButton>
+          </StyledLink>
           <StyledButton
             variant="primary"
             style="outlined"
