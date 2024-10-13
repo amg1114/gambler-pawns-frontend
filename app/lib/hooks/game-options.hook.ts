@@ -6,33 +6,26 @@ type GameOptions = {
 };
 
 export const setGameOptions = (option: GameOptions) => {
-  try {
-    let gameOptions = JSON.parse(localStorage.getItem("gameOptions") || "{}");
+  let gameOptions = JSON.parse(localStorage.getItem("gameOptions") || "{}");
 
-    gameOptions = {
-      ...gameOptions,
-      ...option,
-    };
+  gameOptions = {
+    ...gameOptions,
+    ...option,
+  };
 
-    localStorage.setItem("gameOptions", JSON.stringify(gameOptions));
-  } catch (error) {
-    console.error("Error setting game options:", error);
-  }
+  localStorage.setItem("gameOptions", JSON.stringify(gameOptions));
 };
 
-export const getGameOptions = (): GameOptions => {
-  try {
-    return JSON.parse(localStorage.getItem("gameOptions") || "{}");
-  } catch (error) {
-    console.error("Error getting game options:", error);
-    return {};
+export const getGameOptions = (): GameOptions | null => {
+  const gameOptions = localStorage.getItem("gameOptions");
+
+  if (gameOptions) {
+    return JSON.parse(gameOptions);
+  } else {
+    return null;
   }
 };
 
 export const clearGameOptions = () => {
-  try {
-    localStorage.removeItem("gameOptions");
-  } catch (error) {
-    console.error("Error clearing game options:", error);
-  }
+  localStorage.removeItem("gameOptions");
 };
