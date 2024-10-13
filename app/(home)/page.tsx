@@ -15,6 +15,7 @@ import axios from "axios";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
+import StyledLink from "../ui/components/typography/StyledLink";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -66,27 +67,26 @@ export default function HomePage() {
         <Image src={Board} alt="" className="w-full" />
       </div>
       <div className="w-auto space-y-8">
-        <StyledTitle
-          variant="h1"
-          extraClasses="text-left text-center space-y-6"
-        >
+        <StyledTitle variant="h1" extraClasses="text-center space-y-6">
           SELECT GAME MODE
         </StyledTitle>
         <div className="space-y-4">
-          <StyledButton
+          <StyledLink
             variant="primary"
             style="outlined"
-            extraClasses="w-full !text-light !h-12"
+            extraClasses="flex items-center justify-center w-full !text-light !h-12"
+            href="/game-options/classic"
           >
             Single Player
-          </StyledButton>
-          <StyledButton
+          </StyledLink>
+          <StyledLink
             variant="primary"
             style="filled"
-            extraClasses="w-full !text-dark-1 !h-12"
+            extraClasses="flex items-center justify-center w-full !text-dark-1 !h-12"
+            href="/game-options/arcade"
           >
             Arcade
-          </StyledButton>
+          </StyledLink>
           <StyledButton
             variant="primary"
             style="outlined"
