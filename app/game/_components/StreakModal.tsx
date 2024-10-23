@@ -23,42 +23,34 @@ const StreakModal = ({
   if (isOpen) {
     return (
       <GameAlert close={onClose}>
-        <div
-          className={`fixed inset-0 mx-auto flex items-center ${!isOpen && "hidden"} `}
+        <StyledTitle variant="h2" extraClasses="pt-md !text-center">
+          Streak +1
+        </StyledTitle>
+        <Image
+          src={Fire}
+          alt="fire"
+          className="mx-auto mb-md flex h-3xl w-3xl"
+        />
+        <StyledTitle
+          variant="h3"
+          extraClasses="!mx-auto !text-center pt-md max-w-60 lg:max-w-80 md:max-w-80 sm:max-w-80"
         >
-          <div
-            className={`mx-auto h-auto w-auto ${
-              !isOpen ? "animate-fade-in-down" : "animate-fade-out-up"
-            } items-center justify-center rounded-base bg-dark-1 p-sm shadow-lg`}
+          you’ve won {streakNumber} times in a row
+        </StyledTitle>
+        <div className="grid grid-cols-2">
+          <StyledTitle variant="h3" extraClasses="text-right my-xs">
+            + {" " + moneyGameGiftForWinner}
+          </StyledTitle>
+          <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
+        </div>
+        <div className="!mx-auto !text-center">
+          <StyledButton
+            variant="primary"
+            extraClasses=" mt-md !text-dark-1 mb-md"
+            onClick={onClose}
           >
-            <StyledTitle variant="h2" extraClasses="pt-md text-center">
-              Streak +1
-            </StyledTitle>
-            <Image
-              src={Fire}
-              alt="fire"
-              className="mx-auto mb-md flex h-3xl w-3xl"
-            />
-            <StyledTitle
-              variant="h3"
-              extraClasses="pt-md max-w-60 lg:max-w-80 md:max-w-80 sm:max-w-80"
-            >
-              you’ve won {streakNumber} times in a row
-            </StyledTitle>
-            <div className="grid grid-cols-2">
-              <StyledTitle variant="h3" extraClasses="text-right my-xs">
-                + {" " + moneyGameGiftForWinner}
-              </StyledTitle>
-              <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
-            </div>
-            <StyledButton
-              variant="primary"
-              extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
-              onClick={onClose}
-            >
-              Accept
-            </StyledButton>
-          </div>
+            Accept
+          </StyledButton>
         </div>
       </GameAlert>
     );
