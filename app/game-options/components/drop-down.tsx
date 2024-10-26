@@ -30,6 +30,13 @@ const arrayFriends = [
   { icon: "src", name: "Friend 1", id: "friend1" },
 ];
 
+const arrayGameModesSimple = [
+  { mode: "Rapid", id: "option1" },
+  { mode: "Blitz", id: "option2" },
+  { mode: "Bullet", id: "option3" },
+  { mode: "Arcade", id: "option4" },
+];
+
 type DropDownContext = {
   dropDown: Dropdown;
 };
