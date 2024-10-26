@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
 
@@ -37,7 +37,7 @@ export function useGameConnection({
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Conectar al servidor WebSocket
     const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
     setSocket(newSocket);
@@ -49,7 +49,6 @@ export function useGameConnection({
         gameId,
         playerId,
       });
-      console.log("Reconnecting to game", gameId);
 
       // listen to server response
       newSocket.on("game:reconnected", (data: any) => {
@@ -71,7 +70,6 @@ export function useGameConnection({
       newSocket.on("game:started", (data: GameJoinResponse) => {
         // Cambiar la URL sin redirigir
         // TODO: get playerId from token next-auth, also game info should be stored in the local storage
-        console.log(data);
         localStorage.setItem("gameData", JSON.stringify(data));
         router.replace(`/game/${data.gameId}?playerId=${playerId}`);
         setLoading(false);

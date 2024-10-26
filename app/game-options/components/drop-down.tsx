@@ -7,6 +7,7 @@ import {
   useContext,
   useState,
 } from "react";
+import { setGameOptions } from "@/app/lib/hooks/game-options.hook";
 
 // Importing components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -15,19 +16,77 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Clock from "@/app/ui/icons/clock.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 
-const arrayGameModes = [
-  { mode: "Rapid, 15 min, +10 sec", id: "option1" },
-  { mode: "Rapid, 10 min", id: "option2" },
-  { mode: "Blitz, 5 min", id: "option3" },
-  { mode: "Blitz, 3 min, +2 sec", id: "option4" },
-  { mode: "Bullet, 1 min", id: "option5" },
-  { mode: "Bullet, 2 min +1 sec", id: "option6" },
+type GameMode = {
+  mode: "rapid" | "blitz" | "bullet";
+  timeMinutes: number;
+  timeInSeconds: number;
+};
+
+const arrayGameModes: {
+  mode: string;
+  id: string;
+  config: GameMode;
+}[] = [
+  {
+    mode: "Rapid, 15 min, +10 sec",
+    id: "option1",
+    config: {
+      mode: "rapid",
+      timeMinutes: 15,
+      timeInSeconds: 10,
+    },
+  },
+  {
+    mode: "Rapid, 10 min",
+    id: "option2",
+    config: {
+      mode: "rapid",
+      timeMinutes: 15,
+      timeInSeconds: 10,
+    },
+  },
+  {
+    mode: "Blitz, 5 min",
+    id: "option3",
+    config: {
+      mode: "blitz",
+      timeMinutes: 15,
+      timeInSeconds: 10,
+    },
+  },
+  {
+    mode: "Blitz, 3 min, +2 sec",
+    id: "option4",
+    config: {
+      mode: "blitz",
+      timeMinutes: 15,
+      timeInSeconds: 10,
+    },
+  },
+  {
+    mode: "Bullet, 1 min",
+    id: "option5",
+    config: {
+      mode: "blitz",
+      timeMinutes: 15,
+      timeInSeconds: 10,
+    },
+  },
+  {
+    mode: "Bullet, 2 min +1 sec",
+    id: "option6",
+    config: {
+      mode: "rapid",
+      timeMinutes: 15,
+      timeInSeconds: 10,
+    },
+  },
 ];
 
 const arrayFriends = [
   { icon: "src", name: "Friend 1", id: "friend1" },
-  { icon: "src", name: "Friend 1", id: "friend1" },
-  { icon: "src", name: "Friend 1", id: "friend1" },
+  { icon: "src", name: "Friend 1", id: "friend2" },
+  { icon: "src", name: "Friend 1", id: "friend3" },
 ];
 
 const arrayGameModesSimple = [
@@ -120,9 +179,19 @@ export default function DropdownButton({ children, dropDown }: DropDownProps) {
 DropdownButton.GameModesDrop = function GameModesDrop() {
   const { dropDown } = useDropDownContext();
 
-  function selectedOption(mode: string) {
+  function selectedOption(
+    label: string,
+    mode: {
+      mode: "rapid" | "blitz" | "bullet";
+      timeMinutes: number;
+      timeInSeconds: number;
+    },
+  ) {
     const button = document.getElementById("toggleButton");
-    button!.textContent = mode;
+    for (const key in mode) {
+      setGameOptions(mode);
+    }
+    button!.textContent = label;
   }
 
   return (
@@ -132,7 +201,7 @@ DropdownButton.GameModesDrop = function GameModesDrop() {
           key={gameMode.id}
           className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
           id={gameMode.id}
-          onClick={() => selectedOption(gameMode.mode)}
+          onClick={() => selectedOption(gameMode.mode, gameMode.config)}
         >
           {gameMode.mode}
         </span>

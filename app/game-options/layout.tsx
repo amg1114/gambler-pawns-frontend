@@ -9,5 +9,5 @@ export default function ClassicOptionPage({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <section className="mt-xl">{children}</section>;
 }

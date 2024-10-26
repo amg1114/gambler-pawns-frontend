@@ -5,7 +5,7 @@ type GameModeType = "rapid" | "blitz" | "bullet" | "arcade";
 
 export function useChessGame(
   mode: GameModeType = "rapid",
-  makeMove: (from: string, to: string) => void,
+  makeMove: (from: string, to: string, promotion: string) => void,
 ) {
   const [game, setGame] = useState(new Chess());
   const [movesHistory, setMovesHistory] = useState<string[]>([]);
@@ -38,24 +38,7 @@ export function useChessGame(
 
           if (move) {
             setGame(gameCopy);
-            makeMove(sourceSquare, targetSquare); // Emit move thorugh WebSockets
-
-            // Check if the game has ended
-            if (gameCopy.isCheckmate()) {
-              alert("Checkmate! The game is over.");
-            }
-            // check draw cases
-            // TODO: revisar si en el backend se estan chekeando estos casos
-            else if (gameCopy.isDraw()) {
-              alert("It's a draw! The game is over.");
-            } else if (gameCopy.isStalemate()) {
-              alert("Stalemate! The game is over.");
-            } else if (gameCopy.isThreefoldRepetition()) {
-              alert("Threefold repetition! The game is over.");
-            } else if (gameCopy.isInsufficientMaterial()) {
-              alert("Insufficient material! The game is over.");
-            }
-
+            makeMove(sourceSquare, targetSquare, "q"); // Emit move thorugh WebSockets
             return true; // valid move
           }
         } catch {
