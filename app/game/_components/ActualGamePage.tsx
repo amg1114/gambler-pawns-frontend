@@ -6,7 +6,7 @@ import { formatTimeMs } from "../utils/formatTimeMs";
 
 // custom hooks
 import { useSearchParams } from "next/navigation";
-import { ChessBoardGame } from "../../ui/components/chessBoardGame/chessBoardGame";
+import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
 import { useChessGame } from "../_hooks/useChessGame";
@@ -17,6 +17,7 @@ import OfferDrawModal from "./OfferDrawModal";
 import ResignGameModal from "./ResignGameModal";
 import EndGameModal, { endGameDataInterface } from "./EndGameModal";
 import StreakModal from "./StreakModal";
+import SkeletonGame from "./SkeletonGame";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
@@ -105,9 +106,12 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     );
 
   // muy importante esta condición, si se cambia comienza dar errores inesperados
-  // TODO: dentro del if loading, mostrar el skeleton (importar el componente, no declararlo porque es muy grande)
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <SkeletonGame />
+      </>
+    );
   }
 
   return (
