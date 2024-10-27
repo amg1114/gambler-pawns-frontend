@@ -3,7 +3,7 @@
 // Importing React
 import { useState } from "react";
 import { azeret_mono, bungee } from "@/app/ui/fonts";
-import { ChessBoardGame } from "@components/chessBoardGame/chessBoardGame";
+import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 
 // Importing components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
