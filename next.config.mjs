@@ -7,6 +7,12 @@ const nextConfig = {
                 hostname: 'gamblerpawns-api.up.railway.app',
                 port: '',
                 pathname: '/user_avatars/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'gambler-pawns-backend-staging.app',
+                port: '',
+                pathname: '/user_avatars/**',
             }
         ]
     }
