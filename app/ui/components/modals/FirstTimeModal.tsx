@@ -70,7 +70,7 @@ export default function StoreModal({ children, close }: StoreModalProps) {
               href={"/register"}
               className={`${bungee.className} text-warning`}
             >
-              DON'T HAVE ACCOUNT?
+              DON&apos;T HAVE ACCOUNT?
             </Link>
             <div className="mt-4 grid w-full grid-cols-1 items-center justify-center gap-12 md:grid-cols-2">
               <div className="flex justify-center">
