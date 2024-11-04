@@ -1,7 +1,7 @@
-"use client";
+'use client'
 //Libs
-import { Session } from "next-auth";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
+import { useEffect, useState } from "react";
 
 //Components
 import Image from "next/image";
@@ -11,15 +11,25 @@ import Timer from "./Timer";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function UserInfo({
-  userInfo,
+  userInfoProp,
   awaiting,
   style,
+  
 }: {
-  userInfo?: Session | null;
+  userInfoProp?: any | null;
   awaiting?: boolean;
   style?: string;
+  
 }) {
-  const userAvatar = userInfo ? userInfo.data.userAvatarImg.fileName : "1.png";
+  const [userAvatar, setUserAvatar] = useState("1.png");
+  console.log(userInfoProp);
+
+  useEffect(() => {
+    if (userInfoProp) {
+      setUserAvatar(userInfoProp?.user.userAvatarImg.fileName || "1.png");
+    }
+  }, [userInfoProp]);
+
 
   return (
     <>
@@ -35,22 +45,22 @@ export default function UserInfo({
               <span className="mr-lg rounded-base bg-dark-2 p-xs">????</span>
             </div>
             <div className="">
-              <Timer extraClasses=""></Timer>
+              <Timer extraClasses="">5:00</Timer>
             </div>
           </>
-        ) : (
+        ) : ( style === "primary" ? (
           <>
             <div>
-              <Timer extraClasses=""></Timer>
+                <Timer extraClasses="">{userInfoProp.timer ? userInfoProp.timer : "5:00"}</Timer>
             </div>
 
             <div className="ml-sm flex flex-grow items-end justify-end space-x-2">
               <span
-                className={`fi fi-${userInfo?.data.countryCode.toLocaleLowerCase()} ml-md text-xl`}
+                className={`fi fi-${userInfoProp?.countryCode.toLocaleLowerCase()} ml-md text-xl`}
               ></span>
-              <span className="">{userInfo?.data.eloArcade}</span>
+              <span className="">{userInfoProp?.eloArcade}</span>
               <span className="font-semibold">
-                {userInfo?.data.nickname} (You)
+                {userInfoProp?.nickname} (You)
               </span>
             </div>
             <figure className="relative ml-md aspect-square w-10 lg:w-14">
@@ -71,7 +81,32 @@ export default function UserInfo({
               )}
             </figure>
           </>
-        )}
+        ) : (
+          <>
+            <figure className="relative mr-md aspect-square w-10 lg:w-14">
+              <Image
+                src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${userAvatar}`}
+                alt="Avatar"
+                className="aspect-square w-full rounded-full"
+                width="112"
+                height="112"
+              />
+
+            </figure>
+            <div className="flex flex-grow items-start justify-start space-x-2">
+              <span className="font-semibold">
+                {userInfoProp?.nickname} (Opponent)
+              </span>
+              <span className="">{userInfoProp?.eloArcade}</span>
+              <span
+                className={`fi fi-${userInfoProp?.countryCode.toLocaleLowerCase()} ml-md text-xl`}
+              ></span>
+            </div>
+            <div>
+                  <Timer extraClasses="">{userInfoProp.timer ? userInfoProp.timer : "5:00"}</Timer>
+            </div>
+          </>
+        ))}
       </div>
     </>
   );

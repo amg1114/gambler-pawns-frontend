@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatTimeMs } from "../utils/formatTimeMs";
 
 // custom hooks
@@ -18,6 +18,7 @@ import ResignGameModal from "./ResignGameModal";
 import EndGameModal, { endGameDataInterface } from "./EndGameModal";
 import StreakModal from "./StreakModal";
 import SkeletonGame from "./SkeletonGame";
+import UserInfo from "./UserInfo";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
@@ -49,16 +50,29 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   });
 
   // Save timers (miliseconds)
-  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
-  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
+  // const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
+  // const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
+
+  const [currenPlayerTimer, setCurrentPlayerTimer] = useState(timeMinutes * 60 * 1000);
+  const [opponentPlayerTimer, setOpponentPlayerTimer] = useState(timeMinutes * 60 * 1000);
 
   // Manejar actualización del reloj
   const handleTimerUpdate = (times: {
     playerOneTime: number;
     playerTwoTime: number;
   }) => {
-    setPlayerOneTime(times.playerOneTime);
-    setPlayerTwoTime(times.playerTwoTime);
+    //setPlayerOneTime(times.playerOneTime);
+    //setPlayerTwoTime(times.playerTwoTime);
+
+    // Set current player timer
+    const storedGameData = JSON.parse(localStorage.getItem("gameData") as string);
+    if (storedGameData.color === "white") {
+      setCurrentPlayerTimer(times.playerOneTime);
+      setOpponentPlayerTimer(times.playerTwoTime);
+    } else {
+      setCurrentPlayerTimer(times.playerTwoTime);
+      setOpponentPlayerTimer(times.playerOneTime);
+    }
   };
 
   // Handle opponent draw offer
@@ -105,6 +119,37 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleEndGame,
     );
 
+  const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
+  const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
+
+
+  useEffect(() => {
+    const storedGameData = localStorage.getItem("gameData");
+    if (storedGameData) {
+      const gameData = JSON.parse(storedGameData);
+      let selectedCurrentUser = ""
+      let selectedOpponentUser = ""
+      if (gameData.color === "white") {
+        setCurrentPlayerInfo({ user: selectedCurrentUser, timer: formatTimeMs(currenPlayerTimer) });
+        setOpponentPlayerInfo({ user: selectedOpponentUser, timer: formatTimeMs(opponentPlayerTimer) });
+      }else {
+        setCurrentPlayerInfo({ user: selectedCurrentUser, timer: formatTimeMs(opponentPlayerTimer) });
+        setOpponentPlayerInfo({ user: selectedOpponentUser, timer: formatTimeMs(currenPlayerTimer) });
+      }
+      // const selectedCurrentUser =
+      //   gameData.color === "white" ? gameData.playerWhite : gameData.playerBlack;
+
+      // const selectedOpponentUser =
+      //   gameData.color === "white" ? gameData.playerBlack : gameData.playerWhite;
+
+      // setCurrentPlayerInfo(selectedCurrentUser);
+      // setOpponentPlayerInfo(selectedOpponentUser);
+
+    }
+  }, [opponentPlayerInfo, currenPlayerTimer]);
+
+
+
   // muy importante esta condición, si se cambia comienza dar errores inesperados
   if (loading) {
     return (
@@ -118,8 +163,8 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     <>
       <section className="mx-auto max-w-screen-board">
         <div>
-          <div>Player 1 Time: {formatTimeMs(playerOneTime)}</div>
-          <div>Player 2 Time: {formatTimeMs(playerTwoTime)}</div>
+          <div>Player 1 Time: {formatTimeMs(currenPlayerTimer)}</div>
+          <div>Player 2 Time: {formatTimeMs(opponentPlayerTimer)}</div>
         </div>
         <p>
           {chessGame.gameHistoryMoves.map(
@@ -127,11 +172,13 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
               `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
           )}
         </p>
+        <UserInfo userInfoProp={opponentPlayerInfo}/>
         <ChessBoardGame
           position={chessGame.position}
           onDrop={chessGame.onDrop}
           side={JSON.parse(localStorage.getItem("gameData") as string).color}
         />
+        <UserInfo userInfoProp={currentPlayerInfo} style="primary"/>
         <StyledButton
           onClick={() => {
             setDrawOffer(true);
