@@ -50,9 +50,10 @@ export default function GameHistoryPage() {
           dropDown={{
             dropStyles: "outlined",
             text: "All",
+            idText: "gameType",
           }}
         >
-          <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
+          <Dropdown.SimplifyGameModesDrop></Dropdown.SimplifyGameModesDrop>
         </Dropdown>
       </div>
       <div>
@@ -63,9 +64,10 @@ export default function GameHistoryPage() {
           dropDown={{
             dropStyles: "outlined",
             text: "All",
+            idText: "colorIPlayed",
           }}
         >
-          <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
+          <Dropdown.ColorIPlayed></Dropdown.ColorIPlayed>
         </Dropdown>
       </div>
 
@@ -77,9 +79,10 @@ export default function GameHistoryPage() {
           dropDown={{
             dropStyles: "outlined",
             text: "All",
+            idText: "resultType",
           }}
         >
-          <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
+          <Dropdown.ResultType></Dropdown.ResultType>
         </Dropdown>
       </div>
     </section>
