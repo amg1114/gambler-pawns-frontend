@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
-import StyledTitle from "../typography/StyledTitle";
 
 interface ChessBoardGameProps {
   bgDarkSquaresColor?: string;
@@ -58,9 +57,6 @@ export function ChessBoardGame({
     }, []);
   return (
     <div className="mx-auto max-w-screen-board">
-      <StyledTitle variant="h2" fontFamily="bungee" extraClasses="text-center">
-        Chess Board
-      </StyledTitle>
       <Chessboard
         id="StyledBoard"
         boardOrientation={side}

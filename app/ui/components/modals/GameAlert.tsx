@@ -40,7 +40,7 @@ export default function GameAlert({ children, size, close }: GameAlertProps) {
 
       return () => clearTimeout(timeout);
     }
-  }, [isClosing]);
+  }, [isClosing, close]);
 
   return (
     <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">

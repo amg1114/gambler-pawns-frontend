@@ -14,6 +14,8 @@ interface UseGameConnectionProps {
   gameMode: string;
   bet: number;
   eloRating: number;
+  timeMinutes: number;
+  timeIncSeconds: number;
 }
 
 /**
@@ -28,6 +30,8 @@ export function useGameConnection({
   gameMode,
   bet,
   eloRating,
+  timeMinutes,
+  timeIncSeconds,
 }: UseGameConnectionProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,17 +44,15 @@ export function useGameConnection({
 
     if (gameId !== undefined) {
       // Reconnecting to existing game
-      // TODO: pedir al back todos los datos necesarios
       newSocket.emit("game:reconnect", {
         gameId,
         playerId,
       });
-      console.log("Reconnecting to game", gameId);
 
       // listen to server response
       newSocket.on("game:reconnected", (data: any) => {
         setLoading(false);
-        console.log("Reconnected to game", data);
+        //console.log("Reconnected to game", data);
       });
     } else {
       // Initial connection to start a new game
@@ -59,17 +61,18 @@ export function useGameConnection({
         mode: gameMode,
         bet,
         eloRating,
+        initialTime: timeMinutes,
+        incrementTime: timeIncSeconds,
       });
 
       // listen to server response
       newSocket.on("game:started", (data: GameJoinResponse) => {
         // Cambiar la URL sin redirigir
         // TODO: get playerId from token next-auth, also game info should be stored in the local storage
-        console.log(data);
-        localStorage.setItem("gameData", JSON.stringify(data));
         router.replace(`/game/${data.gameId}?playerId=${playerId}`);
         setLoading(false);
         console.log("Game started", data);
+        localStorage.setItem("gameData", JSON.stringify(data));
       });
     }
 
@@ -77,7 +80,16 @@ export function useGameConnection({
       // Desconnect socket when component unmounts
       newSocket.disconnect();
     };
-  }, [gameId, playerId, gameMode, bet, eloRating, router]);
+  }, [
+    gameId,
+    playerId,
+    gameMode,
+    bet,
+    eloRating,
+    router,
+    timeIncSeconds,
+    timeMinutes,
+  ]);
 
   return { socket, loading };
 }
