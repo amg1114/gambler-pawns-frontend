@@ -21,7 +21,7 @@ export default function SkeletonGame() {
   return (
     <>
       <section className="mx-auto flex max-w-screen-board flex-col items-center justify-center">
-        <UserInfo awaiting={true} />
+        <UserInfo isLoading />
         <div className="relative w-full">
           <div
             className={`absolute z-10 flex h-8 w-full items-center justify-center border-dark-1 bg-secondary text-base text-dark-1 ${bungee.className}`}
@@ -31,7 +31,19 @@ export default function SkeletonGame() {
           </div>
           <ChessBoardGame />
         </div>
-        <UserInfo userInfo={session} awaiting={false} style="primary" />
+        {/* TODO: pasar los datos del sesion */}
+        <UserInfo
+          isLoading={false}
+          isCurrentPlayer
+          userData={{
+            timer: "5:00",
+            nickname: session?.user?.name || "guest",
+            eloRating: /*session?.user?.eloRapid ||*/ 1200,
+            countryCode: /*session?.user?.countryCode ||*/ "co",
+            userAvatar: /*session?.user?.userAvatarImg?.fileName || */ "1.png",
+          }}
+        />
+
         <StyledButton onClick={handleCancel}>Cancel</StyledButton>
       </section>
     </>

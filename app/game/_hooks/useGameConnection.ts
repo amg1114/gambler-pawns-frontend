@@ -44,7 +44,6 @@ export function useGameConnection({
 
     if (gameId !== undefined) {
       // Reconnecting to existing game
-      // TODO: pedir al back todos los datos necesarios
       newSocket.emit("game:reconnect", {
         gameId,
         playerId,
@@ -53,7 +52,7 @@ export function useGameConnection({
       // listen to server response
       newSocket.on("game:reconnected", (data: any) => {
         setLoading(false);
-        console.log("Reconnected to game", data);
+        //console.log("Reconnected to game", data);
       });
     } else {
       // Initial connection to start a new game
@@ -70,10 +69,10 @@ export function useGameConnection({
       newSocket.on("game:started", (data: GameJoinResponse) => {
         // Cambiar la URL sin redirigir
         // TODO: get playerId from token next-auth, also game info should be stored in the local storage
-        localStorage.setItem("gameData", JSON.stringify(data));
         router.replace(`/game/${data.gameId}?playerId=${playerId}`);
         setLoading(false);
         console.log("Game started", data);
+        localStorage.setItem("gameData", JSON.stringify(data));
       });
     }
 
