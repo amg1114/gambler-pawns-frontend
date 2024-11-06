@@ -49,32 +49,14 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     timeIncSeconds,
   });
 
-  // Save timers (miliseconds)
-  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
-  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
-
-  // Manejar actualización del reloj
-  const handleTimerUpdate = (times: {
-    playerOneTime: number;
-    playerTwoTime: number;
-  }) => {
-    setPlayerOneTime(times.playerOneTime);
-    setPlayerTwoTime(times.playerTwoTime);
-  };
-
-  // Handle opponent draw offer
+  // handle game events for modals
   const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
   const handleOpponentDrawOffer = () => {
     setOpponentDrawOffer(true);
   };
-
   // Handle current player draw offer
   const [isDrawOffer, setDrawOffer] = useState(false);
-
-  // handle resign confirmation modal
   const [isResignModalOpen, setResignModalOpen] = useState(false);
-
-  // handle gameEnd
   const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
     null,
   );
@@ -86,26 +68,24 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
 
     if (data.winner === "You") {
       setEndGameStreakModalOpen(true);
+    } else {
+      setGameEndModalOpen(true);
     }
   };
 
-  //Hook to validate and handle moves
-  const chessGame = useChessGame("rapid", (from, to, promotion) => {
-    // handling move
-    makeMove(from, to, promotion);
-  });
+  // timers
+  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
+  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
 
-  // Hook to manage in-game events
-  const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
-    useChessWebSocket(
-      socket,
-      playerId as string,
-      chessGame.updateGameFromOpponent,
-      handleTimerUpdate,
-      handleOpponentDrawOffer,
-      handleEndGame,
-    );
+  const handleTimerUpdate = (times: {
+    playerOneTime: number;
+    playerTwoTime: number;
+  }) => {
+    setPlayerOneTime(times.playerOneTime);
+    setPlayerTwoTime(times.playerTwoTime);
+  };
 
+  // player's info
   const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
   const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
   const [side, setSide] = useState<"white" | "black">("white");
@@ -143,6 +123,22 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       setOpponentPlayerInfo(whiteData);
     }
   }, [playerOneTime, playerTwoTime, loading]);
+
+  //Hook to validate and handle moves
+  const chessGame = useChessGame("rapid", (from, to, promotion) => {
+    makeMove(from, to, promotion);
+  });
+
+  // Hook to manage in-game events
+  const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
+    useChessWebSocket(
+      socket,
+      playerId as string,
+      chessGame.updateGameFromOpponent,
+      handleTimerUpdate,
+      handleOpponentDrawOffer,
+      handleEndGame,
+    );
 
   if (loading) {
     return <SkeletonGame />;
@@ -187,7 +183,6 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           Resign
         </StyledButton>
       </section>
-      {/* Modals */}
       <ResignGameModal
         isOpen={isResignModalOpen}
         handleNo={() => {
