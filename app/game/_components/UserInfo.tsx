@@ -64,9 +64,7 @@ function CurrentUserInfo({
           </button>
         </figure>
       </div>
-
     </>
-
   );
 }
 
@@ -117,7 +115,6 @@ function SkelentonUserInfo() {
       <div className="flex items-center">
         <Timer>5:00</Timer>
       </div>
-
     </>
   );
 }
