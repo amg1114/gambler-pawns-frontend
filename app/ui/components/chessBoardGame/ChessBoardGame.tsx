@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
-import StyledTitle from "../typography/StyledTitle";
 
 interface ChessBoardGameProps {
   bgDarkSquaresColor?: string;

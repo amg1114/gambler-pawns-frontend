@@ -1,12 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatTimeMs } from "../utils/formatTimeMs";
 
 // custom hooks
 import { useSearchParams } from "next/navigation";
-import { ChessBoardGame } from "../../ui/components/chessBoardGame/chessBoardGame";
+import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
 import { useChessGame } from "../_hooks/useChessGame";
@@ -17,6 +17,8 @@ import OfferDrawModal from "./OfferDrawModal";
 import ResignGameModal from "./ResignGameModal";
 import EndGameModal, { endGameDataInterface } from "./EndGameModal";
 import StreakModal from "./StreakModal";
+import SkeletonGame from "./SkeletonGame";
+import UserInfo from "./UserInfo";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
@@ -104,29 +106,71 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleEndGame,
     );
 
-  // muy importante esta condición, si se cambia comienza dar errores inesperados
-  // TODO: dentro del if loading, mostrar el skeleton (importar el componente, no declararlo porque es muy grande)
+  const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
+  const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
+  const [side, setSide] = useState<"white" | "black">("white");
+
+  useEffect(() => {
+    if (loading) return;
+    const gameDataRaw = localStorage.getItem("gameData");
+    if (!gameDataRaw) return;
+
+    const gameData = JSON.parse(gameDataRaw);
+
+    setSide(gameData.color);
+
+    const blackData = {
+      timer: formatTimeMs(playerTwoTime),
+      nickname: gameData.playerBlack.nickname,
+      eloRating: gameData.playerBlack.eloRapid,
+      countryCode: gameData.playerBlack.countryCode,
+      userAvatar: gameData.playerBlack.userAvatarImg.fileName,
+    };
+
+    const whiteData = {
+      timer: formatTimeMs(playerOneTime),
+      nickname: gameData.playerWhite.nickname,
+      eloRating: gameData.playerWhite.eloRapid,
+      countryCode: gameData.playerWhite.countryCode,
+      userAvatar: gameData.playerWhite.userAvatarImg.fileName,
+    };
+
+    if (gameData.color === "white") {
+      setCurrentPlayerInfo(whiteData);
+      setOpponentPlayerInfo(blackData);
+    } else {
+      setCurrentPlayerInfo(blackData);
+      setOpponentPlayerInfo(whiteData);
+    }
+  }, [playerOneTime, playerTwoTime, loading]);
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <SkeletonGame />;
   }
 
   return (
     <>
       <section className="mx-auto max-w-screen-board">
-        <div>
-          <div>Player 1 Time: {formatTimeMs(playerOneTime)}</div>
-          <div>Player 2 Time: {formatTimeMs(playerTwoTime)}</div>
-        </div>
         <p>
           {chessGame.gameHistoryMoves.map(
             (move, index) =>
               `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
           )}
         </p>
+        <UserInfo
+          isLoading={false}
+          userData={opponentPlayerInfo}
+          isCurrentPlayer={false}
+        />
         <ChessBoardGame
           position={chessGame.position}
           onDrop={chessGame.onDrop}
-          side={JSON.parse(localStorage.getItem("gameData") as string).color}
+          side={side}
+        />
+        <UserInfo
+          isLoading={false}
+          userData={currentPlayerInfo}
+          isCurrentPlayer
         />
         <StyledButton
           onClick={() => {

@@ -84,7 +84,7 @@ export default function RegisterPage() {
             <StyledInput
               label="Nickname"
               type="text"
-              inputExtraClasses="bg-secondary mb-md"
+              inputExtraClasses="bg-secondary mb-md !text-white"
               wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
               {...register("nickname")}
               id="nickname"
@@ -98,7 +98,7 @@ export default function RegisterPage() {
             <StyledInput
               label="Email"
               type="email"
-              inputExtraClasses="bg-secondary mb-md"
+              inputExtraClasses="bg-secondary mb-md !text-white"
               wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
               {...register("email")}
               id="email"
@@ -112,7 +112,7 @@ export default function RegisterPage() {
             <StyledInput
               label="Password"
               type="password"
-              inputExtraClasses="bg-secondary mb-md"
+              inputExtraClasses="bg-secondary mb-md !text-white"
               wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
               {...register("password")}
               id="password"
@@ -126,7 +126,7 @@ export default function RegisterPage() {
             <StyledInput
               label="Confirm Password"
               type="password"
-              inputExtraClasses="bg-secondary mb-md"
+              inputExtraClasses="bg-secondary mb-md !text-white"
               wrapperExtraClasses="mb-md text-dark-2 min-[700px]:px-md"
               {...register("confirmpassword")}
               id="confirmpassword"

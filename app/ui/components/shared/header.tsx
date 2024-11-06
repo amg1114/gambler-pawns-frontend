@@ -83,6 +83,7 @@ export default function Header() {
           width={106}
           height={38.74}
           className="h-auto w-auto max-[200px]:sr-only"
+          priority
         />
         <ConditionalRendering
           coins={session?.data.currentCoins}

@@ -31,6 +31,7 @@ const config: Config = {
             accent: "#FAB300",
             error: "#FF0E0E",
             success: "#3AFF13",
+            white: "#FFFFFF",
             warning: "#FFFFFF",
             light: "#EAE9FC",
             gray: "#333333",

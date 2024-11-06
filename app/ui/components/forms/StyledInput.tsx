@@ -44,7 +44,7 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
           </label>
         )}
         <input
-          className={`text-white flex items-center border-0 ${nunito.className} focus:ring-t-primary rounded-base bg-dark-2 p-md focus:outline-none focus:ring-2 focus:ring-opacity-50 ${inputExtraClasses}`}
+          className={`flex items-center border-0 text-white ${nunito.className} focus:ring-t-primary rounded-base bg-dark-2 p-md focus:outline-none focus:ring-2 focus:ring-opacity-50 ${inputExtraClasses}`}
           onInput={onInput}
           onBlur={onBlur}
           onFocus={onFocus}
