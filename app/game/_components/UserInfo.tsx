@@ -38,30 +38,35 @@ function CurrentUserInfo({
 }: userDataInterface) {
   if (!countryCode) return null;
   return (
-    <div>
-      <Timer>{timer}</Timer>
-      <div className="ml-sm flex flex-grow items-end justify-end space-x-2"></div>
-      <span
-        className={`fi fi-${countryCode.toLocaleLowerCase()} ml-md text-xl`}
-      ></span>
-      <span>{eloRating}</span>
-      <span className="font-semibold">{nickname} (You)</span>
-      <figure className="relative ml-md aspect-square w-10 lg:w-14">
-        <Image
-          src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${userAvatar}`}
-          alt="Avatar"
-          className="aspect-square w-full rounded-full"
-          width="112"
-          height="112"
-        />
-        <button
-          className="absolute aspect-square rounded-full bg-gray-2 p-xs"
-          style={{ bottom: "-8px", left: "-4px" }}
-        >
-          <AddCircleOutlineIcon className="text-t-secondary" />
-        </button>
-      </figure>
-    </div>
+    <>
+      <div className="flex items-center justify-center">
+        <Timer>{timer}</Timer>
+      </div>
+      <div className="ml-sm flex flex-grow items-end justify-end space-x-2">
+        <span
+          className={`fi fi-${countryCode.toLocaleLowerCase()} ml-md text-xl`}
+        ></span>
+        <span>{eloRating}</span>
+        <span className="font-semibold">{nickname} (You)</span>
+        <figure className="relative ml-md aspect-square w-10 lg:w-14">
+          <Image
+            src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${userAvatar}`}
+            alt="Avatar"
+            className="aspect-square w-full rounded-full"
+            width="112"
+            height="112"
+          />
+          <button
+            className="absolute aspect-square rounded-full bg-gray-2 p-xs"
+            style={{ bottom: "-8px", left: "-4px" }}
+          >
+            <AddCircleOutlineIcon className="text-t-secondary" />
+          </button>
+        </figure>
+      </div>
+
+    </>
+
   );
 }
 
@@ -109,7 +114,10 @@ function SkelentonUserInfo() {
         <span className="p-xs">??</span>
         <span className="mr-lg rounded-base bg-dark-2 p-xs">????</span>
       </div>
-      <Timer>5:00</Timer>
+      <div className="flex items-center">
+        <Timer>5:00</Timer>
+      </div>
+
     </>
   );
 }
