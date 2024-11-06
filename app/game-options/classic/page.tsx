@@ -4,7 +4,6 @@ import Image from "next/image";
 // Importing components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import StyledLink from "@/app/ui/components/typography/StyledLink";
 import BetOption from "@/app/game-options/components/bet-options";
 import Dropdown from "@/app/game-options/components/drop-down";
 
@@ -75,6 +74,7 @@ export default function ClassicOptionPage() {
         dropDown={{
           dropStyles: "outlined",
           text: "Select a Game Mode",
+          idText: "gameMode",
         }}
       >
         <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
@@ -134,14 +134,7 @@ export default function ClassicOptionPage() {
           </StyledButton>
         </div>
         <div>
-          <Dropdown
-            dropDown={{
-              dropStyles: "filled",
-              text: "Play vs. a Friend",
-            }}
-          >
-            <Dropdown.FriendsDrop></Dropdown.FriendsDrop>
-          </Dropdown>
+          <StyledButton>Friends</StyledButton>
         </div>
 
         <div className="flex items-center justify-center p-md">
