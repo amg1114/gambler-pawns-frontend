@@ -84,6 +84,12 @@ export default function GameHistoryPage() {
         >
           <Dropdown.ResultType></Dropdown.ResultType>
         </Dropdown>
+        <div>
+          <span>
+            <img src="/images/empty-state.svg" alt="empty state" />
+            Pepito123
+          </span>
+        </div>
       </div>
     </section>
   );
