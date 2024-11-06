@@ -44,68 +44,74 @@ function useGameOptionsForm() {
 
 export default function GameHistoryPage() {
   return (
-    <section className="w-[334px] content-center space-y-lg">
-      <StyledTitle variant="h1" extraClasses="text-center">
-        Game History
-      </StyledTitle>
-      <div>
-        <p className={`${azeret_mono.className} pb-md font-bold`}>Game Type</p>
-        <Dropdown
-          dropDown={{
-            dropStyles: "outlined",
-            text: "All",
-            idText: "gameType",
-          }}
-        >
-          <Dropdown.SimplifyGameModesDrop></Dropdown.SimplifyGameModesDrop>
-        </Dropdown>
-      </div>
-      <div>
-        <p className={`${azeret_mono.className} pb-md font-bold`}>
-          I played as
-        </p>
-        <Dropdown
-          dropDown={{
-            dropStyles: "outlined",
-            text: "All",
-            idText: "colorIPlayed",
-          }}
-        >
-          <Dropdown.ColorIPlayed></Dropdown.ColorIPlayed>
-        </Dropdown>
-      </div>
+    <section className="flex flex-col items-center space-y-lg">
+      <div className="w-[334px] space-y-lg">
+        <StyledTitle variant="h1" extraClasses="text-center">
+          Game History
+        </StyledTitle>
+        <div>
+          <p className={`${azeret_mono.className} pb-md font-bold`}>
+            Game Type
+          </p>
+          <Dropdown
+            dropDown={{
+              dropStyles: "outlined",
+              text: "All",
+              idText: "gameType",
+            }}
+          >
+            <Dropdown.SimplifyGameModesDrop></Dropdown.SimplifyGameModesDrop>
+          </Dropdown>
+        </div>
+        <div>
+          <p className={`${azeret_mono.className} pb-md font-bold`}>
+            I played as
+          </p>
+          <Dropdown
+            dropDown={{
+              dropStyles: "outlined",
+              text: "All",
+              idText: "colorIPlayed",
+            }}
+          >
+            <Dropdown.ColorIPlayed></Dropdown.ColorIPlayed>
+          </Dropdown>
+        </div>
 
-      <div>
-        <p className={`${azeret_mono.className} pb-md font-bold`}>
-          Result Type
-        </p>
-        <Dropdown
-          dropDown={{
-            dropStyles: "outlined",
-            text: "All",
-            idText: "resultType",
-          }}
-        >
-          <Dropdown.ResultType></Dropdown.ResultType>
-        </Dropdown>
+        <div>
+          <p className={`${azeret_mono.className} pb-md font-bold`}>
+            Result Type
+          </p>
+          <Dropdown
+            dropDown={{
+              dropStyles: "outlined",
+              text: "All",
+              idText: "resultType",
+            }}
+          >
+            <Dropdown.ResultType></Dropdown.ResultType>
+          </Dropdown>
+        </div>
       </div>
-      <div className="flex">
-        <Image
-          src={Aguacate}
-          alt=""
-          width={52}
-          height={52}
-          className="h-14 w-14"
-        />
-        <ul className="pl-md">
-          <li className={`${azeret_mono.className} font-bold`}>
-            Nombre-usuario (elo)
-          </li>
-          <li className={`${nunito.className} pb-md font-light`}>
-            modo de juego - fecha
-          </li>
-          <StyledButton extraClasses="py-xs">Watch Again</StyledButton>
-        </ul>
+      <div className="w-[386px] space-y-lg">
+        <div className="flex">
+          <Image
+            src={Aguacate}
+            alt=""
+            width={52}
+            height={52}
+            className="h-14 w-14"
+          />
+          <ul className="pl-md">
+            <li className={`${azeret_mono.className} pb-xs font-bold`}>
+              Pepito39427 (1250)
+            </li>
+            <li className={`${nunito.className} pb-md font-light`}>
+              Classic,10min +2sec increment -3 sep 2024
+            </li>
+            <StyledButton extraClasses="py-xs px-sm">Watch Again</StyledButton>
+          </ul>
+        </div>
       </div>
     </section>
   );
