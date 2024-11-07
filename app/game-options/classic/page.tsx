@@ -4,8 +4,8 @@ import Image from "next/image";
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import BetOption from "@/app/game-options/components/bet-options";
-import Dropdown from "@/app/game-options/components/drop-down";
+import BetOption from "@/app/game-options/_components/bet-options";
+import Dropdown from "@/app/game-options/_components/drop-down";
 
 // icons
 import ErrorIcon from "@mui/icons-material/Error";
@@ -18,7 +18,7 @@ import {
   clearGameOptions,
   getGameOptions,
   setGameOptions,
-} from "@/app/game-options/hooks/game-options.hook";
+} from "@/app/game-options/_hooks/game-options.hook";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import GameAlert from "@/app/ui/components/modals/GameAlert";

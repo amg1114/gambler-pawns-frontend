@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { setGameOptions } from "@/app/game-options/hooks/game-options.hook";
+import { setGameOptions } from "@/app/game-options/_hooks/game-options.hook";
 
 // Importing components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -10,7 +10,7 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Clock from "@/app/ui/icons/clock.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 
-import { GameOptions } from "@/app/game-options/hooks/game-options.hook";
+import { GameOptions } from "@/app/game-options/_hooks/game-options.hook";
 
 const arrayGameModes: {
   text: string;
