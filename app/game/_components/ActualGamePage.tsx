@@ -29,7 +29,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const playerId = searchParams.get("playerId");
   const bet = +(searchParams.get("bet") as string);
   const eloRating = 1200; // TODO: get this from token next-auth
-  const timeMinutes = 10;
+  const timeMinutes = 1;
   const timeIncSeconds = 2;
   let gameId = undefined;
 
@@ -85,6 +85,12 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     setPlayerTwoTime(times.playerTwoTime);
   };
 
+  const [inactivityTimer, setInactivityTimer] = useState<null | number>(null);
+
+  const handleInactivityTimerUpdate = (remainingMiliseconds: number) => {
+    setInactivityTimer(remainingMiliseconds);
+  };
+
   // player's info
   const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
   const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
@@ -126,6 +132,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   //Hook to validate and handle moves
   // TODO: pasar el modo de juego dinamicamente
   const chessGame = useChessGame("rapid", (from, to, promotion) => {
+    setInactivityTimer(null);
     makeMove(from, to, promotion);
   });
 
@@ -138,6 +145,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleTimerUpdate,
       handleOpponentDrawOffer,
       handleEndGame,
+      handleInactivityTimerUpdate,
     );
 
   if (loading) {
@@ -147,6 +155,11 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   return (
     <>
       <section className="mx-auto max-w-screen-board">
+        <p>
+          {inactivityTimer
+            ? `Inactivity timer: ${formatTimeMs(inactivityTimer)}`
+            : ""}
+        </p>
         <p>
           {chessGame.gameHistoryMoves.map(
             (move, index) =>

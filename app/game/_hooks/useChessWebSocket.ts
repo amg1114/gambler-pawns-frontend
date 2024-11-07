@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { endGameDataInterface } from "../_components/EndGameModal";
 
-// TODO: implement resign and draw offers
 export function useChessWebSocket(
   socket: Socket | null,
   playerId: string,
@@ -13,6 +12,7 @@ export function useChessWebSocket(
   }) => void,
   setDrawOffer: (value: boolean) => void,
   onGameEnd: (data: endGameDataInterface) => void,
+  onInactivityTimerUpdate: (data: any) => void,
 ) {
   useEffect(() => {
     if (!socket) return;
@@ -37,6 +37,11 @@ export function useChessWebSocket(
         playerOneTime: data.playerOneTime,
         playerTwoTime: data.playerTwoTime,
       });
+    });
+
+    // Listen for inactivity timer updates
+    socket.on("inactivity:countdown:update", (data: any) => {
+      onInactivityTimerUpdate(data.remainingMiliseconds);
     });
 
     // Liste for draw offers
@@ -99,8 +104,16 @@ export function useChessWebSocket(
       socket.off("drawAccepted");
       socket.off("drawRejected");
       socket.off("gameEnd");
+      socket.off("inactivity:countdown:update");
     };
-  }, [socket, updateGameFromOpponent, onTimerUpdate, setDrawOffer, onGameEnd]);
+  }, [
+    socket,
+    updateGameFromOpponent,
+    onTimerUpdate,
+    onInactivityTimerUpdate,
+    setDrawOffer,
+    onGameEnd,
+  ]);
 
   // function to make a move
   const makeMove = (from: string, to: string, promotion: string) => {
