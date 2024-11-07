@@ -1,31 +1,25 @@
 "use client";
 import Image from "next/image";
 
-// Importing components
+// components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import StyledLink from "@/app/ui/components/typography/StyledLink";
 import BetOption from "@/app/game-options/components/bet-options";
 import Dropdown from "@/app/game-options/components/drop-down";
 
-// Importing icons
+// icons
 import ErrorIcon from "@mui/icons-material/Error";
 import ChessTile from "@/app/ui/icons/chess-tile.svg";
 import Dice from "@/app/ui/icons/dice.svg";
 import Link from "@/app/ui/icons/link-shared.svg";
 
-// importing hooks
+// hooks
 import {
   clearGameOptions,
   getGameOptions,
   setGameOptions,
-} from "@/app/lib/hooks/game-options.hook";
+} from "@/app/game-options/hooks/game-options.hook";
 import { useRouter } from "next/navigation";
-// =========  Zod Schema =======
-// TODO: refactor this in a separate file
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";

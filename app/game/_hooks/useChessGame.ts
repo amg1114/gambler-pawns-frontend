@@ -5,6 +5,7 @@ type GameModeType = "rapid" | "blitz" | "bullet" | "arcade";
 
 export function useChessGame(
   mode: GameModeType = "rapid",
+  gameData: any,
   makeMove: (from: string, to: string, promotion: string) => void,
 ) {
   const [game, setGame] = useState(new Chess());
@@ -16,9 +17,7 @@ export function useChessGame(
       const gameCopy = new Chess(game.fen());
 
       // Validate turn (color)
-      const mySide = JSON.parse(
-        localStorage.getItem("gameData") as string,
-      ).color;
+      const mySide = gameData.color;
 
       if (
         (game.turn() === "b" && mySide === "white") ||
@@ -55,7 +54,7 @@ export function useChessGame(
       }
       return false; // invalid move
     },
-    [game, makeMove, mode],
+    [game, makeMove, mode, gameData],
   );
 
   /** Update game from opponent moves */

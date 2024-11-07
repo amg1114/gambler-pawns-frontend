@@ -63,7 +63,7 @@ export function useChessWebSocket(
     socket.on("gameEnd", (data) => {
       // set winner
       const mySide = JSON.parse(
-        localStorage.getItem("gameData") as string,
+        sessionStorage.getItem("gameData") as string,
       ).color;
 
       let winner;
@@ -134,7 +134,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:acceptDraw", {
         playerId,
-        gameId: JSON.parse(localStorage.getItem("gameData") as string).gameId,
+        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
       });
     }
   };
@@ -143,7 +143,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:rejectDraw", {
         playerId,
-        gameId: JSON.parse(localStorage.getItem("gameData") as string).gameId,
+        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
       });
     }
   };
@@ -153,7 +153,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:offerDraw", {
         playerId,
-        gameId: JSON.parse(localStorage.getItem("gameData") as string).gameId,
+        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
       });
     }
   };

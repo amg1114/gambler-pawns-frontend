@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { formatTimeMs } from "../utils/formatTimeMs";
 
 // custom hooks
-import { useSearchParams } from "next/navigation";
 import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
@@ -23,31 +22,12 @@ import UserInfo from "./UserInfo";
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
 
-  // get searchParams from URL
-  const searchParams = useSearchParams();
-  const gameMode = searchParams.get("mode");
-  const playerId = searchParams.get("playerId");
-  const bet = +(searchParams.get("bet") as string);
-  const eloRating = 1200; // TODO: get this from token next-auth
-  const timeMinutes = 10;
-  const timeIncSeconds = 2;
-  let gameId = undefined;
+  const gameId = id;
 
-  // else get gameId from URL
-  if (!searchParams.get("mode") && id !== "") {
-    gameId = id;
-  }
-
-  // Hook to manage conection and reconnection
-  const { socket, loading } = useGameConnection({
-    gameId: gameId as string | undefined,
-    playerId: playerId as string,
-    gameMode: gameMode as string,
-    bet,
-    eloRating,
-    timeMinutes,
-    timeIncSeconds,
-  });
+  const { socket, loading, joinGameDataFormRequest, gameData } =
+    useGameConnection({
+      gameId: gameId,
+    });
 
   // handle game events for modals
   const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
@@ -88,8 +68,14 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   };
 
   // timers
-  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
-  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
+  const [playerOneTime, setPlayerOneTime] = useState(5 * 60 * 1000);
+  const [playerTwoTime, setPlayerTwoTime] = useState(5 * 60 * 1000);
+
+  useEffect(() => {
+    if (!joinGameDataFormRequest) return;
+    setPlayerOneTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
+    setPlayerTwoTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
+  }, [joinGameDataFormRequest]);
 
   const handleTimerUpdate = (times: {
     playerOneTime: number;
@@ -112,10 +98,6 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
 
   useEffect(() => {
     if (loading) return;
-    const gameDataRaw = localStorage.getItem("gameData");
-    if (!gameDataRaw) return;
-
-    const gameData = JSON.parse(gameDataRaw);
     setSide(gameData.color);
 
     const blackData = {
@@ -141,11 +123,11 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       setCurrentPlayerInfo(blackData);
       setOpponentPlayerInfo(whiteData);
     }
-  }, [playerOneTime, playerTwoTime, loading]);
+  }, [playerOneTime, playerTwoTime, loading, gameData]);
 
   //Hook to validate and handle moves
   // TODO: pasar el modo de juego dinamicamente
-  const chessGame = useChessGame("rapid", (from, to, promotion) => {
+  const chessGame = useChessGame("rapid", gameData, (from, to, promotion) => {
     setInactivityTimer(null);
     makeMove(from, to, promotion);
   });
@@ -154,7 +136,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
     useChessWebSocket(
       socket,
-      playerId as string,
+      joinGameDataFormRequest?.playerId,
       chessGame.updateGameFromOpponent,
       handleTimerUpdate,
       handleOpponentDrawOffer,
@@ -163,7 +145,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleInactivityTimerUpdate,
     );
 
-  if (loading) {
+  if (loading || !gameData || !joinGameDataFormRequest) {
     return <SkeletonGame />;
   }
 
