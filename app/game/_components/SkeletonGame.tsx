@@ -37,10 +37,10 @@ export default function SkeletonGame() {
           isCurrentPlayer
           userData={{
             timer: "5:00",
-            nickname: session?.user?.name || "guest",
-            eloRating: /*session?.user?.eloRapid ||*/ 1200,
-            countryCode: /*session?.user?.countryCode ||*/ "co",
-            userAvatar: /*session?.user?.userAvatarImg?.fileName || */ "1.png",
+            nickname: session?.data?.nickname || "guest",
+            eloRating: session?.data?.eloArcade || 1200,
+            countryCode: session?.data?.countryCode || "co",
+            userAvatar: session?.data?.userAvatarImg?.fileName || "1.png",
           }}
         />
 

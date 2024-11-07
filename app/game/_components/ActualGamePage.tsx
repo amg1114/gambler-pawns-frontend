@@ -96,23 +96,22 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     if (!gameDataRaw) return;
 
     const gameData = JSON.parse(gameDataRaw);
-
     setSide(gameData.color);
 
     const blackData = {
       timer: formatTimeMs(playerTwoTime),
-      nickname: gameData.playerBlack.nickname,
-      eloRating: gameData.playerBlack.eloRapid,
-      countryCode: gameData.playerBlack.countryCode,
-      userAvatar: gameData.playerBlack.userAvatarImg.fileName,
+      nickname: gameData.playerBlack.userInfo.nickname,
+      eloRating: gameData.playerBlack.elo,
+      countryCode: gameData.playerBlack.userInfo.countryCode,
+      userAvatar: gameData.playerBlack.userInfo.userAvatarImg.fileName,
     };
 
     const whiteData = {
       timer: formatTimeMs(playerOneTime),
-      nickname: gameData.playerWhite.nickname,
-      eloRating: gameData.playerWhite.eloRapid,
-      countryCode: gameData.playerWhite.countryCode,
-      userAvatar: gameData.playerWhite.userAvatarImg.fileName,
+      nickname: gameData.playerWhite.userInfo.nickname,
+      eloRating: gameData.playerWhite.elo,
+      countryCode: gameData.playerWhite.userInfo.countryCode,
+      userAvatar: gameData.playerWhite.userInfo.userAvatarImg.fileName,
     };
 
     if (gameData.color === "white") {
@@ -125,6 +124,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   }, [playerOneTime, playerTwoTime, loading]);
 
   //Hook to validate and handle moves
+  // TODO: pasar el modo de juego dinamicamente
   const chessGame = useChessGame("rapid", (from, to, promotion) => {
     makeMove(from, to, promotion);
   });
