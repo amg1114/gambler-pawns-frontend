@@ -6,18 +6,15 @@ import StyledButton from "../../ui/components/typography/StyledButton";
 import StyledTitle from "../../ui/components/typography/StyledTitle";
 // Icons
 import Fire from "../../ui/icons/fire.svg";
-import Coin from "../../ui/icons/coin.svg";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 
 const StreakModal = ({
   isOpen,
   streakNumber,
-  moneyGameGiftForWinner,
   onClose,
 }: {
   isOpen: boolean;
   streakNumber: number;
-  moneyGameGiftForWinner: number;
   onClose: () => void;
 }) => {
   if (isOpen) {
@@ -37,12 +34,6 @@ const StreakModal = ({
         >
           you’ve won {streakNumber} times in a row
         </StyledTitle>
-        <div className="grid grid-cols-2">
-          <StyledTitle variant="h3" extraClasses="text-right my-xs">
-            + {" " + moneyGameGiftForWinner}
-          </StyledTitle>
-          <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
-        </div>
         <div className="!mx-auto !text-center">
           <StyledButton
             variant="primary"

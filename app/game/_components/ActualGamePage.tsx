@@ -29,7 +29,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const playerId = searchParams.get("playerId");
   const bet = +(searchParams.get("bet") as string);
   const eloRating = 1200; // TODO: get this from token next-auth
-  const timeMinutes = 1;
+  const timeMinutes = 10;
   const timeIncSeconds = 2;
   let gameId = undefined;
 
@@ -56,6 +56,20 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   };
   // Handle current player draw offer
   const [isDrawOffer, setDrawOffer] = useState(false);
+  const [isDrawOfferRejected, setDrawOfferRejected] = useState(false);
+  const handleRejectDrawOffer = () => {
+    setDrawOfferRejected(true);
+  };
+  useEffect(() => {
+    if (isDrawOfferRejected) {
+      const timer = setTimeout(() => {
+        setDrawOfferRejected(false);
+      }, 10000); // after 10 seconds the message will disappear
+
+      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
+    }
+  }, [isDrawOfferRejected]);
+
   const [isResignModalOpen, setResignModalOpen] = useState(false);
   const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
     null,
@@ -144,6 +158,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       chessGame.updateGameFromOpponent,
       handleTimerUpdate,
       handleOpponentDrawOffer,
+      handleRejectDrawOffer,
       handleEndGame,
       handleInactivityTimerUpdate,
     );
@@ -155,6 +170,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   return (
     <>
       <section className="mx-auto max-w-screen-board">
+        <p>{isDrawOfferRejected ? "Draw offer was rejected" : ""}</p>
         <p>
           {inactivityTimer
             ? `Inactivity timer: ${formatTimeMs(inactivityTimer)}`
@@ -230,7 +246,6 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       <StreakModal
         isOpen={endGameStreakModalOpen}
         streakNumber={session?.data?.streakDays || 0}
-        moneyGameGiftForWinner={endGameData?.moneyGameGiftForWinner || 0}
         onClose={() => {
           setEndGameStreakModalOpen(false);
           setGameEndModalOpen(true);

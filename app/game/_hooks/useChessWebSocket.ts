@@ -11,6 +11,7 @@ export function useChessWebSocket(
     playerTwoTime: number;
   }) => void,
   setDrawOffer: (value: boolean) => void,
+  handleRejectDrawOffer: () => void,
   onGameEnd: (data: endGameDataInterface) => void,
   onInactivityTimerUpdate: (data: any) => void,
 ) {
@@ -55,7 +56,7 @@ export function useChessWebSocket(
     });
 
     socket.on("drawRejected", (data: any) => {
-      // TODO: mostrar modal cuando la rechazan
+      handleRejectDrawOffer();
       console.log("Draw rejected", data);
     });
 
@@ -95,6 +96,11 @@ export function useChessWebSocket(
       });
     });
 
+    // loging exceptions
+    socket.on("exception", (data: any) => {
+      console.error("Exception", data);
+    });
+
     return () => {
       // cleanup listeners when component unmounts
       socket.off("moveMade");
@@ -105,6 +111,7 @@ export function useChessWebSocket(
       socket.off("drawRejected");
       socket.off("gameEnd");
       socket.off("inactivity:countdown:update");
+      socket.off("exception");
     };
   }, [
     socket,
@@ -112,6 +119,7 @@ export function useChessWebSocket(
     onTimerUpdate,
     onInactivityTimerUpdate,
     setDrawOffer,
+    handleRejectDrawOffer,
     onGameEnd,
   ]);
 

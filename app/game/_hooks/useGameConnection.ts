@@ -52,7 +52,7 @@ export function useGameConnection({
       // listen to server response
       newSocket.on("game:reconnected", (data: any) => {
         setLoading(false);
-        //console.log("Reconnected to game", data);
+        console.log("Reconnected to game", data);
       });
     } else {
       // Initial connection to start a new game

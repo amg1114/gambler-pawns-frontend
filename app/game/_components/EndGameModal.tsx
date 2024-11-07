@@ -45,12 +45,14 @@ const EndGameModal = ({
         <StyledTitle variant="h3" extraClasses="mt-xs text-center !h-12">
           By {" " + gameData.reason}
         </StyledTitle>
+
         <div className="grid grid-cols-2">
           <StyledTitle variant="h4" extraClasses="text-right my-xs">
             {formatSignedNumber(gameData.moneyGameGiftForWinner as number)}
           </StyledTitle>
           <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
         </div>
+
         <StyledTitle variant="h4" extraClasses="text-center my-xs  ">
           {formatSignedNumber(gameData.eloChange) + " "} ELO
         </StyledTitle>
