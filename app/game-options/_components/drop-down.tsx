@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { setGameOptions } from "@/app/game-options/_hooks/game-options.hook";
 
@@ -73,10 +74,25 @@ const arrayGameModes: {
   },
 ];
 
-const arrayFriends = [
-  { icon: "src", name: "Friend 1", id: "friend1" },
-  { icon: "src", name: "Friend 1", id: "friend2" },
-  { icon: "src", name: "Friend 1", id: "friend3" },
+const arraySimplifyGameModes = [
+  { mode: "All", id: "option1" },
+  { mode: "Rapid", id: "option2" },
+  { mode: "Blitz", id: "option3" },
+  { mode: "Bullet", id: "option4" },
+  { mode: "Arcade", id: "option5" },
+];
+
+const arrayColorIPlayed = [
+  { mode: "All", id: "option1" },
+  { mode: "Whites", id: "option2" },
+  { mode: "Blacks", id: "option3" },
+];
+
+const arrayResultType = [
+  { mode: "All", id: "option1" },
+  { mode: "I won", id: "option2" },
+  { mode: "Draw", id: "option3" },
+  { mode: "I lost", id: "option4" },
 ];
 
 type DropDownContext = {
@@ -98,6 +114,7 @@ function useDropDownContext() {
 type Dropdown = {
   dropStyles: "filled" | "outlined" | undefined;
   text: string;
+  idText: string;
 };
 
 type DropDownProps = PropsWithChildren & {
@@ -116,7 +133,7 @@ export default function DropdownButton({ children, dropDown }: DropDownProps) {
   // Función para cambiar el texto del boton por la opción seleccionada
 
   function selectedOption(mode: string) {
-    const button = document.getElementById("toggleButton");
+    const button = document.getElementById(dropDown.idText);
     button!.textContent = mode;
   }
 
@@ -136,7 +153,7 @@ export default function DropdownButton({ children, dropDown }: DropDownProps) {
               height={20}
               className="h-auto w-auto"
             />
-            <text id="toggleButton">{dropDown.text}</text>
+            <span id={dropDown.idText}>{dropDown.text}</span>
 
             <Image
               src={ArrowDown}
@@ -185,23 +202,68 @@ DropdownButton.GameModesDrop = function GameModesDrop() {
   );
 };
 
-DropdownButton.FriendsDrop = function FriendsDrop() {
+DropdownButton.ColorIPlayed = function ColorIPlayed() {
   const { dropDown } = useDropDownContext();
 
-  function selectedOption(mode: string) {
-    const button = document.getElementById("toggleButton");
-    button!.textContent = mode;
+  function selectedOption(
+    label: string,
+    mode: {
+      mode: "rapid" | "blitz" | "bullet";
+      timeMinutes: number;
+      timeInSeconds: number;
+    },
+  ) {
+    const button = document.getElementById("colorIPlayed");
+    for (const key in mode) {
+      setGameOptions(mode);
+    }
+    button!.textContent = label;
   }
 
   return (
     <>
-      {arrayFriends.map((friends) => (
+      {arrayColorIPlayed.map((gameMode) => (
         <span
-          key={friends.id}
+          key={gameMode.id}
           className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
-          id={friends.id}
+          id={gameMode.id}
+          //onClick={() => selectedOption(gameMode.mode, gameMode.config)}
         >
-          {friends.name}
+          {gameMode.mode}
+        </span>
+      ))}
+    </>
+  );
+};
+
+DropdownButton.ResultType = function ResultType() {
+  const { dropDown } = useDropDownContext();
+
+  function selectedOption(
+    label: string,
+    mode: {
+      mode: "rapid" | "blitz" | "bullet";
+      timeMinutes: number;
+      timeInSeconds: number;
+    },
+  ) {
+    const button = document.getElementById("resultType");
+    for (const key in mode) {
+      setGameOptions(mode);
+    }
+    button!.textContent = label;
+  }
+
+  return (
+    <>
+      {arrayResultType.map((gameMode) => (
+        <span
+          key={gameMode.id}
+          className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
+          id={gameMode.id}
+          //onClick={() => selectedOption(gameMode.mode, gameMode.config)}
+        >
+          {gameMode.mode}
         </span>
       ))}
     </>

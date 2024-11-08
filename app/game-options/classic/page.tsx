@@ -69,6 +69,7 @@ export default function ClassicOptionPage() {
         dropDown={{
           dropStyles: "outlined",
           text: "Select a Game Mode",
+          idText: "gameMode",
         }}
       >
         <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
@@ -128,14 +129,7 @@ export default function ClassicOptionPage() {
           </StyledButton>
         </div>
         <div>
-          <Dropdown
-            dropDown={{
-              dropStyles: "filled",
-              text: "Play vs. a Friend",
-            }}
-          >
-            <Dropdown.FriendsDrop></Dropdown.FriendsDrop>
-          </Dropdown>
+          <StyledButton>Friends</StyledButton>
         </div>
 
         <div className="flex items-center justify-center p-md">
