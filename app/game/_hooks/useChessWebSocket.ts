@@ -123,6 +123,7 @@ export function useChessWebSocket(
     setDrawOffer,
     handleRejectDrawOffer,
     onGameEnd,
+    handleException,
   ]);
 
   // function to make a move

@@ -5,7 +5,6 @@ import Image from "next/image";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import BetOption from "@/app/game-options/_components/bet-options";
-import Dropdown from "@/app/game-options/_components/drop-down";
 
 // icons
 import ErrorIcon from "@mui/icons-material/Error";
@@ -23,6 +22,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
+import { GameModesDrop } from "../_components/GameModesDropdown";
 
 export default function ClassicOptionPage() {
   const router = useRouter();
@@ -64,16 +65,14 @@ export default function ClassicOptionPage() {
       <StyledTitle variant="h1" extraClasses="text-center">
         Game Options
       </StyledTitle>
-
-      <Dropdown
+      <DropdownButton
         dropDown={{
           dropStyles: "outlined",
           text: "Select a Game Mode",
-          idText: "gameMode",
         }}
       >
-        <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
-      </Dropdown>
+        <GameModesDrop />
+      </DropdownButton>
 
       <StyledTitle variant="h2" extraClasses="text-center">
         Your bet
