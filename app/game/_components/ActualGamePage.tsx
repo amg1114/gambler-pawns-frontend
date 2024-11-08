@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { formatTimeMs } from "../utils/formatTimeMs";
 
 // custom hooks
-import { useSearchParams } from "next/navigation";
 import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
@@ -23,31 +22,12 @@ import UserInfo from "./UserInfo";
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
 
-  // get searchParams from URL
-  const searchParams = useSearchParams();
-  const gameMode = searchParams.get("mode");
-  const playerId = searchParams.get("playerId");
-  const bet = +(searchParams.get("bet") as string);
-  const eloRating = 1200; // TODO: get this from token next-auth
-  const timeMinutes = 10;
-  const timeIncSeconds = 2;
-  let gameId = undefined;
+  const gameId = id;
 
-  // else get gameId from URL
-  if (!searchParams.get("mode") && id !== "") {
-    gameId = id;
-  }
-
-  // Hook to manage conection and reconnection
-  const { socket, loading } = useGameConnection({
-    gameId: gameId as string | undefined,
-    playerId: playerId as string,
-    gameMode: gameMode as string,
-    bet,
-    eloRating,
-    timeMinutes,
-    timeIncSeconds,
-  });
+  const { socket, loading, joinGameDataFormRequest, gameData } =
+    useGameConnection({
+      gameId: gameId,
+    });
 
   // handle game events for modals
   const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
@@ -56,6 +36,20 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   };
   // Handle current player draw offer
   const [isDrawOffer, setDrawOffer] = useState(false);
+  const [isDrawOfferRejected, setDrawOfferRejected] = useState(false);
+  const handleRejectDrawOffer = () => {
+    setDrawOfferRejected(true);
+  };
+  useEffect(() => {
+    if (isDrawOfferRejected) {
+      const timer = setTimeout(() => {
+        setDrawOfferRejected(false);
+      }, 10000); // after 10 seconds the message will disappear
+
+      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
+    }
+  }, [isDrawOfferRejected]);
+
   const [isResignModalOpen, setResignModalOpen] = useState(false);
   const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
     null,
@@ -74,8 +68,14 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   };
 
   // timers
-  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
-  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
+  const [playerOneTime, setPlayerOneTime] = useState(5 * 60 * 1000);
+  const [playerTwoTime, setPlayerTwoTime] = useState(5 * 60 * 1000);
+
+  useEffect(() => {
+    if (!joinGameDataFormRequest) return;
+    setPlayerOneTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
+    setPlayerTwoTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
+  }, [joinGameDataFormRequest]);
 
   const handleTimerUpdate = (times: {
     playerOneTime: number;
@@ -85,6 +85,31 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     setPlayerTwoTime(times.playerTwoTime);
   };
 
+  const [inactivityTimer, setInactivityTimer] = useState<null | number>(null);
+
+  const handleInactivityTimerUpdate = (remainingMiliseconds: number) => {
+    setInactivityTimer(remainingMiliseconds);
+  };
+
+  // exception handling
+  const [
+    exceptionFromBackendChessService,
+    setExceptionFromBackendChessService,
+  ] = useState<any>(null);
+  const handleExceptionFromBackendChessService = (data: any) => {
+    setExceptionFromBackendChessService(data);
+  };
+
+  useEffect(() => {
+    if (exceptionFromBackendChessService) {
+      const timer = setTimeout(() => {
+        setExceptionFromBackendChessService(null);
+      }, 10000); // after 10 seconds the message will disappear
+
+      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
+    }
+  }, [exceptionFromBackendChessService]);
+
   // player's info
   const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
   const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
@@ -92,27 +117,22 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
 
   useEffect(() => {
     if (loading) return;
-    const gameDataRaw = localStorage.getItem("gameData");
-    if (!gameDataRaw) return;
-
-    const gameData = JSON.parse(gameDataRaw);
-
     setSide(gameData.color);
 
     const blackData = {
       timer: formatTimeMs(playerTwoTime),
-      nickname: gameData.playerBlack.nickname,
-      eloRating: gameData.playerBlack.eloRapid,
-      countryCode: gameData.playerBlack.countryCode,
-      userAvatar: gameData.playerBlack.userAvatarImg.fileName,
+      nickname: gameData.playerBlack.userInfo.nickname,
+      eloRating: gameData.playerBlack.elo,
+      countryCode: gameData.playerBlack.userInfo.countryCode,
+      userAvatar: gameData.playerBlack.userInfo.userAvatarImg.fileName,
     };
 
     const whiteData = {
       timer: formatTimeMs(playerOneTime),
-      nickname: gameData.playerWhite.nickname,
-      eloRating: gameData.playerWhite.eloRapid,
-      countryCode: gameData.playerWhite.countryCode,
-      userAvatar: gameData.playerWhite.userAvatarImg.fileName,
+      nickname: gameData.playerWhite.userInfo.nickname,
+      eloRating: gameData.playerWhite.elo,
+      countryCode: gameData.playerWhite.userInfo.countryCode,
+      userAvatar: gameData.playerWhite.userInfo.userAvatarImg.fileName,
     };
 
     if (gameData.color === "white") {
@@ -122,31 +142,53 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       setCurrentPlayerInfo(blackData);
       setOpponentPlayerInfo(whiteData);
     }
-  }, [playerOneTime, playerTwoTime, loading]);
+  }, [playerOneTime, playerTwoTime, loading, gameData]);
 
   //Hook to validate and handle moves
-  const chessGame = useChessGame("rapid", (from, to, promotion) => {
-    makeMove(from, to, promotion);
-  });
+  const chessGame = useChessGame(
+    joinGameDataFormRequest?.mode,
+    gameData,
+    (from, to, promotion) => {
+      setInactivityTimer(null);
+      makeMove(from, to, promotion);
+    },
+  );
 
   // Hook to manage in-game events
   const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
     useChessWebSocket(
       socket,
-      playerId as string,
+      joinGameDataFormRequest?.playerId,
       chessGame.updateGameFromOpponent,
       handleTimerUpdate,
       handleOpponentDrawOffer,
+      handleRejectDrawOffer,
       handleEndGame,
+      handleInactivityTimerUpdate,
+      handleExceptionFromBackendChessService,
     );
 
-  if (loading) {
-    return <SkeletonGame />;
+  if (loading || !gameData) {
+    return (
+      <SkeletonGame
+        joinGameDataFormRequest={joinGameDataFormRequest}
+        exceptionFromBackendChessService={exceptionFromBackendChessService}
+      />
+    );
   }
 
   return (
     <>
       <section className="mx-auto max-w-screen-board">
+        {/* TODO: crear un componente separado que se use para mostrar:
+          -> 1. excepciones, el timer de inactividad, cuando alguien rechace una oferta de tablas */}
+        {exceptionFromBackendChessService ? (
+          <p>{exceptionFromBackendChessService.message}</p>
+        ) : null}
+        {isDrawOfferRejected ? <p>Draw offer was rejected</p> : null}
+        {inactivityTimer ? (
+          <p>{`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}</p>
+        ) : null}
         <p>
           {chessGame.gameHistoryMoves.map(
             (move, index) =>
@@ -217,17 +259,15 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       <StreakModal
         isOpen={endGameStreakModalOpen}
         streakNumber={session?.data?.streakDays || 0}
-        moneyGameGiftForWinner={endGameData?.moneyGameGiftForWinner || 0}
         onClose={() => {
           setEndGameStreakModalOpen(false);
           setGameEndModalOpen(true);
         }}
       />
-      {/* TODO: pasar el modod de juego dinamicamente */}
       <EndGameModal
         isOpen={gameEndModalOpen}
         gameData={endGameData as endGameDataInterface | null}
-        gameMode={"rapid"}
+        gameMode={joinGameDataFormRequest.mode}
         gameId={id as string}
       />
     </>

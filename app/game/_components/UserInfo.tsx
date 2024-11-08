@@ -120,15 +120,6 @@ function SkelentonUserInfo() {
 }
 
 export default function UserInfo(props: UserInfoProps) {
-  // const [userAvatar, setUserAvatar] = useState("1.png");
-
-  // useEffect(() => {
-  //   console.log(userInfoProp);
-  //   if (userInfoProp) {
-  //     setUserAvatar(userInfoProp?.user.userAvatarImg.fileName || "1.png");
-  //   }
-  // }, [userInfoProp]);
-
   if (props.isLoading) {
     return (
       <div className="my-lg flex w-full">

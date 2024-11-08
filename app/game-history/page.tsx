@@ -4,43 +4,12 @@ import Image from "next/image";
 
 // Importing components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import Dropdown from "@/app/game-options/components/drop-down";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Aguacate from "@/app/ui/icons/aguacate.png";
-
-// =========  Zod Schema =======
-// TODO: refactor this in a separate file
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { URL } from "next/dist/compiled/@edge-runtime/primitives/url";
-
-const gameOptionsSchema = z.object({
-  // TODO: validate if is in enum, and refactor selection options as a
-  gameMode: z.string().nonempty("Game mode is required"),
-  // TODO: validate if is in enum
-  bet: z.string().nonempty("Bet amount is required"),
-  opponent: z.string().nonempty("Opponent selection is required"),
-});
-// =========  Zod Schema =======
-
-// =========  custom hook to use React Hook Form with this schema =======
-// TODO: refactor this in a separate file
-type GameOptionsFormData = z.infer<typeof gameOptionsSchema>;
-
-function useGameOptionsForm() {
-  const form = useForm<GameOptionsFormData>({
-    resolver: zodResolver(gameOptionsSchema),
-    defaultValues: {
-      gameMode: "",
-      bet: "",
-      opponent: "",
-    },
-  });
-
-  return form;
-}
-// =========  custom hook to use React Hook Form with this schema =======
+import DropdownButton from "../ui/components/DropDown/DropDownButton";
+import { ResultType } from "./_components/DropDown/DropDownResultType";
+import { PlayedAsColor } from "./_components/DropDown/DropDownPlayedAsColor";
+import { SimplifyGameModesDrop } from "./_components/DropDown/DropDownGameModes";
 
 export default function GameHistoryPage() {
   return (
@@ -53,44 +22,44 @@ export default function GameHistoryPage() {
           <p className={`${azeret_mono.className} pb-md font-bold`}>
             Game Type
           </p>
-          <Dropdown
+          <DropdownButton
             dropDown={{
               dropStyles: "outlined",
               text: "All",
-              idText: "gameType",
+              //idText: "gameType",
             }}
           >
-            <Dropdown.SimplifyGameModesDrop></Dropdown.SimplifyGameModesDrop>
-          </Dropdown>
+            <SimplifyGameModesDrop />
+          </DropdownButton>
         </div>
         <div>
           <p className={`${azeret_mono.className} pb-md font-bold`}>
             I played as
           </p>
-          <Dropdown
+          <DropdownButton
             dropDown={{
               dropStyles: "outlined",
               text: "All",
-              idText: "colorIPlayed",
+              //idText: "colorIPlayed",
             }}
           >
-            <Dropdown.ColorIPlayed></Dropdown.ColorIPlayed>
-          </Dropdown>
+            <PlayedAsColor />
+          </DropdownButton>
         </div>
 
         <div>
           <p className={`${azeret_mono.className} pb-md font-bold`}>
             Result Type
           </p>
-          <Dropdown
+          <DropdownButton
             dropDown={{
               dropStyles: "outlined",
               text: "All",
-              idText: "resultType",
+              //idText: "resultType",
             }}
           >
-            <Dropdown.ResultType></Dropdown.ResultType>
-          </Dropdown>
+            <ResultType />
+          </DropdownButton>
         </div>
       </div>
       <div className="w-[386px] space-y-lg">

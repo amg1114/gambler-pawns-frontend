@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { endGameDataInterface } from "../_components/EndGameModal";
 
-// TODO: implement resign and draw offers
 export function useChessWebSocket(
   socket: Socket | null,
   playerId: string,
@@ -12,7 +11,10 @@ export function useChessWebSocket(
     playerTwoTime: number;
   }) => void,
   setDrawOffer: (value: boolean) => void,
+  handleRejectDrawOffer: () => void,
   onGameEnd: (data: endGameDataInterface) => void,
+  onInactivityTimerUpdate: (data: any) => void,
+  handleException: (data: any) => void,
 ) {
   useEffect(() => {
     if (!socket) return;
@@ -39,6 +41,11 @@ export function useChessWebSocket(
       });
     });
 
+    // Listen for inactivity timer updates
+    socket.on("inactivity:countdown:update", (data: any) => {
+      onInactivityTimerUpdate(data.remainingMiliseconds);
+    });
+
     // Liste for draw offers
     socket.on("drawOffered", (data: any) => {
       setDrawOffer(true);
@@ -50,14 +57,14 @@ export function useChessWebSocket(
     });
 
     socket.on("drawRejected", (data: any) => {
-      // TODO: mostrar modal cuando la rechazan
+      handleRejectDrawOffer();
       console.log("Draw rejected", data);
     });
 
     socket.on("gameEnd", (data) => {
       // set winner
       const mySide = JSON.parse(
-        localStorage.getItem("gameData") as string,
+        sessionStorage.getItem("gameData") as string,
       ).color;
 
       let winner;
@@ -90,6 +97,12 @@ export function useChessWebSocket(
       });
     });
 
+    // loging exceptions
+    socket.on("exception", (data: any) => {
+      handleException(data);
+      console.error("Exception", data);
+    });
+
     return () => {
       // cleanup listeners when component unmounts
       socket.off("moveMade");
@@ -99,8 +112,19 @@ export function useChessWebSocket(
       socket.off("drawAccepted");
       socket.off("drawRejected");
       socket.off("gameEnd");
+      socket.off("inactivity:countdown:update");
+      socket.off("exception");
     };
-  }, [socket, updateGameFromOpponent, onTimerUpdate, setDrawOffer, onGameEnd]);
+  }, [
+    socket,
+    updateGameFromOpponent,
+    onTimerUpdate,
+    onInactivityTimerUpdate,
+    setDrawOffer,
+    handleRejectDrawOffer,
+    onGameEnd,
+    handleException,
+  ]);
 
   // function to make a move
   const makeMove = (from: string, to: string, promotion: string) => {
@@ -113,7 +137,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:acceptDraw", {
         playerId,
-        gameId: JSON.parse(localStorage.getItem("gameData") as string).gameId,
+        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
       });
     }
   };
@@ -122,7 +146,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:rejectDraw", {
         playerId,
-        gameId: JSON.parse(localStorage.getItem("gameData") as string).gameId,
+        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
       });
     }
   };
@@ -132,7 +156,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:offerDraw", {
         playerId,
-        gameId: JSON.parse(localStorage.getItem("gameData") as string).gameId,
+        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
       });
     }
   };
