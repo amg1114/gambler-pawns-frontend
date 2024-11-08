@@ -243,7 +243,7 @@ DropdownButton.SimplifyGameModesDrop = function SimplifyGameModesDrop() {
           key={gameMode.id}
           className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
           id={gameMode.id}
-          onClick={() => selectedOption(gameMode.mode, gameMode.config)}
+          //onClick={() => selectedOption(gameMode.mode, gameMode.config)}
         >
           {gameMode.mode}
         </span>
@@ -277,7 +277,7 @@ DropdownButton.ColorIPlayed = function ColorIPlayed() {
           key={gameMode.id}
           className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
           id={gameMode.id}
-          onClick={() => selectedOption(gameMode.mode, gameMode.config)}
+          //onClick={() => selectedOption(gameMode.mode, gameMode.config)}
         >
           {gameMode.mode}
         </span>
@@ -311,7 +311,7 @@ DropdownButton.ResultType = function ResultType() {
           key={gameMode.id}
           className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
           id={gameMode.id}
-          onClick={() => selectedOption(gameMode.mode, gameMode.config)}
+          //onClick={() => selectedOption(gameMode.mode, gameMode.config)}
         >
           {gameMode.mode}
         </span>
