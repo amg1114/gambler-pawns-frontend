@@ -91,6 +91,25 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     setInactivityTimer(remainingMiliseconds);
   };
 
+  // exception handling
+  const [
+    exceptionFromBackendChessService,
+    setExceptionFromBackendChessService,
+  ] = useState<any>(null);
+  const handleExceptionFromBackendChessService = (data: any) => {
+    setExceptionFromBackendChessService(data);
+  };
+
+  useEffect(() => {
+    if (exceptionFromBackendChessService) {
+      const timer = setTimeout(() => {
+        setExceptionFromBackendChessService(null);
+      }, 10000); // after 10 seconds the message will disappear
+
+      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
+    }
+  }, [exceptionFromBackendChessService]);
+
   // player's info
   const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
   const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
@@ -146,21 +165,30 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleRejectDrawOffer,
       handleEndGame,
       handleInactivityTimerUpdate,
+      handleExceptionFromBackendChessService,
     );
 
   if (loading || !gameData) {
-    return <SkeletonGame joinGameDataFormRequest={joinGameDataFormRequest} />;
+    return (
+      <SkeletonGame
+        joinGameDataFormRequest={joinGameDataFormRequest}
+        exceptionFromBackendChessService={exceptionFromBackendChessService}
+      />
+    );
   }
 
   return (
     <>
       <section className="mx-auto max-w-screen-board">
-        <p>{isDrawOfferRejected ? "Draw offer was rejected" : ""}</p>
-        <p>
-          {inactivityTimer
-            ? `Inactivity timer: ${formatTimeMs(inactivityTimer)}`
-            : ""}
-        </p>
+        {/* TODO: crear un componente separado que se use para mostrar:
+          -> 1. excepciones, el timer de inactividad, cuando alguien rechace una oferta de tablas */}
+        {exceptionFromBackendChessService ? (
+          <p>{exceptionFromBackendChessService.message}</p>
+        ) : null}
+        {isDrawOfferRejected ? <p>Draw offer was rejected</p> : null}
+        {inactivityTimer ? (
+          <p>{`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}</p>
+        ) : null}
         <p>
           {chessGame.gameHistoryMoves.map(
             (move, index) =>

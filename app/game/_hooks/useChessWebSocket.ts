@@ -14,6 +14,7 @@ export function useChessWebSocket(
   handleRejectDrawOffer: () => void,
   onGameEnd: (data: endGameDataInterface) => void,
   onInactivityTimerUpdate: (data: any) => void,
+  handleException: (data: any) => void,
 ) {
   useEffect(() => {
     if (!socket) return;
@@ -98,6 +99,7 @@ export function useChessWebSocket(
 
     // loging exceptions
     socket.on("exception", (data: any) => {
+      handleException(data);
       console.error("Exception", data);
     });
 
