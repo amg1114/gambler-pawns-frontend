@@ -126,11 +126,14 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   }, [playerOneTime, playerTwoTime, loading, gameData]);
 
   //Hook to validate and handle moves
-  // TODO: pasar el modo de juego dinamicamente
-  const chessGame = useChessGame("rapid", gameData, (from, to, promotion) => {
-    setInactivityTimer(null);
-    makeMove(from, to, promotion);
-  });
+  const chessGame = useChessGame(
+    joinGameDataFormRequest?.mode,
+    gameData,
+    (from, to, promotion) => {
+      setInactivityTimer(null);
+      makeMove(from, to, promotion);
+    },
+  );
 
   // Hook to manage in-game events
   const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
@@ -145,8 +148,8 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleInactivityTimerUpdate,
     );
 
-  if (loading || !gameData || !joinGameDataFormRequest) {
-    return <SkeletonGame />;
+  if (loading || !gameData) {
+    return <SkeletonGame joinGameDataFormRequest={joinGameDataFormRequest} />;
   }
 
   return (
@@ -233,11 +236,10 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           setGameEndModalOpen(true);
         }}
       />
-      {/* TODO: pasar el modod de juego dinamicamente */}
       <EndGameModal
         isOpen={gameEndModalOpen}
         gameData={endGameData as endGameDataInterface | null}
-        gameMode={"rapid"}
+        gameMode={joinGameDataFormRequest.mode}
         gameId={id as string}
       />
     </>

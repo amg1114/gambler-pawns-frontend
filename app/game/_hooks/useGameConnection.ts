@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import getEloByMode from "@/app/lib/utils/getEloByMode";
 
 interface UseGameConnectionProps {
   gameId: string | undefined;
@@ -28,7 +29,7 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
 
   // Load data from sessionStorage when component mounts
   // -> see comment below about this temporary solution
-  useEffect(() => {
+  useLayoutEffect(() => {
     const storedJoinGameDataFormRequest = sessionStorage.getItem(
       "joinGameDataFormRequest",
     );
@@ -43,7 +44,7 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!session?.data) return;
     const storedGameData = sessionStorage.getItem("joinGameDataFormRequest");
     if (!storedGameData) return;
@@ -52,7 +53,7 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
     setJoinGameDataFormRequest({
       ...parsedStoredGameData,
       playerId: session?.data?.userId.toString() || `guest_${Date.now()}`,
-      eloRating: session?.data?.eloRapid || 1200, // TODO: cambiar para que el elo se corresponda con el modo de juego dinamicamente
+      eloRating: getEloByMode(parsedStoredGameData.mode, session),
     });
   }, [session]);
 

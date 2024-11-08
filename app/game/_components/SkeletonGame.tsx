@@ -10,7 +10,13 @@ import { useSession } from "next-auth/react";
 import { bungee } from "@/app/ui/fonts";
 import { useRouter } from "next/navigation";
 
-export default function SkeletonGame() {
+interface SkeletonGameProps {
+  joinGameDataFormRequest: any;
+}
+
+export default function SkeletonGame({
+  joinGameDataFormRequest,
+}: SkeletonGameProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -31,14 +37,14 @@ export default function SkeletonGame() {
           </div>
           <ChessBoardGame />
         </div>
-        {/* TODO: pasar los datos del sesion */}
         <UserInfo
           isLoading={false}
           isCurrentPlayer
           userData={{
-            timer: "5:00",
-            nickname: session?.data?.nickname || "guest",
-            eloRating: session?.data?.eloArcade || 1200,
+            timer: joinGameDataFormRequest?.time || "5:00",
+            nickname:
+              session?.data?.nickname || joinGameDataFormRequest?.playerId,
+            eloRating: joinGameDataFormRequest?.eloRating || 1200,
             countryCode: session?.data?.countryCode || "co",
             userAvatar: session?.data?.userAvatarImg?.fileName || "1.png",
           }}
