@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 
 /*
-# Find examples of usage:
+@see
+https://en.wikipedia.org/wiki/Universal_Chess_Interface
+https://gist.github.com/DOBRO/2592c6dad754ba67e6dcaec8c90165bf
 
 ## In general:
 + https://github.com/nmrugg/stockfish.js/network/dependents (Review first)
@@ -12,7 +14,6 @@ import { useState, useEffect } from "react";
 
 ## Useful
 +  https://github.com/emreozogul/chess-analyzer (nexjs project)
-+ https://github.com/Neorex80/ReactGames/blob/main/game-zone/src/Games/chess/Stockfish.js (react, muy bueno)
 + https://github.com/Vanshpanchal/Chess-Notation-Viewer (interesesante para la pagina de rewatch)
 + https://github.com/m6un/chess-analyzer/blob/main/src/app/api/uploadPgn.js interesting for evaluation
 + https://github.com/pllehrman/chess/tree/main/frontend/public/stockfish (ejemplo importando stockfish distintas versiones)
@@ -43,8 +44,28 @@ export const useStockfish = (fen: string) => {
       return;
     }
 
-    stockfish = new Worker("/stockfish-nnue-16.js");
-    console.log("Starting engine via web worker");
+    // Detect user environment and use the appropriate worker
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const supportsCORS = "SharedArrayBuffer" in window;
+
+    let stockfishPath = "";
+
+    if (isMobile) {
+      if (supportsCORS) {
+        stockfishPath = "/engines/stockfish-nnue-16-no-simd.js"; // Lite multi-threaded
+      } else {
+        stockfishPath = "/engines/stockfish-nnue-16-single.js"; // Lite single-threaded
+      }
+    } else {
+      if (supportsCORS) {
+        stockfishPath = "/engines/stockfish-nnue-16.js"; // Large multi-threaded
+      } else {
+        stockfishPath = "/engines/stockfish-nnue-16-single.js"; // Large single-threaded
+      }
+    }
+
+    stockfish = new Worker(stockfishPath);
+    console.log(`Starting engine via web worker: ${stockfishPath}`);
 
     // when engine sends a message
     stockfish.onmessage = (event: MessageEvent) => {
