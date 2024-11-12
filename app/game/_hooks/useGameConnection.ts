@@ -1,21 +1,11 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
-
-interface GameJoinResponse {
-  gameId: string;
-  opponentId: string;
-  color: "white" | "black";
-}
+import { useSession } from "next-auth/react";
+import getEloByMode from "@/app/lib/utils/getEloByMode";
 
 interface UseGameConnectionProps {
-  gameId?: string | undefined;
-  playerId: string;
-  gameMode: string;
-  bet: number;
-  eloRating: number;
-  timeMinutes: number;
-  timeIncSeconds: number;
+  gameId: string | undefined;
 }
 
 /**
@@ -23,74 +13,94 @@ interface UseGameConnectionProps {
  * @param props - The game connection parameters.
  * @returns An object containing the socket and loading state.
  */
-
-export function useGameConnection({
-  gameId,
-  playerId,
-  gameMode,
-  bet,
-  eloRating,
-  timeMinutes,
-  timeIncSeconds,
-}: UseGameConnectionProps) {
+export function useGameConnection({ gameId }: UseGameConnectionProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { data: session } = useSession();
+
+  // TODO: we have to save joinGameDataFormRequest, and gameData in a global state
+  // -> to avoid losing the data when the component unmounts
+  //    as a temporary solution we are saving it in sessionStorage
+  //    then we should not remove them (both states) from sessionStorage until the game ends
+  const [joinGameDataFormRequest, setJoinGameDataFormRequest] =
+    useState<any>(null);
+  const [gameData, setGameData] = useState<any>(null);
+
+  // Load data from sessionStorage when component mounts
+  // -> see comment below about this temporary solution
+  useLayoutEffect(() => {
+    const storedJoinGameDataFormRequest = sessionStorage.getItem(
+      "joinGameDataFormRequest",
+    );
+    const storedGameData = sessionStorage.getItem("gameData");
+
+    if (storedJoinGameDataFormRequest) {
+      setJoinGameDataFormRequest(JSON.parse(storedJoinGameDataFormRequest));
+    }
+
+    if (storedGameData) {
+      setGameData(JSON.parse(storedGameData));
+    }
+  }, []);
 
   useLayoutEffect(() => {
-    // Conectar al servidor WebSocket
+    if (!session?.data) return;
+    const storedGameData = sessionStorage.getItem("joinGameDataFormRequest");
+    if (!storedGameData) return;
+    const parsedStoredGameData = JSON.parse(storedGameData);
+
+    setJoinGameDataFormRequest({
+      ...parsedStoredGameData,
+      playerId: session?.data?.userId.toString() || `guest_${Date.now()}`,
+      eloRating: getEloByMode(parsedStoredGameData.mode, session),
+    });
+  }, [session]);
+
+  useEffect(() => {
+    if (!joinGameDataFormRequest || !joinGameDataFormRequest.playerId) return;
+
+    // connect to ws server
     const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
     setSocket(newSocket);
 
-    if (gameId !== undefined) {
-      // Reconnecting to existing game
-      // TODO: pedir al back todos los datos necesarios
-      newSocket.emit("game:reconnect", {
-        gameId,
-        playerId,
-      });
+    // Manejadores de eventos para la conexión
+    newSocket.on("connect", () => {
+      console.log("Socket conectado");
 
-      // listen to server response
-      newSocket.on("game:reconnected", (data: any) => {
-        setLoading(false);
-        console.log("Reconnected to game", data);
-      });
-    } else {
-      // Initial connection to start a new game
-      newSocket.emit("game:join", {
-        playerId,
-        mode: gameMode,
-        bet,
-        eloRating,
-        initialTime: timeMinutes,
-        incrementTime: timeIncSeconds,
-      });
+      if (gameId) {
+        console.log("Trying reconnection", gameId);
+        // Reconnecting to existing game
+        newSocket.emit("game:reconnect", {
+          gameId,
+          playerId: joinGameDataFormRequest.playerId,
+        });
+      } else {
+        console.log("Joining game with data", joinGameDataFormRequest);
+        newSocket.emit("game:join", joinGameDataFormRequest);
+      }
+    });
 
-      // listen to server response
-      newSocket.on("game:started", (data: GameJoinResponse) => {
-        // Cambiar la URL sin redirigir
-        // TODO: get playerId from token next-auth, also game info should be stored in the local storage
-        localStorage.setItem("gameData", JSON.stringify(data));
-        router.replace(`/game/${data.gameId}?playerId=${playerId}`);
-        setLoading(false);
-        console.log("Game started", data);
-      });
-    }
+    // listen to server responses
+    newSocket.on("game:reconnected", (data: any) => {
+      setLoading(false);
+      console.log("Reconnected to game", data);
+    });
+
+    newSocket.on("game:started", (data: any) => {
+      // redirect to game page
+      console.log("Game started", data);
+      sessionStorage.setItem("gameData", JSON.stringify(data));
+      setGameData(data);
+      setLoading(false);
+      router.replace(`/game/${data.gameId}`);
+    });
 
     return () => {
       // Desconnect socket when component unmounts
       newSocket.disconnect();
     };
-  }, [
-    gameId,
-    playerId,
-    gameMode,
-    bet,
-    eloRating,
-    router,
-    timeIncSeconds,
-    timeMinutes,
-  ]);
+  }, [gameId, joinGameDataFormRequest, router]);
 
-  return { socket, loading };
+  return { socket, loading, joinGameDataFormRequest, gameData };
 }

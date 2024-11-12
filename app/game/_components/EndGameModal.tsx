@@ -39,52 +39,46 @@ const EndGameModal = ({
           router.push("/");
         }}
       >
-        <div className="fixed inset-0 mx-auto flex items-center">
-          <div
-            className={`mx-auto h-auto w-auto ${
-              !isOpen ? "animate-fade-in-down" : "animate-fade-out-up"
-            } items-center justify-center rounded-base bg-dark-1 px-lg py-lg shadow-lg`}
+        <StyledTitle variant="h2" extraClasses="pt-md mb-xs text-center">
+          {gameData.winner !== "Draw" ? gameData.winner + " Wins" : "Draw"}
+        </StyledTitle>
+        <StyledTitle variant="h3" extraClasses="mt-xs text-center !h-12">
+          By {" " + gameData.reason}
+        </StyledTitle>
+
+        <div className="grid grid-cols-2">
+          <StyledTitle variant="h4" extraClasses="text-right my-xs">
+            {formatSignedNumber(gameData.moneyGameGiftForWinner as number)}
+          </StyledTitle>
+          <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
+        </div>
+
+        <StyledTitle variant="h4" extraClasses="text-center my-xs  ">
+          {formatSignedNumber(gameData.eloChange) + " "} ELO
+        </StyledTitle>
+        <div className="grid grid-cols-1 pt-md">
+          <StyledButton
+            variant="primary"
+            extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
+            onClick={() => {
+              if (gameMode === "arcade") {
+                router.push("game-options/arcade");
+              }
+              router.push("/game-options/classic");
+            }}
           >
-            <StyledTitle variant="h2" extraClasses="pt-md mb-xs text-center">
-              {gameData.winner !== "Draw" ? gameData.winner + " Wins" : "Draw"}
-            </StyledTitle>
-            <StyledTitle variant="h3" extraClasses="mt-xs text-center !h-12">
-              By {" " + gameData.reason}
-            </StyledTitle>
-            <div className="grid grid-cols-2">
-              <StyledTitle variant="h4" extraClasses="text-right my-xs">
-                {formatSignedNumber(gameData.moneyGameGiftForWinner as number)}
-              </StyledTitle>
-              <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
-            </div>
-            <StyledTitle variant="h4" extraClasses="text-center my-xs  ">
-              {formatSignedNumber(gameData.eloChange) + " "} ELO
-            </StyledTitle>
-            <div className="grid grid-cols-1 pt-md">
-              <StyledButton
-                variant="primary"
-                extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
-                onClick={() => {
-                  if (gameMode === "arcade") {
-                    router.push("game-options/arcade");
-                  }
-                  router.push("/game-options/classic");
-                }}
-              >
-                New Game
-              </StyledButton>
-              <StyledButton
-                variant="primary"
-                style="outlined"
-                extraClasses="mx-auto !w-36"
-                onClick={() => {
-                  router.push(`/rewatch/${gameId}`);
-                }}
-              >
-                Watch Again
-              </StyledButton>
-            </div>
-          </div>
+            New Game
+          </StyledButton>
+          <StyledButton
+            variant="primary"
+            style="outlined"
+            extraClasses="mx-auto !w-36"
+            onClick={() => {
+              router.push(`/rewatch/${gameId}`);
+            }}
+          >
+            Watch Again
+          </StyledButton>
         </div>
       </GameAlert>
     );

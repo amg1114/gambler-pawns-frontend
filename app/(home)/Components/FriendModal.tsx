@@ -49,7 +49,7 @@ export default function FriendModal({
     <div className="relative inline-block">
       <button
         onClick={toggleModal}
-        className="p-2 bg-blue-500 text-white rounded-full"
+        className="p-2 bg-blue-500 rounded-full text-white"
       >
         <Image
           src={avatar}
@@ -61,7 +61,7 @@ export default function FriendModal({
       {isOpen && (
         <div
           ref={modalRef}
-          className="p-4 text-white rounded-lg absolute w-auto min-w-64 bg-dark-1 shadow-lg"
+          className="p-4 rounded-lg absolute w-auto min-w-64 bg-dark-1 text-white shadow-lg"
           style={{ bottom: "120%", left: "50%", transform: "translateX(-0%)" }}
         >
           <div className="m-sm flex items-center">

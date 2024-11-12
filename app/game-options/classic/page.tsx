@@ -1,34 +1,29 @@
 "use client";
 import Image from "next/image";
 
-// Importing components
+// components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import StyledLink from "@/app/ui/components/typography/StyledLink";
-import BetOption from "@/app/game-options/components/bet-options";
-import Dropdown from "@/app/game-options/components/drop-down";
+import BetOption from "@/app/game-options/_components/bet-options";
 
-// Importing icons
+// icons
 import ErrorIcon from "@mui/icons-material/Error";
 import ChessTile from "@/app/ui/icons/chess-tile.svg";
 import Dice from "@/app/ui/icons/dice.svg";
 import Link from "@/app/ui/icons/link-shared.svg";
 
-// importing hooks
+// hooks
 import {
   clearGameOptions,
   getGameOptions,
   setGameOptions,
-} from "@/app/lib/hooks/game-options.hook";
+} from "@/app/game-options/_hooks/game-options.hook";
 import { useRouter } from "next/navigation";
-// =========  Zod Schema =======
-// TODO: refactor this in a separate file
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
+import { GameModesDrop } from "../_components/GameModesDropdown";
 
 export default function ClassicOptionPage() {
   const router = useRouter();
@@ -70,15 +65,14 @@ export default function ClassicOptionPage() {
       <StyledTitle variant="h1" extraClasses="text-center">
         Game Options
       </StyledTitle>
-
-      <Dropdown
+      <DropdownButton
         dropDown={{
           dropStyles: "outlined",
           text: "Select a Game Mode",
         }}
       >
-        <Dropdown.GameModesDrop></Dropdown.GameModesDrop>
-      </Dropdown>
+        <GameModesDrop />
+      </DropdownButton>
 
       <StyledTitle variant="h2" extraClasses="text-center">
         Your bet
@@ -134,14 +128,7 @@ export default function ClassicOptionPage() {
           </StyledButton>
         </div>
         <div>
-          <Dropdown
-            dropDown={{
-              dropStyles: "filled",
-              text: "Play vs. a Friend",
-            }}
-          >
-            <Dropdown.FriendsDrop></Dropdown.FriendsDrop>
-          </Dropdown>
+          <StyledButton>Friends</StyledButton>
         </div>
 
         <div className="flex items-center justify-center p-md">

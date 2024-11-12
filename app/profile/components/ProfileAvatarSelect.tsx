@@ -133,7 +133,7 @@ export function ProfileAvatarSelect({
                 key={`avatar-${avatar.userAvatarImgId}`}
                 onClick={() => changeHandler(avatar.fileName)}
               >
-                <img
+                <Image
                   src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${avatar.fileName}`}
                   alt={`Avatar ${avatar.userAvatarImgId}`}
                 />

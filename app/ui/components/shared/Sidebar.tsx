@@ -17,6 +17,7 @@ import notification from "@/app/ui/icons/notification.svg";
 
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 export default function Sidebar({
   isSidebarOpen,
@@ -25,7 +26,7 @@ export default function Sidebar({
 }: {
   isSidebarOpen: boolean;
   isMounted: boolean;
-  session: any;
+  session: Session | null;
 }) {
   const router = useRouter();
   const sideBarOptions = [
@@ -49,12 +50,12 @@ export default function Sidebar({
   const gameOptions = [
     {
       name: "Classic",
-      link: "/classic",
+      link: "/game-options/classic",
       image: ChessTile,
     },
     {
       name: "Arcade",
-      link: "/arcade",
+      link: "/game-options/arcade",
       image: arcadeIcon,
     },
     {
@@ -110,9 +111,14 @@ export default function Sidebar({
                 href="/profile"
                 className="flex w-full items-center justify-center p-md hover:bg-secondary"
               >
-                <Image src={avatar} alt="avatar" width={50} height={50} />
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${session.data.userAvatarImg.fileName}`}
+                  alt="avatar"
+                  width={50}
+                  height={50}
+                />
                 <div className="flex flex-col p-xs">
-                  <p className="text-xl font-black">Morbid</p>
+                  <p className="text-xl font-black">{session.data.nickname}</p>
                   <p>My profile</p>
                 </div>
               </Link>

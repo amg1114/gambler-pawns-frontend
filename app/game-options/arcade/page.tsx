@@ -9,8 +9,8 @@ import Link from "@/app/ui/icons/link-shared.svg";
 // Importing components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import BetOption from "@/app/game-options/components/bet-options";
-import ArcadeOptions from "@/app/game-options/components/modifier-options";
+import BetOption from "@/app/game-options/_components/bet-options";
+import ArcadeOptions from "@/app/game-options/_components/modifier-options";
 
 export default function ClassicOptionPage() {
   return (

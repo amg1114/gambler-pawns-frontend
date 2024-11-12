@@ -1,12 +1,11 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatTimeMs } from "../_utils/formatTimeMs";
 
 // custom hooks
-import { useSearchParams } from "next/navigation";
-import { ChessBoardGame } from "../../ui/components/chessBoardGame/chessBoardGame";
+import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
 import { useChessGame } from "../_hooks/useChessGame";
@@ -17,62 +16,41 @@ import OfferDrawModal from "./OfferDrawModal";
 import ResignGameModal from "./ResignGameModal";
 import EndGameModal, { endGameDataInterface } from "./EndGameModal";
 import StreakModal from "./StreakModal";
+import SkeletonGame from "./SkeletonGame";
+import UserInfo from "./UserInfo";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
 
-  // get searchParams from URL
-  const searchParams = useSearchParams();
-  const gameMode = searchParams.get("mode");
-  const playerId = searchParams.get("playerId");
-  const bet = +(searchParams.get("bet") as string);
-  const eloRating = 1200; // TODO: get this from token next-auth
-  const timeMinutes = 10;
-  const timeIncSeconds = 2;
-  let gameId = undefined;
+  const gameId = id;
 
-  // else get gameId from URL
-  if (!searchParams.get("mode") && id !== "") {
-    gameId = id;
-  }
+  const { socket, loading, joinGameDataFormRequest, gameData } =
+    useGameConnection({
+      gameId: gameId,
+    });
 
-  // Hook to manage conection and reconnection
-  const { socket, loading } = useGameConnection({
-    gameId: gameId as string | undefined,
-    playerId: playerId as string,
-    gameMode: gameMode as string,
-    bet,
-    eloRating,
-    timeMinutes,
-    timeIncSeconds,
-  });
-
-  // Save timers (miliseconds)
-  const [playerOneTime, setPlayerOneTime] = useState(timeMinutes * 60 * 1000);
-  const [playerTwoTime, setPlayerTwoTime] = useState(timeMinutes * 60 * 1000);
-
-  // Manejar actualización del reloj
-  const handleTimerUpdate = (times: {
-    playerOneTime: number;
-    playerTwoTime: number;
-  }) => {
-    setPlayerOneTime(times.playerOneTime);
-    setPlayerTwoTime(times.playerTwoTime);
-  };
-
-  // Handle opponent draw offer
+  // handle game events for modals
   const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
   const handleOpponentDrawOffer = () => {
     setOpponentDrawOffer(true);
   };
-
   // Handle current player draw offer
   const [isDrawOffer, setDrawOffer] = useState(false);
+  const [isDrawOfferRejected, setDrawOfferRejected] = useState(false);
+  const handleRejectDrawOffer = () => {
+    setDrawOfferRejected(true);
+  };
+  useEffect(() => {
+    if (isDrawOfferRejected) {
+      const timer = setTimeout(() => {
+        setDrawOfferRejected(false);
+      }, 10000); // after 10 seconds the message will disappear
 
-  // handle resign confirmation modal
+      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
+    }
+  }, [isDrawOfferRejected]);
+
   const [isResignModalOpen, setResignModalOpen] = useState(false);
-
-  // handle gameEnd
   const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
     null,
   );
@@ -84,49 +62,153 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
 
     if (data.winner === "You") {
       setEndGameStreakModalOpen(true);
+    } else {
+      setGameEndModalOpen(true);
     }
   };
 
+  // timers
+  const [playerOneTime, setPlayerOneTime] = useState(5 * 60 * 1000);
+  const [playerTwoTime, setPlayerTwoTime] = useState(5 * 60 * 1000);
+
+  useEffect(() => {
+    if (!joinGameDataFormRequest) return;
+    setPlayerOneTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
+    setPlayerTwoTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
+  }, [joinGameDataFormRequest]);
+
+  const handleTimerUpdate = (times: {
+    playerOneTime: number;
+    playerTwoTime: number;
+  }) => {
+    setPlayerOneTime(times.playerOneTime);
+    setPlayerTwoTime(times.playerTwoTime);
+  };
+
+  const [inactivityTimer, setInactivityTimer] = useState<null | number>(null);
+
+  const handleInactivityTimerUpdate = (remainingMiliseconds: number) => {
+    setInactivityTimer(remainingMiliseconds);
+  };
+
+  // exception handling
+  const [
+    exceptionFromBackendChessService,
+    setExceptionFromBackendChessService,
+  ] = useState<any>(null);
+  const handleExceptionFromBackendChessService = (data: any) => {
+    setExceptionFromBackendChessService(data);
+  };
+
+  useEffect(() => {
+    if (exceptionFromBackendChessService) {
+      const timer = setTimeout(() => {
+        setExceptionFromBackendChessService(null);
+      }, 10000); // after 10 seconds the message will disappear
+
+      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
+    }
+  }, [exceptionFromBackendChessService]);
+
+  // player's info
+  const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
+  const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
+  const [side, setSide] = useState<"white" | "black">("white");
+
+  useEffect(() => {
+    if (loading) return;
+    setSide(gameData.color);
+
+    const blackData = {
+      timer: formatTimeMs(playerTwoTime),
+      nickname: gameData.playerBlack.userInfo.nickname,
+      eloRating: gameData.playerBlack.elo,
+      countryCode: gameData.playerBlack.userInfo.countryCode,
+      userAvatar: gameData.playerBlack.userInfo.userAvatarImg.fileName,
+    };
+
+    const whiteData = {
+      timer: formatTimeMs(playerOneTime),
+      nickname: gameData.playerWhite.userInfo.nickname,
+      eloRating: gameData.playerWhite.elo,
+      countryCode: gameData.playerWhite.userInfo.countryCode,
+      userAvatar: gameData.playerWhite.userInfo.userAvatarImg.fileName,
+    };
+
+    if (gameData.color === "white") {
+      setCurrentPlayerInfo(whiteData);
+      setOpponentPlayerInfo(blackData);
+    } else {
+      setCurrentPlayerInfo(blackData);
+      setOpponentPlayerInfo(whiteData);
+    }
+  }, [playerOneTime, playerTwoTime, loading, gameData]);
+
   //Hook to validate and handle moves
-  const chessGame = useChessGame("rapid", (from, to, promotion) => {
-    // handling move
-    makeMove(from, to, promotion);
-  });
+  const chessGame = useChessGame(
+    joinGameDataFormRequest?.mode,
+    gameData,
+    (from, to, promotion) => {
+      setInactivityTimer(null);
+      makeMove(from, to, promotion);
+    },
+  );
 
   // Hook to manage in-game events
   const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
     useChessWebSocket(
       socket,
-      playerId as string,
+      joinGameDataFormRequest?.playerId,
       chessGame.updateGameFromOpponent,
       handleTimerUpdate,
       handleOpponentDrawOffer,
+      handleRejectDrawOffer,
       handleEndGame,
+      handleInactivityTimerUpdate,
+      handleExceptionFromBackendChessService,
     );
 
-  // muy importante esta condición, si se cambia comienza dar errores inesperados
-  // TODO: dentro del if loading, mostrar el skeleton (importar el componente, no declararlo porque es muy grande)
-  if (loading) {
-    return <div>Loading...</div>;
+  if (loading || !gameData) {
+    return (
+      <SkeletonGame
+        joinGameDataFormRequest={joinGameDataFormRequest}
+        exceptionFromBackendChessService={exceptionFromBackendChessService}
+      />
+    );
   }
 
   return (
     <>
       <section className="mx-auto max-w-screen-board">
-        <div>
-          <div>Player 1 Time: {formatTimeMs(playerOneTime)}</div>
-          <div>Player 2 Time: {formatTimeMs(playerTwoTime)}</div>
-        </div>
+        {/* TODO: crear un componente separado que se use para mostrar:
+          -> 1. excepciones, el timer de inactividad, cuando alguien rechace una oferta de tablas */}
+        {exceptionFromBackendChessService ? (
+          <p>{exceptionFromBackendChessService.message}</p>
+        ) : null}
+        {isDrawOfferRejected ? <p>Draw offer was rejected</p> : null}
+        {inactivityTimer ? (
+          <p>{`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}</p>
+        ) : null}
         <p>
           {chessGame.gameHistoryMoves.map(
             (move, index) =>
               `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
           )}
         </p>
+        <UserInfo
+          isLoading={false}
+          userData={opponentPlayerInfo}
+          isCurrentPlayer={false}
+        />
         <ChessBoardGame
           position={chessGame.position}
           onDrop={chessGame.onDrop}
-          side={JSON.parse(localStorage.getItem("gameData") as string).color}
+          side={side}
+        />
+        <UserInfo
+          isLoading={false}
+          userData={currentPlayerInfo}
+          isCurrentPlayer
         />
         <StyledButton
           onClick={() => {
@@ -143,7 +225,6 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           Resign
         </StyledButton>
       </section>
-      {/* Modals */}
       <ResignGameModal
         isOpen={isResignModalOpen}
         handleNo={() => {
@@ -178,17 +259,15 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       <StreakModal
         isOpen={endGameStreakModalOpen}
         streakNumber={session?.data?.streakDays || 0}
-        moneyGameGiftForWinner={endGameData?.moneyGameGiftForWinner || 0}
         onClose={() => {
           setEndGameStreakModalOpen(false);
           setGameEndModalOpen(true);
         }}
       />
-      {/* TODO: pasar el modo de juego dinamicamente */}
       <EndGameModal
         isOpen={gameEndModalOpen}
         gameData={endGameData as endGameDataInterface | null}
-        gameMode={"rapid"}
+        gameMode={joinGameDataFormRequest.mode}
         gameId={id as string}
       />
     </>
