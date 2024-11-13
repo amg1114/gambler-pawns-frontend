@@ -1,87 +1,43 @@
 "use client";
-import { useState, useEffect } from "react";
-
-/*
-@see
-https://en.wikipedia.org/wiki/Universal_Chess_Interface
-https://gist.github.com/DOBRO/2592c6dad754ba67e6dcaec8c90165bf
-
-## In general:
-+ https://github.com/nmrugg/stockfish.js/network/dependents (Review first)
-+ https://github.com/lichess-org/stockfish.js/network/dependents
- 
----
-
-## Useful
-+  https://github.com/emreozogul/chess-analyzer (nexjs project)
-+ https://github.com/Vanshpanchal/Chess-Notation-Viewer (interesesante para la pagina de rewatch)
-+ https://github.com/m6un/chess-analyzer/blob/main/src/app/api/uploadPgn.js interesting for evaluation
-+ https://github.com/pllehrman/chess/tree/main/frontend/public/stockfish (ejemplo importando stockfish distintas versiones)
-+ -> https://github.com/pllehrman/chess/blob/main/frontend/src/components/game/utilities/computerLogic.jsx excelente como implementa la logica de stockfish
-+ https://github.com/DarshanIITB/chess-frontend/blob/main/src/Components/Ai.ts (intersante implementación algo minimax con chess.js)
-+ https://github.com/mjanic/chessproject-nextjs/blob/stockfish-webworker/app/Board.tsx (interesante como combina la api rest de lichess con stockfish.js and feature to avoid blocking the main thread)
-+ https://github.com/emreozogul/chess-analyzer/blob/main/components/StockfishAnalysis.tsx
-+ https://github.com/dattatreya412/Chess-client/blob/main/src/pages/GameAnalysis.jsx#L21C1-L32C10
-
-
-## Descripción de los comandos uci que acepta stockfish
-+ https://github.com/official-stockfish/Stockfish/wiki/UCI-&-Commands
-
-## Idk can be useful
-+ https://www.jsdelivr.com/package/npm/stockfish.wasm
-*/
+import { useState, useEffect, useCallback } from "react";
 
 export const useStockfish = (fen: string) => {
   const [bestMove, setBestMove] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [evaluation, setEvaluation] = useState<string>("");
   const [engineReady, setEngineReady] = useState(false);
+  const [worker, setWorker] = useState<Worker | null>(null);
 
+  // Inicialización del worker
   useEffect(() => {
-    let stockfish: Worker | null = null;
+    if (typeof window === "undefined") return;
 
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    // Detect user environment and use the appropriate worker
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     const supportsCORS = "SharedArrayBuffer" in window;
 
     let stockfishPath = "";
-
     if (isMobile) {
-      if (supportsCORS) {
-        stockfishPath = "/engines/stockfish-nnue-16-no-simd.js"; // Lite multi-threaded
-      } else {
-        stockfishPath = "/engines/stockfish-nnue-16-single.js"; // Lite single-threaded
-      }
+      stockfishPath = supportsCORS
+        ? "/engines/stockfish-nnue-16-no-simd.js"
+        : "/engines/stockfish-nnue-16-single.js";
     } else {
-      if (supportsCORS) {
-        stockfishPath = "/engines/stockfish-nnue-16.js"; // Large multi-threaded
-      } else {
-        stockfishPath = "/engines/stockfish-nnue-16-single.js"; // Large single-threaded
-      }
+      stockfishPath = supportsCORS
+        ? "/engines/stockfish-nnue-16.js"
+        : "/engines/stockfish-nnue-16-single.js";
     }
 
-    stockfish = new Worker(stockfishPath);
-    console.log(`Starting engine via web worker: ${stockfishPath}`);
+    const stockfish = new Worker(stockfishPath);
+    setWorker(stockfish);
 
-    // when engine sends a message
     stockfish.onmessage = (event: MessageEvent) => {
       const message = event.data;
-      console.log("Received from Stockfish:", message);
 
       if (typeof message === "string") {
         if (message.includes("uciok")) {
-          console.log("UCI OK received");
-          stockfish?.postMessage("isready");
+          stockfish.postMessage("isready");
         } else if (message.includes("readyok")) {
-          console.log("Engine is ready");
           setEngineReady(true);
-          setIsThinking(true);
-          stockfish?.postMessage(`position fen ${fen}`);
-          stockfish?.postMessage("go depth 15");
+          setIsThinking(false);
         } else if (message.startsWith("info") && message.includes("score cp")) {
           const scoreMatch = message.match(/score cp (-?\d+)/);
           if (scoreMatch) {
@@ -102,7 +58,6 @@ export const useStockfish = (fen: string) => {
       console.error("Error from Stockfish worker:", error);
     };
 
-    // Initialize the engine
     stockfish.postMessage("uci");
 
     return () => {
@@ -111,19 +66,42 @@ export const useStockfish = (fen: string) => {
         stockfish.terminate();
       }
     };
-  }, [fen]);
+  }, []);
 
+  // Función para analizar una nueva posición
+  const analyzePosition = useCallback(
+    (fen: string, side: "w" | "b") => {
+      if (!worker || !engineReady) return;
+
+      setBestMove(null);
+      setIsThinking(true);
+
+      worker.postMessage("stop"); // Detener análisis anterior
+      worker.postMessage("position fen " + fen);
+
+      // Configurar el motor para jugar desde la perspectiva correcta
+      worker.postMessage(
+        side === "b"
+          ? "setoption name UCI_Side value black"
+          : "setoption name UCI_Side value white",
+      );
+      worker.postMessage("go depth 10");
+    },
+    [worker, engineReady],
+  );
+
+  // Efecto para analizar la posición cuando cambia el FEN
   useEffect(() => {
-    if (engineReady) {
-      console.log("Engine is ready, analyzing position");
-      // You can add additional logic here if needed
+    if (fen) {
+      analyzePosition(fen, "b"); // Siempre analizamos desde la perspectiva de las negras
     }
-  }, [engineReady]);
+  }, [fen, analyzePosition]);
 
   return {
     bestMove,
     isThinking,
     evaluation,
     engineReady,
+    analyzePosition,
   };
 };
