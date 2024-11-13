@@ -39,7 +39,7 @@ export default function BotPage() {
   // trigger bot's moves
   useEffect(() => {
     const makeBotMove = async () => {
-      console.log("Verificando condiciones para mover:", {
+      console.warn("Verificando condiciones para mover:", {
         turn: game.turn(),
         bestMove,
         isThinking,
@@ -58,7 +58,7 @@ export default function BotPage() {
         console.log("Ejecutando movimiento del bot:", bestMove);
 
         // small delay to make the bot move more human-like
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         const [from, to] = [
           bestMove.slice(0, 2) as Square,
