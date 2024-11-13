@@ -29,9 +29,25 @@ export default function BotPage() {
 
   const { bestMove, isThinking, analyzePosition } = useStockfish(position);
 
-  // Efecto para manejar el movimiento del bot
+  // triggers the bot to analyze the position when it's the bot's turn
+  useEffect(() => {
+    if (game.turn() === "b" && isProcessingMove && !isThinking) {
+      analyzePosition(position, "b");
+    }
+  }, [game, isProcessingMove, position, analyzePosition, isThinking]);
+
+  // trigger bot's moves
   useEffect(() => {
     const makeBotMove = async () => {
+      console.log("Verificando condiciones para mover:", {
+        turn: game.turn(),
+        bestMove,
+        isThinking,
+        isProcessingMove,
+        isGameOver: game.isGameOver(),
+      });
+
+      // only proceed if it's the bot's turn and it's not already processing a move
       if (
         game.turn() === "b" &&
         bestMove &&
@@ -39,8 +55,9 @@ export default function BotPage() {
         isProcessingMove &&
         !game.isGameOver()
       ) {
-        console.log("Making bot move:", bestMove);
-        // Pequeña pausa para hacer el movimiento más natural
+        console.log("Ejecutando movimiento del bot:", bestMove);
+
+        // small delay to make the bot move more human-like
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         const [from, to] = [
@@ -54,23 +71,11 @@ export default function BotPage() {
     };
 
     makeBotMove();
-  }, [bestMove, isThinking, makeMove, game, isProcessingMove]);
-
-  // Efecto para forzar el análisis después de cada movimiento
-  useEffect(() => {
-    if (game.turn() === "b" && isProcessingMove) {
-      analyzePosition(position, "b");
-    }
-  }, [position, game, isProcessingMove, analyzePosition]);
+  }, [bestMove, isThinking, game, makeMove, isProcessingMove]);
 
   return (
     <div className="p-4 container mx-auto">
-      <ChessBoardGame
-        position={position}
-        onDrop={handleDrop}
-        side="white"
-        // disabled={isProcessingMove || game.turn() === "b"}
-      />
+      <ChessBoardGame position={position} onDrop={handleDrop} side="white" />
     </div>
   );
 }

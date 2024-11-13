@@ -1,6 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
+/**
+ * Custom hook to interact with the Stockfish chess engine.
+ *
+ * @param {string} fen - The FEN string representing the current position of the chess game.
+ * @returns {object} - Returns an object containing the best move, thinking status, evaluation, engine readiness, and a function to analyze the position.
+ */
 export const useStockfish = (fen: string) => {
   const [bestMove, setBestMove] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -8,10 +14,10 @@ export const useStockfish = (fen: string) => {
   const [engineReady, setEngineReady] = useState(false);
   const [worker, setWorker] = useState<Worker | null>(null);
 
-  // Inicialización del worker
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // initialize Stockfish engine
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     const supportsCORS = "SharedArrayBuffer" in window;
 
@@ -29,6 +35,11 @@ export const useStockfish = (fen: string) => {
     const stockfish = new Worker(stockfishPath);
     setWorker(stockfish);
 
+    /**
+     * Handles messages from the Stockfish worker.
+     *
+     * @param {MessageEvent} event - The message event from the Stockfish worker.
+     */
     stockfish.onmessage = (event: MessageEvent) => {
       const message = event.data;
 
@@ -39,12 +50,16 @@ export const useStockfish = (fen: string) => {
           setEngineReady(true);
           setIsThinking(false);
         } else if (message.startsWith("info") && message.includes("score cp")) {
+          // only process the evaluation if it corresponds to the current analysis
+
           const scoreMatch = message.match(/score cp (-?\d+)/);
           if (scoreMatch) {
             const score = parseInt(scoreMatch[1]) / 100;
             setEvaluation(score.toFixed(2));
           }
         } else if (message.startsWith("bestmove")) {
+          // only process the best move if it corresponds to the current analysis
+
           const bestMoveMatch = message.match(/bestmove (\S+)/);
           if (bestMoveMatch) {
             setIsThinking(false);
@@ -54,6 +69,11 @@ export const useStockfish = (fen: string) => {
       }
     };
 
+    /**
+     * Handles errors from the Stockfish worker.
+     *
+     * @param {ErrorEvent} error - The error event from the Stockfish worker.
+     */
     stockfish.onerror = (error) => {
       console.error("Error from Stockfish worker:", error);
     };
@@ -66,20 +86,32 @@ export const useStockfish = (fen: string) => {
         stockfish.terminate();
       }
     };
-  }, []);
+  }, [fen]);
 
-  // Función para analizar una nueva posición
+  /**
+   * Analyzes the given position using Stockfish.
+   *
+   * @param {string} fen - The FEN string representing the position to analyze.
+   * @param {"w" | "b"} side - The side to analyze for ("w" for white, "b" for black).
+   */
   const analyzePosition = useCallback(
     (fen: string, side: "w" | "b") => {
-      if (!worker || !engineReady) return;
+      if (!worker || !engineReady) {
+        console.info("Worker or engine not ready");
+        return;
+      }
 
+      console.info("Starting analysis for position:", fen);
+
+      // clean up previous analysis
       setBestMove(null);
       setIsThinking(true);
 
-      worker.postMessage("stop"); // Detener análisis anterior
-      worker.postMessage("position fen " + fen);
+      // stop any previous analysis
+      worker.postMessage("stop");
 
-      // Configurar el motor para jugar desde la perspectiva correcta
+      // start new analysis
+      worker.postMessage("position fen " + fen);
       worker.postMessage(
         side === "b"
           ? "setoption name UCI_Side value black"
@@ -89,13 +121,6 @@ export const useStockfish = (fen: string) => {
     },
     [worker, engineReady],
   );
-
-  // Efecto para analizar la posición cuando cambia el FEN
-  useEffect(() => {
-    if (fen) {
-      analyzePosition(fen, "b"); // Siempre analizamos desde la perspectiva de las negras
-    }
-  }, [fen, analyzePosition]);
 
   return {
     bestMove,

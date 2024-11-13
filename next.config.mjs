@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: process.env.NEXT_PUBLIC_ENV === "prod",
   images: {
     remotePatterns: [
       {
