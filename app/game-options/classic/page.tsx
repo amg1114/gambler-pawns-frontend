@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 
+// Importing option array
+import { arraySimplifyGameModes } from "@/app/game-history/_components/optionArrays";
+
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -23,7 +26,6 @@ import { useState } from "react";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
-import { GameModesDrop } from "../_components/GameModesDropdown";
 
 export default function ClassicOptionPage() {
   const router = useRouter();
@@ -66,13 +68,9 @@ export default function ClassicOptionPage() {
         Game Options
       </StyledTitle>
       <DropdownButton
-        dropDown={{
-          dropStyles: "outlined",
-          text: "Select a Game Mode",
-        }}
-      >
-        <GameModesDrop />
-      </DropdownButton>
+        options={arraySimplifyGameModes}
+        dropDown={{ dropStyles: "outlined", title: "All" }}
+      />
 
       <StyledTitle variant="h2" extraClasses="text-center">
         Your bet

@@ -1,10 +1,27 @@
-import {
-  setGameOptions,
-  GameOptions,
-} from "@/app/game-options/_hooks/game-options.hook";
-import { useDropDownContext } from "@/app/ui/components/DropDown/DropDownButton";
+import { GameOptions } from "@/app/game-options/_hooks/game-options.hook";
 
-const arrayGameModes: {
+export const arraySimplifyGameModes = [
+  { id: "option1", option: "All" },
+  { id: "option2", option: "Rapid" },
+  { id: "option3", option: "Blitz" },
+  { id: "option4", option: "Bullet" },
+  { id: "option5", option: "Arcade" },
+];
+
+export const arrayPlayedAsColor = [
+  { id: "option1", option: "All" },
+  { id: "option2", option: "White" },
+  { id: "option3", option: "Black" },
+];
+
+export const arrayResultType = [
+  { id: "option1", option: "All" },
+  { id: "option2", option: "I won" },
+  { id: "option3", option: "Draw" },
+  { id: "option4", option: "I lost" },
+];
+
+export const arrayGameModes: {
   text: string;
   id: string;
   config: GameOptions;
@@ -64,29 +81,3 @@ const arrayGameModes: {
     },
   },
 ];
-
-export function GameModesDrop() {
-  const { dropDown } = useDropDownContext();
-
-  function selectedOption(label: string, mode: GameOptions) {
-    const button = document.getElementById("toggleButton");
-
-    setGameOptions(mode);
-    button!.textContent = label;
-  }
-
-  return (
-    <>
-      {arrayGameModes.map((gameMode) => (
-        <span
-          key={gameMode.id}
-          className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
-          id={gameMode.id}
-          onClick={() => selectedOption(gameMode.text, gameMode.config)}
-        >
-          {gameMode.text}
-        </span>
-      ))}
-    </>
-  );
-}

@@ -7,9 +7,11 @@ import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Aguacate from "@/app/ui/icons/aguacate.png";
 import DropdownButton from "../ui/components/DropDown/DropDownButton";
-import { ResultType } from "./_components/DropDown/DropDownResultType";
-import { PlayedAsColor } from "./_components/DropDown/DropDownPlayedAsColor";
-import { SimplifyGameModesDrop } from "./_components/DropDown/DropDownGameModes";
+
+// Importing option arrays
+import { arraySimplifyGameModes } from "@/app/game-history/_components/optionArrays";
+import { arrayPlayedAsColor } from "@/app/game-history/_components/optionArrays";
+import { arrayResultType } from "@/app/game-history/_components/optionArrays";
 
 export default function GameHistoryPage() {
   return (
@@ -23,28 +25,18 @@ export default function GameHistoryPage() {
             Game Type
           </p>
           <DropdownButton
-            dropDown={{
-              dropStyles: "outlined",
-              text: "All",
-              //idText: "gameType",
-            }}
-          >
-            <SimplifyGameModesDrop />
-          </DropdownButton>
+            options={arraySimplifyGameModes}
+            dropDown={{ dropStyles: "outlined", title: "All" }}
+          />
         </div>
         <div>
           <p className={`${azeret_mono.className} pb-md font-bold`}>
             I played as
           </p>
           <DropdownButton
-            dropDown={{
-              dropStyles: "outlined",
-              text: "All",
-              //idText: "colorIPlayed",
-            }}
-          >
-            <PlayedAsColor />
-          </DropdownButton>
+            options={arrayPlayedAsColor}
+            dropDown={{ dropStyles: "outlined", title: "All" }}
+          />
         </div>
 
         <div>
@@ -52,14 +44,9 @@ export default function GameHistoryPage() {
             Result Type
           </p>
           <DropdownButton
-            dropDown={{
-              dropStyles: "outlined",
-              text: "All",
-              //idText: "resultType",
-            }}
-          >
-            <ResultType />
-          </DropdownButton>
+            options={arrayResultType}
+            dropDown={{ dropStyles: "outlined", title: "All" }}
+          />
         </div>
       </div>
       <div className="w-[386px] space-y-lg">
