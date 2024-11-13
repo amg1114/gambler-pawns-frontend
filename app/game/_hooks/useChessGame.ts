@@ -15,7 +15,7 @@ interface UseChessGameReturnType {
 /**
  * Custom hook to manage a chess game.
  *
- * @param {GameModeType} mode - The mode of the game (e.g., "rapid", "blitz", "bullet", "arcade").
+ * @param {GameModeType} mode - The mode of the game.
  * @param {any} gameData - The initial data for the game, including the player's color.
  * @param {function} [makeMoveCallback] - Optional callback function to be called when a move is made.
  * @returns {UseChessGameReturnType} - Returns an object containing the current position, game history moves, onDrop function, updateGameFromOpponent function, and innerMakeMove function.

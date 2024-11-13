@@ -27,35 +27,26 @@ export default function BotPage() {
     [game, onDrop],
   );
 
-  const { bestMove, isThinking, analyzePosition } = useStockfish(position);
+  const { bestMove, analyzePosition } = useStockfish();
 
   // triggers the bot to analyze the position when it's the bot's turn
   useEffect(() => {
-    if (game.turn() === "b" && isProcessingMove && !isThinking) {
-      analyzePosition(position, "b");
+    if (game.turn() === "b" && isProcessingMove) {
+      analyzePosition(game.fen(), "b");
     }
-  }, [game, isProcessingMove, position, analyzePosition, isThinking]);
+  }, [game, isProcessingMove, analyzePosition]);
 
   // trigger bot's moves
   useEffect(() => {
     const makeBotMove = async () => {
-      console.warn("Verificando condiciones para mover:", {
-        turn: game.turn(),
-        bestMove,
-        isThinking,
-        isProcessingMove,
-        isGameOver: game.isGameOver(),
-      });
-
       // only proceed if it's the bot's turn and it's not already processing a move
       if (
         game.turn() === "b" &&
         bestMove &&
-        !isThinking &&
         isProcessingMove &&
         !game.isGameOver()
       ) {
-        console.log("Ejecutando movimiento del bot:", bestMove);
+        console.info("Ejecutando movimiento del bot:", bestMove);
 
         // small delay to make the bot move more human-like
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -71,7 +62,7 @@ export default function BotPage() {
     };
 
     makeBotMove();
-  }, [bestMove, isThinking, game, makeMove, isProcessingMove]);
+  }, [bestMove, game, makeMove, isProcessingMove]);
 
   return (
     <div className="p-4 container mx-auto">

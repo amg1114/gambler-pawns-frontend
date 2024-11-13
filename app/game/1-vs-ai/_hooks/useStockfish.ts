@@ -1,23 +1,28 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
+interface UseStockFishReturnType {
+  bestMove: string | null;
+  isThinking: boolean;
+  evaluation: string;
+  engineReady: boolean;
+  analyzePosition: (fen: string, side: "w" | "b") => void;
+}
+
 /**
  * Custom hook to interact with the Stockfish chess engine.
  *
- * @param {string} fen - The FEN string representing the current position of the chess game.
- * @returns {object} - Returns an object containing the best move, thinking status, evaluation, engine readiness, and a function to analyze the position.
+ * @returns {UseStockFishReturnType} - Returns an object containing the best move, thinking status, evaluation, engine readiness, and a function to analyze the position.
  */
-export const useStockfish = (fen: string) => {
+export const useStockfish = (): UseStockFishReturnType => {
   const [bestMove, setBestMove] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [evaluation, setEvaluation] = useState<string>("");
   const [engineReady, setEngineReady] = useState(false);
   const [worker, setWorker] = useState<Worker | null>(null);
 
+  // stockfish lifecycle: create worker, initialize, analyze, terminate
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // initialize Stockfish engine
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     const supportsCORS = "SharedArrayBuffer" in window;
 
@@ -74,7 +79,7 @@ export const useStockfish = (fen: string) => {
      *
      * @param {ErrorEvent} error - The error event from the Stockfish worker.
      */
-    stockfish.onerror = (error) => {
+    stockfish.onerror = (error: ErrorEvent) => {
       console.error("Error from Stockfish worker:", error);
     };
 
@@ -86,7 +91,7 @@ export const useStockfish = (fen: string) => {
         stockfish.terminate();
       }
     };
-  }, [fen]);
+  }, []);
 
   /**
    * Analyzes the given position using Stockfish.
