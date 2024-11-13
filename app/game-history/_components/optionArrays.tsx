@@ -22,13 +22,13 @@ export const arrayResultType = [
 ];
 
 export const arrayGameModes: {
-  text: string;
   id: string;
+  option: string;
   config: GameOptions;
 }[] = [
   {
-    text: "Rapid, 15 min, +10 sec",
     id: "option1",
+    option: "Rapid, 15 min, +10 sec",
     config: {
       mode: "rapid",
       timeInMinutes: 15,
@@ -36,8 +36,8 @@ export const arrayGameModes: {
     },
   },
   {
-    text: "Rapid, 10 min",
     id: "option2",
+    option: "Rapid, 10 min",
     config: {
       mode: "rapid",
       timeInMinutes: 10,
@@ -45,8 +45,8 @@ export const arrayGameModes: {
     },
   },
   {
-    text: "Blitz, 5 min",
     id: "option3",
+    option: "Blitz, 5 min",
     config: {
       mode: "blitz",
       timeInMinutes: 5,
@@ -54,8 +54,8 @@ export const arrayGameModes: {
     },
   },
   {
-    text: "Blitz, 3 min, +2 sec",
     id: "option4",
+    option: "Blitz, 3 min, +2 sec",
     config: {
       mode: "blitz",
       timeInMinutes: 3,
@@ -63,8 +63,8 @@ export const arrayGameModes: {
     },
   },
   {
-    text: "Bullet, 1 min",
     id: "option5",
+    option: "Bullet, 1 min",
     config: {
       mode: "bullet",
       timeInMinutes: 1,
@@ -72,8 +72,8 @@ export const arrayGameModes: {
     },
   },
   {
-    text: "Bullet, 2 min +1 sec",
     id: "option6",
+    option: "Bullet, 2 min +1 sec",
     config: {
       mode: "bullet",
       timeInMinutes: 2,
