@@ -2,7 +2,7 @@
 import Image from "next/image";
 
 // Importing option array
-import { arraySimplifyGameModes } from "@/app/game-history/_components/optionArrays";
+import { arrayGameModes } from "@/app/game-history/_components/optionArrays";
 
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -68,8 +68,8 @@ export default function ClassicOptionPage() {
         Game Options
       </StyledTitle>
       <DropdownButton
-        options={arraySimplifyGameModes}
-        dropDown={{ dropStyles: "outlined", title: "All" }}
+        options={arrayGameModes}
+        dropDown={{ dropStyles: "outlined", title: "Select a Game Mode" }}
       />
 
       <StyledTitle variant="h2" extraClasses="text-center">

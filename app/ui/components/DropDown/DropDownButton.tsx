@@ -7,6 +7,10 @@ import Image from "next/image";
 // Importing icons
 import Clock from "@/app/ui/icons/clock.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
+import {
+  GameOptions,
+  setGameOptions,
+} from "@/app/game-options/_hooks/game-options.hook";
 
 interface DropDownOption {
   id: string;
@@ -33,8 +37,9 @@ export default function DropdownButton({ options, dropDown }: DropDownProps) {
   };
 
   // Función para cambiar el texto del boton por la opción seleccionada
-  function selectedOption(mode: string) {
-    setSelectedLabel(mode);
+  function selectedOption(label: string, mode: GameOptions) {
+    setGameOptions(mode);
+    setSelectedLabel(label);
     setIsDropdownVisible(false);
   }
 
@@ -75,7 +80,7 @@ export default function DropdownButton({ options, dropDown }: DropDownProps) {
               key={gameMode.id}
               className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
               id={gameMode.id}
-              onClick={() => selectedOption(gameMode.option)}
+              onClick={() => selectedOption(gameMode.option, gameMode.config)}
             >
               {gameMode.option}
             </span>
