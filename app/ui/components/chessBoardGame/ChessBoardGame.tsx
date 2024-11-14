@@ -135,8 +135,12 @@ export function ChessBoardGame({
   const handleSquareClick = useCallback(
     (square: Square, piece: string | undefined) => {
       setRightClickedSquares([]);
+      console.log("handleSquareClick", piece, selectedPiece);
 
-      if (piece) {
+      const isTryingToCaptureOpponentPieces =
+        selectedPiece && piece && piece[0] !== selectedPiece[0];
+
+      if (piece && !isTryingToCaptureOpponentPieces) {
         setSelectedPiece(piece);
         setSelectedSquare(square);
       } else if (selectedPiece && selectedSquare) {
