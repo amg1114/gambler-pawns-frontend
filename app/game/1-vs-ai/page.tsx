@@ -2,18 +2,20 @@
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import { useChessGame } from "../_hooks/useChessGame";
 import { useStockfish } from "./_hooks/useStockfish";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Square } from "chess.js";
+import EndGameAgainsBotModal from "./_components/EndGameAgainsBotModal";
 
 export default function BotPage() {
   // TODO: in the future have a form with options after game such as engine level (like elo), side, game mode
   const [isProcessingMove, setIsProcessingMove] = useState(false);
 
-  const gameData = {
-    color: "w",
-  };
+  const gameData = useMemo(() => ({ color: "w" }), []);
 
-  const { game, position, onDrop, makeMove } = useChessGame("rapid", gameData);
+  const { game, position, onDrop, makeMove, endGameData } = useChessGame(
+    "rapid",
+    gameData,
+  );
 
   const handleDrop = useCallback(
     (from: Square, to: Square) => {
@@ -47,7 +49,6 @@ export default function BotPage() {
         !game.isGameOver()
       ) {
         console.info("Ejecutando movimiento del bot:", bestMove);
-
         // small delay to make the bot move more human-like
         await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -67,6 +68,11 @@ export default function BotPage() {
   return (
     <div className="p-4 container mx-auto">
       <ChessBoardGame position={position} onDrop={handleDrop} side="white" />
+      <EndGameAgainsBotModal
+        isOpen={endGameData !== null}
+        winner={game.isDraw() ? "Draw" : game.turn() === "w" ? "Bot" : "You"}
+        reason={endGameData?.reason || ""}
+      />
     </div>
   );
 }

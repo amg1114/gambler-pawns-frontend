@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useLayoutEffect, useCallback } from "react";
 
 interface UseStockFishReturnType {
   bestMove: string | null;
@@ -22,7 +22,7 @@ export const useStockfish = (): UseStockFishReturnType => {
   const [worker, setWorker] = useState<Worker | null>(null);
 
   // stockfish lifecycle: create worker, initialize, analyze, terminate
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     const supportsCORS = "SharedArrayBuffer" in window;
 
