@@ -67,7 +67,13 @@ export default function BotPage() {
 
   return (
     <div className="p-4 container mx-auto">
-      <ChessBoardGame position={position} onDrop={handleDrop} side="white" />
+      <ChessBoardGame
+        position={position}
+        onDrop={handleDrop}
+        side="white"
+        game={game}
+        arePremovesAllowed={true}
+      />
       <EndGameAgainsBotModal
         isOpen={endGameData !== null}
         winner={game.isDraw() ? "Draw" : game.turn() === "w" ? "Bot" : "You"}

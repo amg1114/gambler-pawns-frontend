@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
@@ -6,9 +6,26 @@ import { Chess } from "chess.js";
 const STYLE_COLORS = {
   LIGTH_SQUARES: "#edeed1",
   DARK_SQUARES: "#427119",
-  SELECTED_SQUARE: "rgba(244, 246, 130, 0.6)",
-  RIGHT_CLICKED_SQUARE: "rgba(255, 0, 0, 0.6)",
   SQUARE_TO_DROP: "rgba(243, 255, 79, 0.75)",
+  SELECTED_SQUARE: "rgba(251, 255, 12, 0.6)",
+  RIGHT_CLICKED_SQUARE: "rgba(255, 0, 0, 0.6)",
+  CHECK_SQUARE: "rgba(255, 0, 0, 0.6)",
+  WINNER_SQUARE: "rgba(0, 255, 0, 0.6)",
+};
+
+const getPiecePosition = (
+  game: Chess,
+  piece: { type: string; color: string },
+): Square[] => {
+  const squares: Square[] = [];
+  game.board().map((row) => {
+    row.map((p) => {
+      if (p?.color === piece.color && p?.type === piece.type) {
+        squares.push(p.square);
+      }
+    });
+  });
+  return squares;
 };
 
 interface ChessBoardGameProps {
@@ -28,17 +45,53 @@ export function ChessBoardGame({
   position,
   onDrop,
   arePremovesAllowed,
+  game,
 }: ChessBoardGameProps) {
   /** Represents the currently selected piece. */
   const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
+
   /** Represents the currently selected square. */
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
+
   /** Represents the square selected after a move (source square). */
   const [squareSelectedAfterMove, setSquareSelectedAfterMove] =
     useState<Square | null>(null);
+
   /** Represents the square selected before a move (target square). */
   const [squareSlectedBeforeMove, setSquareSelectedBeforeMove] =
     useState<Square | null>(null);
+
+  /** Represents the square of the king in check. */
+  const [kingInCheck, setKingInCheck] = useState<Square | null>(null);
+
+  /** Represents the square of the winning king in checkmate. */
+  const [winnerKing, setWinnerKing] = useState<Square | null>(null);
+
+  /** Represents the square of the losing king in checkmate. */
+  const [loserKing, setLoserKing] = useState<Square | null>(null);
+
+  // Update check and mate status of the king after each move
+  useEffect(() => {
+    if (!game) return;
+    const currentColor = game.turn();
+
+    if (game.isCheck()) {
+      setKingInCheck(
+        getPiecePosition(game, { type: "k", color: currentColor })[0],
+      );
+    } else {
+      setKingInCheck(null);
+    }
+
+    if (game.isCheckmate()) {
+      const winner = currentColor === "w" ? "b" : "w";
+
+      setWinnerKing(getPiecePosition(game, { type: "k", color: winner })[0]);
+      setLoserKing(
+        getPiecePosition(game, { type: "k", color: currentColor })[0],
+      );
+    }
+  }, [game]);
 
   /**
    * Handles the drop event of a piece on the chessboard.
@@ -175,18 +228,17 @@ export function ChessBoardGame({
   const customSquareStyles = useMemo(() => {
     const styles: { [key: string]: React.CSSProperties } = {};
 
+    // selected squares
     if (selectedSquare) {
       styles[selectedSquare] = {
         backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
       };
     }
-
     if (squareSelectedAfterMove) {
       styles[squareSelectedAfterMove] = {
         backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
       };
     }
-
     if (squareSlectedBeforeMove) {
       styles[squareSlectedBeforeMove] = {
         backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
@@ -199,12 +251,33 @@ export function ChessBoardGame({
       };
     });
 
+    // check / mate squares
+    if (kingInCheck) {
+      styles[kingInCheck] = {
+        backgroundColor: STYLE_COLORS.CHECK_SQUARE,
+      };
+    }
+    if (winnerKing) {
+      styles[winnerKing] = {
+        backgroundColor: STYLE_COLORS.WINNER_SQUARE,
+      };
+    }
+
+    if (loserKing) {
+      styles[loserKing] = {
+        backgroundColor: STYLE_COLORS.CHECK_SQUARE,
+      };
+    }
+
     return styles;
   }, [
     selectedSquare,
     squareSelectedAfterMove,
     squareSlectedBeforeMove,
     rightClickedSquares,
+    kingInCheck,
+    winnerKing,
+    loserKing,
   ]);
 
   return (
