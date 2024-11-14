@@ -8,6 +8,7 @@ interface ChessBoardGameProps {
   side?: "white" | "black";
   position?: string; // FEN
   onDrop?: (sourceSquare: Square, targetSquare: Square) => boolean;
+  arePremovesAllowed?: boolean;
 }
 
 export function ChessBoardGame({
@@ -16,11 +17,14 @@ export function ChessBoardGame({
   side = "white",
   position,
   onDrop,
+  arePremovesAllowed,
 }: ChessBoardGameProps) {
   /** Represents the currently selected piece. */
   const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
   /** Represents the currently selected square. */
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
+  /** Represents the square that was right-clicked. */
+  const [rightClickedSquares, setRightClickedSquares] = useState<Square[]>([]);
 
   /**
    * Handles the click event on a square.
@@ -35,6 +39,8 @@ export function ChessBoardGame({
    */
   const handleSquareClick = useCallback(
     (square: Square, piece: string | undefined) => {
+      setRightClickedSquares([]);
+
       if (piece) {
         setSelectedPiece(piece);
         setSelectedSquare(square);
@@ -45,6 +51,13 @@ export function ChessBoardGame({
       }
     },
     [onDrop, selectedPiece, selectedSquare],
+  );
+
+  const handleRightClick = useCallback(
+    (square: Square) => {
+      setRightClickedSquares([...rightClickedSquares, square]);
+    },
+    [setRightClickedSquares, rightClickedSquares],
   );
 
   // TODO: obtener datos sobre las piezas de un contexto, para usar el set de piezas seleccionado por el usuario
@@ -94,6 +107,34 @@ export function ChessBoardGame({
       return pieceComponents;
     }, []);
 
+  /**
+   * Custom square styles.
+   *
+   * This constant uses `useMemo` to create custom styles for the squares based on the selected piece,
+   * the king in check, and the king in checkmate. The styles are memoized to avoid unnecessary re-renders.
+   */
+  const customSquareStyles = useMemo(() => {
+    const styles: { [key: string]: React.CSSProperties } = {};
+
+    if (selectedSquare) {
+      styles[selectedSquare] = {
+        backgroundColor: "rgba(244, 246, 130, 0.6)",
+      };
+    }
+
+    rightClickedSquares.forEach((square) => {
+      styles[square] = {
+        backgroundColor: "rgba(255, 0, 0, 0.6)",
+      };
+    });
+
+    return styles;
+  }, [selectedSquare, rightClickedSquares]);
+
+  /*
+  | customDropSquareStyle         | object: { boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)' }                                                                                                                                                                                                                 | inline CSS styling
+  | Custom drop square style object (Square being hovered over with dragged piece). 
+  */
   return (
     <div className="mx-auto max-w-screen-board">
       <Chessboard
@@ -112,7 +153,10 @@ export function ChessBoardGame({
         }}
         customPieces={customPieces}
         onPieceDrop={onDrop}
+        onSquareRightClick={handleRightClick}
         onSquareClick={handleSquareClick}
+        customSquareStyles={customSquareStyles}
+        arePremovesAllowed={arePremovesAllowed}
       />
     </div>
   );

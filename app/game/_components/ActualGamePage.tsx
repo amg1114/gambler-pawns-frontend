@@ -204,6 +204,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           position={chessGame.position}
           onDrop={chessGame.onDrop}
           side={side}
+          arePremovesAllowed={joinGameDataFormRequest?.mode === "bullet"}
         />
         <UserInfo
           isLoading={false}
