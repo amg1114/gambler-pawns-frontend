@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
 
@@ -17,11 +17,49 @@ export function ChessBoardGame({
   position,
   onDrop,
 }: ChessBoardGameProps) {
-  // TODO: obtener datos sobre las piezas de un contexto
-  const chessSet = "defaultChessSet";
-  const imgPieceFormat = "svg";
+  /** Represents the currently selected piece. */
+  const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
+  /** Represents the currently selected square. */
+  const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
+
+  /**
+   * Handles the click event on a square.
+   *
+   * This function is called when a square on the chessboard is clicked. If a piece is present
+   * on the clicked square, it sets the selected piece and square. If no piece is present and
+   * a piece is already selected, it calls the `onDrop` function with the selected square and
+   * the clicked square, and then clears the selected piece and square.
+   *
+   * @param {Square} square - The clicked square.
+   * @param {string | undefined} piece - The piece on the clicked square, if any.
+   */
+  const handleSquareClick = useCallback(
+    (square: Square, piece: string | undefined) => {
+      if (piece) {
+        setSelectedPiece(piece);
+        setSelectedSquare(square);
+      } else if (selectedPiece && selectedSquare) {
+        onDrop?.(selectedSquare, square);
+        setSelectedPiece(null);
+        setSelectedSquare(null);
+      }
+    },
+    [onDrop, selectedPiece, selectedSquare],
+  );
+
+  // TODO: obtener datos sobre las piezas de un contexto, para usar el set de piezas seleccionado por el usuario
+  /**
+   * Custom chess pieces components.
+   *
+   * This constant uses `useMemo` to create custom chess piece components based on the selected chess set and image format.
+   * The components are memoized to avoid unnecessary re-renders.
+   *
+   * @type {Object.<string, React.FC<{ squareWidth: number }>>}
+   */
   const customPieces: { [key: string]: React.FC<{ squareWidth: number }> } =
     useMemo(() => {
+      const chessSet = "defaultChessSet";
+      const imgPieceFormat = "svg";
       const pieces = [
         "wP",
         "wN",
@@ -55,6 +93,7 @@ export function ChessBoardGame({
       });
       return pieceComponents;
     }, []);
+
   return (
     <div className="mx-auto max-w-screen-board">
       <Chessboard
@@ -73,6 +112,7 @@ export function ChessBoardGame({
         }}
         customPieces={customPieces}
         onPieceDrop={onDrop}
+        onSquareClick={handleSquareClick}
       />
     </div>
   );
