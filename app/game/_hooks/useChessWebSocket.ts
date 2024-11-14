@@ -61,7 +61,7 @@ export function useChessWebSocket(
       console.log("Draw rejected", data);
     });
 
-    socket.on("gameEnd", (data) => {
+    socket.on("gameEnd", (data: any) => {
       // set winner
       const mySide = JSON.parse(
         sessionStorage.getItem("gameData") as string,

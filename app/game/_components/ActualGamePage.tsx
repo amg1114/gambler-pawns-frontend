@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { formatTimeMs } from "../utils/formatTimeMs";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { formatTimeMs } from "../_utils/formatTimeMs";
 
 // custom hooks
 import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
@@ -71,11 +71,11 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const [playerOneTime, setPlayerOneTime] = useState(5 * 60 * 1000);
   const [playerTwoTime, setPlayerTwoTime] = useState(5 * 60 * 1000);
 
-  useEffect(() => {
-    if (!joinGameDataFormRequest) return;
+  useLayoutEffect(() => {
+    if (!joinGameDataFormRequest?.timeMinutes) return;
     setPlayerOneTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
     setPlayerTwoTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
-  }, [joinGameDataFormRequest]);
+  }, [joinGameDataFormRequest?.timeMinutes]);
 
   const handleTimerUpdate = (times: {
     playerOneTime: number;
@@ -115,7 +115,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
   const [side, setSide] = useState<"white" | "black">("white");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (loading) return;
     setSide(gameData.color);
 
