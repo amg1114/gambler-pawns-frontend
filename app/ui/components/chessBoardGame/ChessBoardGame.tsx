@@ -1,6 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
+import { Chess } from "chess.js";
+
+const STYLE_COLORS = {
+  LIGTH_SQUARES: "#edeed1",
+  DARK_SQUARES: "#427119",
+  SELECTED_SQUARE: "rgba(244, 246, 130, 0.6)",
+  RIGHT_CLICKED_SQUARE: "rgba(255, 0, 0, 0.6)",
+  SQUARE_TO_DROP: "rgba(243, 255, 79, 0.75)",
+};
 
 interface ChessBoardGameProps {
   bgDarkSquaresColor?: string;
@@ -9,11 +18,12 @@ interface ChessBoardGameProps {
   position?: string; // FEN
   onDrop?: (sourceSquare: Square, targetSquare: Square) => boolean;
   arePremovesAllowed?: boolean;
+  game?: Chess;
 }
 
 export function ChessBoardGame({
-  bgDarkSquaresColor = "#427119",
-  bgLightSquaresColor = "#edeed1",
+  bgDarkSquaresColor = STYLE_COLORS.DARK_SQUARES,
+  bgLightSquaresColor = STYLE_COLORS.LIGTH_SQUARES,
   side = "white",
   position,
   onDrop,
@@ -23,7 +33,39 @@ export function ChessBoardGame({
   const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
   /** Represents the currently selected square. */
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
-  /** Represents the square that was right-clicked. */
+  /** Represents the square selected after a move (source square). */
+  const [squareSelectedAfterMove, setSquareSelectedAfterMove] =
+    useState<Square | null>(null);
+  /** Represents the square selected before a move (target square). */
+  const [squareSlectedBeforeMove, setSquareSelectedBeforeMove] =
+    useState<Square | null>(null);
+
+  /**
+   * Handles the drop event of a piece on the chessboard.
+   *
+   * This function is called when a piece is dropped on the chessboard. It calls the `onDrop`
+   * function passed as a prop with the source and target squares. If the move is valid, it updates
+   * the state to reflect the squares involved in the move.
+   *
+   * @param {Square} sourceSquare - The square from which the piece is moved.
+   * @param {Square} targetSquare - The square to which the piece is moved.
+   * @returns {boolean} - Returns true if the move is valid, otherwise false.
+   */
+  const innerOnDrop = useCallback(
+    (sourceSquare: Square, targetSquare: Square) => {
+      const result = onDrop?.(sourceSquare, targetSquare);
+
+      if (result) {
+        setSelectedSquare(null);
+        setSquareSelectedAfterMove(sourceSquare);
+        setSquareSelectedBeforeMove(targetSquare);
+      }
+      return result ?? false;
+    },
+    [onDrop],
+  );
+
+  /** Represents the squares that were right-clicked. */
   const [rightClickedSquares, setRightClickedSquares] = useState<Square[]>([]);
 
   /**
@@ -45,22 +87,38 @@ export function ChessBoardGame({
         setSelectedPiece(piece);
         setSelectedSquare(square);
       } else if (selectedPiece && selectedSquare) {
-        onDrop?.(selectedSquare, square);
+        innerOnDrop(selectedSquare, square);
         setSelectedPiece(null);
         setSelectedSquare(null);
       }
     },
-    [onDrop, selectedPiece, selectedSquare],
+    [selectedPiece, selectedSquare, innerOnDrop],
   );
 
+  /**
+   * Handles the right-click event on a square.
+   *
+   * This function is called when a square on the chessboard is right-clicked. If the square
+   * is already in the `rightClickedSquares` array, it removes the square from the array.
+   * Otherwise, it adds the square to the array.
+   *
+   * @param {Square} square - The right-clicked square.
+   */
   const handleRightClick = useCallback(
     (square: Square) => {
-      setRightClickedSquares([...rightClickedSquares, square]);
+      setRightClickedSquares((prevSquares) => {
+        if (prevSquares.includes(square)) {
+          // if the square is already right clicked, remove it
+          return prevSquares.filter((s) => s !== square);
+        } else {
+          // if not add it
+          return [...prevSquares, square];
+        }
+      });
     },
-    [setRightClickedSquares, rightClickedSquares],
+    [setRightClickedSquares],
   );
 
-  // TODO: obtener datos sobre las piezas de un contexto, para usar el set de piezas seleccionado por el usuario
   /**
    * Custom chess pieces components.
    *
@@ -71,6 +129,7 @@ export function ChessBoardGame({
    */
   const customPieces: { [key: string]: React.FC<{ squareWidth: number }> } =
     useMemo(() => {
+      // TODO: obtener datos sobre las piezas de un contexto, para usar el set de piezas seleccionado por el usuario
       const chessSet = "defaultChessSet";
       const imgPieceFormat = "svg";
       const pieces = [
@@ -118,23 +177,36 @@ export function ChessBoardGame({
 
     if (selectedSquare) {
       styles[selectedSquare] = {
-        backgroundColor: "rgba(244, 246, 130, 0.6)",
+        backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
+      };
+    }
+
+    if (squareSelectedAfterMove) {
+      styles[squareSelectedAfterMove] = {
+        backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
+      };
+    }
+
+    if (squareSlectedBeforeMove) {
+      styles[squareSlectedBeforeMove] = {
+        backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
       };
     }
 
     rightClickedSquares.forEach((square) => {
       styles[square] = {
-        backgroundColor: "rgba(255, 0, 0, 0.6)",
+        backgroundColor: STYLE_COLORS.RIGHT_CLICKED_SQUARE,
       };
     });
 
     return styles;
-  }, [selectedSquare, rightClickedSquares]);
+  }, [
+    selectedSquare,
+    squareSelectedAfterMove,
+    squareSlectedBeforeMove,
+    rightClickedSquares,
+  ]);
 
-  /*
-  | customDropSquareStyle         | object: { boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)' }                                                                                                                                                                                                                 | inline CSS styling
-  | Custom drop square style object (Square being hovered over with dragged piece). 
-  */
   return (
     <div className="mx-auto max-w-screen-board">
       <Chessboard
@@ -152,10 +224,13 @@ export function ChessBoardGame({
           backgroundColor: bgLightSquaresColor,
         }}
         customPieces={customPieces}
-        onPieceDrop={onDrop}
+        onPieceDrop={innerOnDrop}
+        customDropSquareStyle={{
+          boxShadow: `inset 0 0 2px 6px ${STYLE_COLORS.SQUARE_TO_DROP}`,
+        }}
+        customSquareStyles={customSquareStyles}
         onSquareRightClick={handleRightClick}
         onSquareClick={handleSquareClick}
-        customSquareStyles={customSquareStyles}
         arePremovesAllowed={arePremovesAllowed}
       />
     </div>
