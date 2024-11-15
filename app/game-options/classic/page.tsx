@@ -2,7 +2,7 @@
 import Image from "next/image";
 
 // Importing option array
-import { arrayGameModes } from "@/app/game-history/_components/optionArrays";
+import { arrayGameModes } from "@/app/ui/components/DropDown/optionArrays";
 
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -30,6 +30,7 @@ import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
 export default function ClassicOptionPage() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
+  const [gameMode, setGameMode] = useState<string>("Select a Game Mode");
 
   const handleCancelSubmission = () => {
     clearGameOptions();
@@ -70,6 +71,8 @@ export default function ClassicOptionPage() {
       <DropdownButton
         options={arrayGameModes}
         dropDown={{ dropStyles: "outlined", title: "Select a Game Mode" }}
+        selectedId={gameMode}
+        setSelectedId={setGameMode}
       />
 
       <StyledTitle variant="h2" extraClasses="text-center">

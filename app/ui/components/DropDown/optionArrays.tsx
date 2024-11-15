@@ -1,24 +1,25 @@
 import { GameOptions } from "@/app/game-options/_hooks/game-options.hook";
 
 export const arraySimplifyGameModes = [
-  { id: "option1", option: "All" },
-  { id: "option2", option: "Rapid" },
-  { id: "option3", option: "Blitz" },
-  { id: "option4", option: "Bullet" },
-  { id: "option5", option: "Arcade" },
+  { id: "All", option: "All" },
+  { id: "rapid", option: "Rapid" },
+  { id: "blitz", option: "Blitz" },
+  { id: "bullet", option: "Bullet" },
+  { id: "arcade", option: "Arcade" },
 ];
 
 export const arrayPlayedAsColor = [
-  { id: "option1", option: "All" },
-  { id: "option2", option: "White" },
-  { id: "option3", option: "Black" },
+  { id: "All", option: "All" },
+  { id: "w", option: "White" },
+  { id: "b", option: "Black" },
 ];
 
 export const arrayResultType = [
-  { id: "option1", option: "All" },
-  { id: "option2", option: "I won" },
-  { id: "option3", option: "Draw" },
-  { id: "option4", option: "I lost" },
+  { id: "All", option: "All" },
+  { id: "won", option: "I won" },
+  { id: "Draw Offer", option: "Draw" },
+  { id: "Resing", option: "Resing" },
+  { id: "loss", option: "I lost" },
 ];
 
 export const arrayGameModes: {

@@ -11,6 +11,7 @@ import {
   GameOptions,
   setGameOptions,
 } from "@/app/game-options/_hooks/game-options.hook";
+import { set } from "zod";
 
 interface DropDownOption {
   id: string;
@@ -25,9 +26,16 @@ type Dropdown = {
 interface DropDownProps {
   options: DropDownOption[];
   dropDown: Dropdown;
+  selectedId: string;
+  setSelectedId: (id: string) => void;
 }
 
-export default function DropdownButton({ options, dropDown }: DropDownProps) {
+export default function DropdownButton({
+  options,
+  dropDown,
+  selectedId,
+  setSelectedId,
+}: DropDownProps) {
   // Estado para controlar la visibilidad del dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState(dropDown.title);
@@ -37,9 +45,10 @@ export default function DropdownButton({ options, dropDown }: DropDownProps) {
   };
 
   // Función para cambiar el texto del boton por la opción seleccionada
-  function selectedOption(label: string, mode: GameOptions) {
+  function selectedOption(id: string, label: string, mode: GameOptions) {
     setGameOptions(mode);
     setSelectedLabel(label);
+    setSelectedId(id);
     setIsDropdownVisible(false);
   }
 
@@ -79,8 +88,10 @@ export default function DropdownButton({ options, dropDown }: DropDownProps) {
             <span
               key={gameMode.id}
               className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
-              id={gameMode.id}
-              onClick={() => selectedOption(gameMode.option, gameMode.config)}
+              id={selectedId}
+              onClick={() =>
+                selectedOption(gameMode.id, gameMode.option, gameMode.config)
+              }
             >
               {gameMode.option}
             </span>
