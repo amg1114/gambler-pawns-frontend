@@ -26,27 +26,29 @@ type Dropdown = {
 interface DropDownProps {
   options: DropDownOption[];
   dropDown: Dropdown;
-  selectedLabel: string;
-  setSelectedLabel: (label: string) => void;
+  selectedId: string;
+  setSelectedId: (id: string) => void;
 }
 
 export default function DropdownButton({
   options,
   dropDown,
-  selectedLabel,
-  setSelectedLabel,
+  selectedId,
+  setSelectedId,
 }: DropDownProps) {
   // Estado para controlar la visibilidad del dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
+  const [selectedLabel, setSelectedLabel] = useState(dropDown.title);
   // Función para alternar la visibilidad del dropdown
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
   };
 
   // Función para cambiar el texto del boton por la opción seleccionada
-  function selectedOption(label: string, mode: GameOptions) {
+  function selectedOption(id: string, label: string, mode: GameOptions) {
     setGameOptions(mode);
     setSelectedLabel(label);
+    setSelectedId(id);
     setIsDropdownVisible(false);
   }
 
@@ -86,8 +88,10 @@ export default function DropdownButton({
             <span
               key={gameMode.id}
               className="block cursor-pointer py-sm pl-md hover:bg-dark-1"
-              id={gameMode.id}
-              onClick={() => selectedOption(gameMode.option, gameMode.config)}
+              id={selectedId}
+              onClick={() =>
+                selectedOption(gameMode.id, gameMode.option, gameMode.config)
+              }
             >
               {gameMode.option}
             </span>

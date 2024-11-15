@@ -13,11 +13,9 @@ import { arrayPlayedAsColor } from "@/app/ui/components/DropDown/optionArrays";
 import { arrayResultType } from "@/app/ui/components/DropDown/optionArrays";
 
 export default function GameHistoryPage() {
-  const [selectedGameMode, setSelectedGameMode] = useState("All");
-  const [selectedPlayedAs, setSelectedPlayedAs] = useState("All");
-  const [selectedResultType, setSelectedResultType] = useState("All");
-
-  console.log(selectedGameMode, selectedPlayedAs, selectedResultType);
+  const [selectedIdGameMode, setSelectedIdGameMode] = useState("All");
+  const [selectedIdPlayedAs, setSelectedIdPlayedAs] = useState("All");
+  const [selectedIdResultType, setSelectedIdResultType] = useState("All");
 
   return (
     <section className="flex flex-col items-center space-y-lg">
@@ -32,8 +30,8 @@ export default function GameHistoryPage() {
           <DropdownButton
             options={arraySimplifyGameModes}
             dropDown={{ dropStyles: "outlined", title: "All" }}
-            selectedLabel={selectedGameMode}
-            setSelectedLabel={setSelectedGameMode}
+            selectedId={selectedIdGameMode}
+            setSelectedId={setSelectedIdGameMode}
           />
         </div>
         <div>
@@ -43,8 +41,8 @@ export default function GameHistoryPage() {
           <DropdownButton
             options={arrayPlayedAsColor}
             dropDown={{ dropStyles: "outlined", title: "All" }}
-            selectedLabel={selectedPlayedAs}
-            setSelectedLabel={setSelectedPlayedAs}
+            selectedId={selectedIdPlayedAs}
+            setSelectedId={setSelectedIdPlayedAs}
           />
         </div>
 
@@ -55,12 +53,18 @@ export default function GameHistoryPage() {
           <DropdownButton
             options={arrayResultType}
             dropDown={{ dropStyles: "outlined", title: "All" }}
-            selectedLabel={selectedResultType}
-            setSelectedLabel={setSelectedResultType}
+            selectedId={selectedIdResultType}
+            setSelectedId={setSelectedIdResultType}
           />
         </div>
       </div>
-      <GameResume />
+      <GameResume
+        options={{
+          GameMode: selectedIdGameMode,
+          ResultType: selectedIdResultType,
+          PlayedAs: selectedIdPlayedAs,
+        }}
+      />
     </section>
   );
 }

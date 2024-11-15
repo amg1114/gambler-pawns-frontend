@@ -71,8 +71,8 @@ export default function ClassicOptionPage() {
       <DropdownButton
         options={arrayGameModes}
         dropDown={{ dropStyles: "outlined", title: "Select a Game Mode" }}
-        selectedLabel={gameMode}
-        setSelectedLabel={setGameMode}
+        selectedId={gameMode}
+        setSelectedId={setGameMode}
       />
 
       <StyledTitle variant="h2" extraClasses="text-center">

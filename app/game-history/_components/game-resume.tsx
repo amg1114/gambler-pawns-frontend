@@ -16,15 +16,34 @@ interface GamesHistory {
   mode: string;
   gameDate: string;
 }
-export default function GameResume() {
+
+type Options = {
+  GameMode: string;
+  ResultType: string;
+  PlayedAs: string;
+};
+
+interface GameResumeProps {
+  options: Options;
+}
+
+export default function GameResume({ options }: GameResumeProps) {
   const { data: session } = useSession();
   const [games, setGames] = useState<GamesHistory[]>([]);
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(
-          `http://[::1]:8000/api/v1/game-history?userId=${session?.data.userId}`,
-        );
+        let url = `http://[::1]:8000/api/v1/game-history?userId=${session?.data.userId}`;
+        if (options.GameMode !== "All") {
+          url += `&mode=${options.GameMode}`;
+        }
+        if (options.ResultType !== "All") {
+          url += `&result=${options.ResultType}`;
+        }
+        if (options.PlayedAs !== "All") {
+          url += `&side=${options.PlayedAs}`;
+        }
+        const response = await axios.get(url);
         setGames(response.data.data); // Ajusta la estructura según tu API &mode=${}&result=${}&side=${}
       } catch (error) {
         console.error("Error fetching friends:", error);
@@ -33,9 +52,8 @@ export default function GameResume() {
 
     if (session) {
       fetchGames();
-      console.log(games);
     }
-  }, [session]);
+  }, [session, options.GameMode, options.ResultType, options.PlayedAs]);
 
   return (
     <div className="w-[334px] space-y-lg">
