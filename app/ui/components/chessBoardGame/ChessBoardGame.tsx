@@ -94,6 +94,70 @@ export function ChessBoardGame({
   }, [game]);
 
   /**
+   * Checks if the move is a king-side castling.
+   * @returns {boolean} - Returns true if the move is a valid king-side castling, otherwise false.
+   */
+  const isKingSideCastling = useCallback(
+    (
+      sourceSquare: Square,
+      targetSquare: Square,
+      color: "w" | "b",
+      game: Chess,
+    ) => {
+      return (
+        sourceSquare === (color === "w" ? "e1" : "e8") &&
+        targetSquare === (color === "w" ? "h1" : "h8") &&
+        game.getCastlingRights(color).k
+      );
+    },
+    [],
+  );
+
+  /**
+   * Checks if the move is a queen-side castling.
+   * @returns {boolean} - Returns true if the move is a valid queen-side castling, otherwise false.
+   */
+  const isQueenSideCastling = useCallback(
+    (
+      sourceSquare: Square,
+      targetSquare: Square,
+      color: "w" | "b",
+      game: Chess,
+    ) => {
+      return (
+        sourceSquare === (color === "w" ? "e1" : "e8") &&
+        targetSquare === (color === "w" ? "a1" : "a8") &&
+        game.getCastlingRights(color).q
+      );
+    },
+    [],
+  );
+
+  /**
+   * Handles the castling move.
+   *
+   * This function checks if the move is a king-side or queen-side castling and performs the castling move.
+   * @returns {boolean} - Returns true if the castling move is valid and performed, otherwise false.
+   */
+  const handleCastling = useCallback(
+    (
+      sourceSquare: Square,
+      targetSquare: Square,
+      color: "w" | "b",
+      onDrop: (sourceSquare: Square, targetSquare: Square) => boolean,
+      game: Chess,
+    ): boolean => {
+      if (isKingSideCastling(sourceSquare, targetSquare, color, game)) {
+        return onDrop(sourceSquare, color === "w" ? "g1" : "g8");
+      } else if (isQueenSideCastling(sourceSquare, targetSquare, color, game)) {
+        return onDrop(sourceSquare, color === "w" ? "c1" : "c8");
+      }
+      return false;
+    },
+    [isKingSideCastling, isQueenSideCastling],
+  );
+
+  /**
    * Handles the drop event of a piece on the chessboard.
    *
    * This function is called when a piece is dropped on the chessboard. It calls the `onDrop`
@@ -106,16 +170,42 @@ export function ChessBoardGame({
    */
   const innerOnDrop = useCallback(
     (sourceSquare: Square, targetSquare: Square) => {
-      const result = onDrop?.(sourceSquare, targetSquare);
+      if (!game) return false;
+
+      const sourcePiece = game.get(sourceSquare);
+      const targetPiece = game.get(targetSquare);
+
+      let result = false;
+
+      if (
+        sourcePiece &&
+        targetPiece &&
+        sourcePiece.color === targetPiece.color &&
+        sourcePiece.type === "k" &&
+        targetPiece.type === "r"
+      ) {
+        if (onDrop) {
+          result = handleCastling(
+            sourceSquare,
+            targetSquare,
+            sourcePiece.color,
+            onDrop,
+            game,
+          );
+        }
+      } else {
+        result = onDrop?.(sourceSquare, targetSquare) ?? false;
+      }
 
       if (result) {
         setSelectedSquare(null);
         setSquareSelectedAfterMove(sourceSquare);
         setSquareSelectedBeforeMove(targetSquare);
       }
-      return result ?? false;
+
+      return result;
     },
-    [onDrop],
+    [game, handleCastling, onDrop],
   );
 
   /** Represents the squares that were right-clicked. */
@@ -135,18 +225,28 @@ export function ChessBoardGame({
   const handleSquareClick = useCallback(
     (square: Square, piece: string | undefined) => {
       setRightClickedSquares([]);
-      console.log("handleSquareClick", piece, selectedPiece);
 
+      console.log("selectedPiece", selectedPiece);
       const isTryingToCaptureOpponentPieces =
         selectedPiece && piece && piece[0] !== selectedPiece[0];
 
-      if (piece && !isTryingToCaptureOpponentPieces) {
+      const isTryingToCastle =
+        selectedPiece &&
+        piece &&
+        piece[0] === selectedPiece[0] &&
+        (piece[1] === "R" || piece[1] === "K");
+
+      if (piece && !isTryingToCaptureOpponentPieces && !isTryingToCastle) {
         setSelectedPiece(piece);
         setSelectedSquare(square);
       } else if (selectedPiece && selectedSquare) {
         innerOnDrop(selectedSquare, square);
         setSelectedPiece(null);
         setSelectedSquare(null);
+      } else {
+        // TODO: handle premoves
+        // add premoves to queue
+        // color premoves
       }
     },
     [selectedPiece, selectedSquare, innerOnDrop],
