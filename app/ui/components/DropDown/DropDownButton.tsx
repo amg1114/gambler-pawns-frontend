@@ -11,6 +11,7 @@ import {
   GameOptions,
   setGameOptions,
 } from "@/app/game-options/_hooks/game-options.hook";
+import { set } from "zod";
 
 interface DropDownOption {
   id: string;
@@ -25,12 +26,18 @@ type Dropdown = {
 interface DropDownProps {
   options: DropDownOption[];
   dropDown: Dropdown;
+  selectedLabel: string;
+  setSelectedLabel: (label: string) => void;
 }
 
-export default function DropdownButton({ options, dropDown }: DropDownProps) {
+export default function DropdownButton({
+  options,
+  dropDown,
+  selectedLabel,
+  setSelectedLabel,
+}: DropDownProps) {
   // Estado para controlar la visibilidad del dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
-  const [selectedLabel, setSelectedLabel] = useState(dropDown.title);
   // Función para alternar la visibilidad del dropdown
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);

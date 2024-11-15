@@ -1,19 +1,24 @@
 "use client";
-import { azeret_mono, nunito } from "@/app/ui/fonts";
-import Image from "next/image";
+import { azeret_mono } from "@/app/ui/fonts";
+import { useState } from "react";
 
 // Importing components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import StyledButton from "@/app/ui/components/typography/StyledButton";
-import Aguacate from "@/app/ui/icons/aguacate.png";
-import DropdownButton from "../ui/components/DropDown/DropDownButton";
+import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
+import GameResume from "@/app/game-history/_components/game-resume";
 
 // Importing option arrays
-import { arraySimplifyGameModes } from "@/app/game-history/_components/optionArrays";
-import { arrayPlayedAsColor } from "@/app/game-history/_components/optionArrays";
-import { arrayResultType } from "@/app/game-history/_components/optionArrays";
+import { arraySimplifyGameModes } from "@/app/ui/components/DropDown/optionArrays";
+import { arrayPlayedAsColor } from "@/app/ui/components/DropDown/optionArrays";
+import { arrayResultType } from "@/app/ui/components/DropDown/optionArrays";
 
 export default function GameHistoryPage() {
+  const [selectedGameMode, setSelectedGameMode] = useState("All");
+  const [selectedPlayedAs, setSelectedPlayedAs] = useState("All");
+  const [selectedResultType, setSelectedResultType] = useState("All");
+
+  console.log(selectedGameMode, selectedPlayedAs, selectedResultType);
+
   return (
     <section className="flex flex-col items-center space-y-lg">
       <div className="w-[334px] space-y-lg">
@@ -27,6 +32,8 @@ export default function GameHistoryPage() {
           <DropdownButton
             options={arraySimplifyGameModes}
             dropDown={{ dropStyles: "outlined", title: "All" }}
+            selectedLabel={selectedGameMode}
+            setSelectedLabel={setSelectedGameMode}
           />
         </div>
         <div>
@@ -36,6 +43,8 @@ export default function GameHistoryPage() {
           <DropdownButton
             options={arrayPlayedAsColor}
             dropDown={{ dropStyles: "outlined", title: "All" }}
+            selectedLabel={selectedPlayedAs}
+            setSelectedLabel={setSelectedPlayedAs}
           />
         </div>
 
@@ -46,29 +55,12 @@ export default function GameHistoryPage() {
           <DropdownButton
             options={arrayResultType}
             dropDown={{ dropStyles: "outlined", title: "All" }}
+            selectedLabel={selectedResultType}
+            setSelectedLabel={setSelectedResultType}
           />
         </div>
       </div>
-      <div className="w-[386px] space-y-lg">
-        <div className="flex">
-          <Image
-            src={Aguacate}
-            alt=""
-            width={52}
-            height={52}
-            className="h-14 w-14"
-          />
-          <ul className="pl-md">
-            <li className={`${azeret_mono.className} pb-xs font-bold`}>
-              Pepito39427 (1250)
-            </li>
-            <li className={`${nunito.className} pb-md font-light`}>
-              Classic,10min +2sec increment -3 sep 2024
-            </li>
-            <StyledButton extraClasses="py-xs px-sm">Watch Again</StyledButton>
-          </ul>
-        </div>
-      </div>
+      <GameResume />
     </section>
   );
 }
