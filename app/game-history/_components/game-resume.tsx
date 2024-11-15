@@ -1,13 +1,12 @@
 import Image from "next/image";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { azeret_mono, nunito } from "@/app/ui/fonts";
 
 // Importing components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import capitalizeFirstLetter from "@/app/lib/utils/capitalizeFirstLetter";
-
-import { useEffect, useState } from "react";
 
 interface GamesHistory {
   oponentAvatar: any;
@@ -30,6 +29,9 @@ interface GameResumeProps {
 export default function GameResume({ options }: GameResumeProps) {
   const { data: session } = useSession();
   const [games, setGames] = useState<GamesHistory[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -55,10 +57,26 @@ export default function GameResume({ options }: GameResumeProps) {
     }
   }, [session, options.GameMode, options.ResultType, options.PlayedAs]);
 
+  const indexOfLastGame = currentPage * itemsPerPage;
+  const indexOfFirstGame = indexOfLastGame - itemsPerPage;
+  const currentGames = games.slice(indexOfFirstGame, indexOfLastGame);
+
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(games.length / itemsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="w-[334px] space-y-lg">
-      {games && games.length > 0 ? (
-        games.map((game, index) => (
+      {currentGames && currentGames.length > 0 ? (
+        currentGames.map((game, index) => (
           <div key={index} className="flex">
             <Image
               src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${game.oponentAvatar}`}
@@ -84,6 +102,17 @@ export default function GameResume({ options }: GameResumeProps) {
       ) : (
         <p>No games found</p>
       )}
+      <div className="flex justify-between">
+        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+          Previous
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage >= Math.ceil(games.length / itemsPerPage)}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
