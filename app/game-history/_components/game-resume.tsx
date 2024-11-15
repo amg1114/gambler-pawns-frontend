@@ -103,15 +103,16 @@ export default function GameResume({ options }: GameResumeProps) {
         <p>No games found</p>
       )}
       <div className="flex justify-between">
-        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+        <StyledButton onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
-        </button>
-        <button
+        </StyledButton>
+        <StyledButton
+          extraClasses="pl-lg pr-lg "
           onClick={handleNextPage}
           disabled={currentPage >= Math.ceil(games.length / itemsPerPage)}
         >
           Next
-        </button>
+        </StyledButton>
       </div>
     </div>
   );

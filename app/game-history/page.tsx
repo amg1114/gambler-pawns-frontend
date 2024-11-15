@@ -18,8 +18,8 @@ export default function GameHistoryPage() {
   const [selectedIdResultType, setSelectedIdResultType] = useState("All");
 
   return (
-    <section className="flex flex-col items-center space-y-lg">
-      <div className="w-[334px] space-y-lg">
+    <section className="mt-lg grid w-[715px] grid-cols-1 gap-12 lg:grid-cols-2">
+      <div className="space-y-lg">
         <StyledTitle variant="h1" extraClasses="text-center">
           Game History
         </StyledTitle>
