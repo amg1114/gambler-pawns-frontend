@@ -13,7 +13,7 @@ interface UseChessGameReturnType {
   gameHistoryMoves: string[];
   onDrop: (sourceSquare: Square, targetSquare: Square) => boolean;
   updateGameFromOpponent: (fen: string, moveHistory: string[]) => void;
-  makeMove: (from: string, to: string, promotion: string) => boolean;
+  makeMove: (from: Square, to: Square, promotion?: string) => boolean;
   game: Chess;
   endGameData: EndGameDataType | null;
 }
@@ -80,28 +80,39 @@ export function useChessGame(
    * @param {string} to - The ending square of the piece to move (e.g., "e4").
    * @param {string} promotion - The piece to promote to if a pawn reaches the last rank (e.g., "q" for queen).
    * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
+   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
    */
   const makeMove = useCallback(
-    (from: string, to: string, promotion: string): boolean => {
+    (from: Square, to: Square, promotionPiece?: string) => {
       const gameCopy = new Chess(game.fen());
+
+      const moveConfig: any = {
+        from,
+        to,
+        promotionPiece: promotionPiece || "q",
+      };
+
+      if (promotionPiece) {
+        moveConfig.promotion = promotionPiece.toLowerCase();
+      }
+
       try {
-        const move = gameCopy.move({
-          from,
-          to,
-          promotion,
-        });
+        const move = gameCopy.move(moveConfig);
+
         if (move) {
           setGame(gameCopy);
           setMovesHistory([...movesHistory, to]);
 
           if (makeMoveCallback) {
-            makeMoveCallback(from, to, "q"); // Emit move thorugh WebSockets
+            makeMoveCallback(from, to, promotionPiece || "q"); // Emit move thorugh WebSockets
           }
           checkGameEnd(gameCopy);
           return true;
         }
       } catch {
-        console.warn(`Invalid move from: ${from}, to: ${to}`);
+        console.warn(
+          `Invalid move from: ${from}, to: ${to}, promotion: ${moveConfig.promotionPiece}`,
+        );
         return false;
       }
       return false;
@@ -110,9 +121,10 @@ export function useChessGame(
   );
 
   const forceMakeMove = useCallback(
-    (from: Square, to: Square, _promotion: string): boolean => {
+    (from: Square, to: Square, _promotionPiece?: string): boolean => {
       // This is the way we can force "invalid" moves for arcade moves
       // see this thread https://github.com/jhlywa/chess.js/issues/309
+      // TODO: how to handlw promotions here
 
       const gameCopy = new Chess(game.fen());
       gameCopy.put(game.get(from), to);
@@ -133,10 +145,11 @@ export function useChessGame(
    *
    * @param {Square} sourceSquare - The starting square of the piece to move.
    * @param {Square} targetSquare - The ending square of the piece to move.
+   * @param {string} promotionPiece - The piece to promote to if a pawn reaches the last rank.
    * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
    */
   const onDrop = useCallback(
-    (sourceSquare: Square, targetSquare: Square) => {
+    (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
       // Validate turn (color)
       const mySide = gameData.color;
       if (
@@ -147,8 +160,8 @@ export function useChessGame(
       }
 
       return mode !== "arcade"
-        ? makeMove(sourceSquare, targetSquare, "q")
-        : forceMakeMove(sourceSquare, targetSquare, "q");
+        ? makeMove(sourceSquare, targetSquare, promotionPiece)
+        : forceMakeMove(sourceSquare, targetSquare, promotionPiece);
     },
     [game, gameData, mode, makeMove, forceMakeMove],
   );

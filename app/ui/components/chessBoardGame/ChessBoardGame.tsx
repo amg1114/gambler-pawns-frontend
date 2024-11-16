@@ -33,9 +33,14 @@ interface ChessBoardGameProps {
   bgLightSquaresColor?: string;
   side?: "white" | "black";
   position?: string; // FEN
-  onDrop?: (sourceSquare: Square, targetSquare: Square) => boolean;
+  onDrop?: (
+    sourceSquare: Square,
+    targetSquare: Square,
+    promotionPiece?: string,
+  ) => boolean;
   arePremovesAllowed?: boolean;
   game?: Chess;
+  setPromotionPiece?: (piece: string) => void;
 }
 
 export function ChessBoardGame({
@@ -69,6 +74,19 @@ export function ChessBoardGame({
 
   /** Represents the square of the losing king in checkmate. */
   const [loserKing, setLoserKing] = useState<Square | null>(null);
+
+  /** Represents the squares that have been right-clicked. */
+  const [rightClickedSquares, setRightClickedSquares] = useState<Square[]>([]);
+
+  /** Represents the promotion information. */
+  const [promotionInfo, setPromotionInfo] = useState<{
+    from: Square;
+    to: Square;
+  } | null>(null);
+
+  /** Wether to manually show promotion dialog to the user */
+  const [showPromotionDialogManually, setShowPromotionDialogManually] =
+    useState(false);
 
   // Update check and mate status of the king after each move
   useEffect(() => {
@@ -169,7 +187,7 @@ export function ChessBoardGame({
    * @returns {boolean} - Returns true if the move is valid, otherwise false.
    */
   const innerOnDrop = useCallback(
-    (sourceSquare: Square, targetSquare: Square) => {
+    (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
       if (!game) return false;
 
       const sourcePiece = game.get(sourceSquare);
@@ -184,17 +202,17 @@ export function ChessBoardGame({
         sourcePiece.type === "k" &&
         targetPiece.type === "r"
       ) {
-        if (onDrop) {
-          result = handleCastling(
-            sourceSquare,
-            targetSquare,
-            sourcePiece.color,
-            onDrop,
-            game,
-          );
-        }
+        if (!onDrop) return false;
+
+        result = handleCastling(
+          sourceSquare,
+          targetSquare,
+          sourcePiece.color,
+          onDrop,
+          game,
+        );
       } else {
-        result = onDrop?.(sourceSquare, targetSquare) ?? false;
+        result = onDrop?.(sourceSquare, targetSquare, promotionPiece) ?? false;
       }
 
       if (result) {
@@ -208,8 +226,70 @@ export function ChessBoardGame({
     [game, handleCastling, onDrop],
   );
 
-  /** Represents the squares that were right-clicked. */
-  const [rightClickedSquares, setRightClickedSquares] = useState<Square[]>([]);
+  /**
+   * Handles the selection of a promotion piece.
+   *
+   * This function is called when a promotion piece is selected. It uses the promotion information
+   * stored in the state to make the move with the selected promotion piece. runs after the move is made
+   * and after `handlePromotionCheck` runs to check if the move results in a promotion.
+   *
+   * @param {string} [pieceSelectedToPromote] - The piece selected for promotion (e.g., "q" for queen).
+   * @returns {boolean} - Returns true if the move is valid and performed, otherwise false.
+   */
+  const handlePromotionPieceSelect = useCallback(
+    (pieceSelectedToPromote?: string) => {
+      if (!promotionInfo) return false;
+
+      const { from, to } = promotionInfo;
+
+      const result = innerOnDrop(
+        from,
+        to,
+        pieceSelectedToPromote?.[1].toLowerCase(),
+      );
+
+      setPromotionInfo(null);
+      setShowPromotionDialogManually(false);
+      return result;
+    },
+    [promotionInfo, innerOnDrop],
+  );
+
+  /**
+   * Checks if a move results in a promotion.
+   *
+   * This function is called to check if a move results in a promotion. If it does, it stores the promotion
+   * information in the state and returns true to indicate that a promotion is needed. this function is called
+   * after the move is made and before `handlePromotionPieceSelect` runs to handle the promotion piece selection.
+   *
+   * @param {Square} sourceSquare - The square from which the piece is moved.
+   * @param {Square} targetSquare - The square to which the piece is moved.
+   * @param {string} piece - The piece being moved (e.g., "wP" for white pawn).
+   * @returns {boolean} - Returns true if the move results in a promotion, otherwise false.
+   */
+  const handlePromotionCheck = useCallback(
+    (sourceSquare: Square, targetSquare: Square, piece: string) => {
+      const isTryingToPromote =
+        (piece === "wP" &&
+          sourceSquare[1] === "7" &&
+          targetSquare[1] === "8") ||
+        (piece === "bP" &&
+          sourceSquare[1] === "2" &&
+          targetSquare[1] === "1" &&
+          Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <=
+            1);
+
+      if (!isTryingToPromote) return false;
+
+      // save promotion info
+      setPromotionInfo({
+        from: sourceSquare,
+        to: targetSquare,
+      });
+      return true;
+    },
+    [],
+  );
 
   /**
    * Handles the click event on a square.
@@ -226,7 +306,6 @@ export function ChessBoardGame({
     (square: Square, piece: string | undefined) => {
       setRightClickedSquares([]);
 
-      console.log("selectedPiece", selectedPiece);
       const isTryingToCaptureOpponentPieces =
         selectedPiece && piece && piece[0] !== selectedPiece[0];
 
@@ -236,20 +315,40 @@ export function ChessBoardGame({
         piece[0] === selectedPiece[0] &&
         (piece[1] === "R" || piece[1] === "K");
 
-      if (piece && !isTryingToCaptureOpponentPieces && !isTryingToCastle) {
+      const isChangingSelectedPiece =
+        piece && !isTryingToCaptureOpponentPieces && !isTryingToCastle;
+
+      const isTryingToMakeMove =
+        selectedPiece && selectedSquare && !isChangingSelectedPiece;
+
+      // is changing the selected piece
+      if (isChangingSelectedPiece) {
         setSelectedPiece(piece);
         setSelectedSquare(square);
-      } else if (selectedPiece && selectedSquare) {
+      } else if (isTryingToMakeMove) {
+        // check if the current move is a promotion
+        const isPromotionMove = handlePromotionCheck(
+          selectedSquare,
+          square,
+          selectedPiece,
+        );
+
+        if (isPromotionMove) {
+          // dont move, show promotion dialog
+          setShowPromotionDialogManually(true);
+          return;
+        }
+
         innerOnDrop(selectedSquare, square);
         setSelectedPiece(null);
         setSelectedSquare(null);
       } else {
-        // TODO: handle premoves
+        // TODO: handle premoves with right click
         // add premoves to queue
         // color premoves
       }
     },
-    [selectedPiece, selectedSquare, innerOnDrop],
+    [selectedPiece, selectedSquare, handlePromotionCheck, innerOnDrop],
   );
 
   /**
@@ -409,6 +508,9 @@ export function ChessBoardGame({
         onSquareRightClick={handleRightClick}
         onSquareClick={handleSquareClick}
         arePremovesAllowed={arePremovesAllowed}
+        onPromotionPieceSelect={handlePromotionPieceSelect}
+        onPromotionCheck={handlePromotionCheck}
+        showPromotionDialog={showPromotionDialogManually}
       />
     </div>
   );

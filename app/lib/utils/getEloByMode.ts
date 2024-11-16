@@ -1,3 +1,5 @@
+// TODO: currently not used, but could be useful in the future
+
 import { Session } from "next-auth";
 type Mode = "rapid" | "blitz" | "bullet" | "arcade";
 
