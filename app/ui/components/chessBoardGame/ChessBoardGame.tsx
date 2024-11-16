@@ -415,6 +415,7 @@ export function ChessBoardGame({
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
               backgroundSize: "80%",
+              cursor: "grab",
             }}
           />
         );
