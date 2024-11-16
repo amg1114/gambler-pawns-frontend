@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import getEloByMode from "@/app/lib/utils/getEloByMode";
 
 interface UseGameConnectionProps {
   gameId: string | undefined;
@@ -53,7 +52,6 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
     setJoinGameDataFormRequest({
       ...parsedStoredGameData,
       playerId: session?.data?.userId.toString() || `guest_${Date.now()}`,
-      eloRating: getEloByMode(parsedStoredGameData.mode, session),
     });
   }, [session]);
 
