@@ -15,6 +15,7 @@ export function useChessWebSocket(
   onGameEnd: (data: endGameDataInterface) => void,
   onInactivityTimerUpdate: (data: any) => void,
   handleException: (data: any) => void,
+  gameData: any,
 ) {
   useEffect(() => {
     if (!socket) return;
@@ -63,9 +64,7 @@ export function useChessWebSocket(
 
     socket.on("gameEnd", (data: any) => {
       // set winner
-      const mySide = JSON.parse(
-        sessionStorage.getItem("gameData") as string,
-      ).color;
+      const mySide = gameData?.color;
 
       let winner;
       if (
@@ -124,6 +123,7 @@ export function useChessWebSocket(
     handleRejectDrawOffer,
     onGameEnd,
     handleException,
+    gameData?.color,
   ]);
 
   // function to make a move
@@ -137,7 +137,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:acceptDraw", {
         playerId,
-        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
+        gameId: gameData?.gameId,
       });
     }
   };
@@ -146,7 +146,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:rejectDraw", {
         playerId,
-        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
+        gameId: gameData?.gameId,
       });
     }
   };
@@ -156,7 +156,7 @@ export function useChessWebSocket(
     if (socket) {
       socket.emit("game:offerDraw", {
         playerId,
-        gameId: JSON.parse(sessionStorage.getItem("gameData") as string).gameId,
+        gameId: gameData?.gameId,
       });
     }
   };

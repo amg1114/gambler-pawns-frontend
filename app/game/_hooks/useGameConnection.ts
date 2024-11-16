@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
@@ -17,6 +19,7 @@ interface UseGameConnectionProps {
  * @returns The parsed game data, or null if no data is found.
  */
 const readGameData = () => {
+  if (typeof window === "undefined") return null;
   const storedGameData = sessionStorage.getItem("gameData");
   if (!storedGameData) return null;
   return JSON.parse(storedGameData);
@@ -27,6 +30,7 @@ const readGameData = () => {
  * @returns {any | null} - The parsed join game data form request, or null if no data is found.
  */
 const readJoinGameDataFormRequest = (session: Session | null): any | null => {
+  if (typeof window === "undefined") return null;
   const storedJoinGameDataFormRequest = sessionStorage.getItem(
     "joinGameDataFormRequest",
   );

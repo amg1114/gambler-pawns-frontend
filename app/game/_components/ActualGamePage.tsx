@@ -166,6 +166,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       handleEndGame,
       handleInactivityTimerUpdate,
       handleExceptionFromBackendChessService,
+      gameData,
     );
 
   if (loading || !gameData) {
