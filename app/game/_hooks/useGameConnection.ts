@@ -69,10 +69,8 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
     const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
     setSocket(newSocket);
 
-    // Manejadores de eventos para la conexión
+    // when connection is established, join the game or reconnect
     newSocket.on("connect", () => {
-      console.log("Socket conectado");
-
       if (gameId) {
         console.log("Trying reconnection", gameId);
         // Reconnecting to existing game
@@ -86,14 +84,14 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
       }
     });
 
-    // listen to server responses
+    // when reconnected to game
     newSocket.on("game:reconnected", (data: any) => {
       setLoading(false);
       console.log("Reconnected to game", data);
     });
 
+    // when new game is started
     newSocket.on("game:started", (data: any) => {
-      // redirect to game page
       console.log("Game started", data);
       sessionStorage.setItem("gameData", JSON.stringify(data));
       setGameData(data);
@@ -103,6 +101,9 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
 
     return () => {
       // Disconnect socket when component unmounts
+      newSocket.off("connect");
+      newSocket.off("game:reconnected");
+      newSocket.off("game:started");
       newSocket.disconnect();
     };
   }, [gameId, joinGameDataFormRequest, router]);
