@@ -8,7 +8,7 @@ import Image from "next/image";
 import Coin from "../../ui/icons/coin.svg";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import { useRouter } from "next/navigation";
-import { formatSignedNumber } from "../utils/formatSignedNumber";
+import { formatSignedNumber } from "../_utils/formatSignedNumber";
 
 export interface endGameDataInterface {
   winner: string;
@@ -37,6 +37,8 @@ const EndGameModal = ({
       <GameAlert
         close={() => {
           router.push("/");
+          sessionStorage.removeItem("joinGameDataFormRequest");
+          sessionStorage.removeItem("gameData");
         }}
       >
         <StyledTitle variant="h2" extraClasses="pt-md mb-xs text-center">
@@ -61,6 +63,8 @@ const EndGameModal = ({
             variant="primary"
             extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
             onClick={() => {
+              sessionStorage.removeItem("joinGameDataFormRequest");
+              sessionStorage.removeItem("gameData");
               if (gameMode === "arcade") {
                 router.push("game-options/arcade");
               }
@@ -75,6 +79,8 @@ const EndGameModal = ({
             extraClasses="mx-auto !w-36"
             onClick={() => {
               router.push(`/rewatch/${gameId}`);
+              sessionStorage.removeItem("joinGameDataFormRequest");
+              sessionStorage.removeItem("gameData");
             }}
           >
             Watch Again

@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 
+// Importing option array
+import { arrayGameModes } from "@/app/ui/components/DropDown/optionArrays";
+
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -23,11 +26,11 @@ import { useState } from "react";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
-import { GameModesDrop } from "../_components/GameModesDropdown";
 
 export default function ClassicOptionPage() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
+  const [gameMode, setGameMode] = useState<string>("Select a Game Mode");
 
   const handleCancelSubmission = () => {
     clearGameOptions();
@@ -66,13 +69,11 @@ export default function ClassicOptionPage() {
         Game Options
       </StyledTitle>
       <DropdownButton
-        dropDown={{
-          dropStyles: "outlined",
-          text: "Select a Game Mode",
-        }}
-      >
-        <GameModesDrop />
-      </DropdownButton>
+        options={arrayGameModes}
+        dropDown={{ dropStyles: "outlined", title: "Select a Game Mode" }}
+        selectedId={gameMode}
+        setSelectedId={setGameMode}
+      />
 
       <StyledTitle variant="h2" extraClasses="text-center">
         Your bet
