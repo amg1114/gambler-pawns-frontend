@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { formatTimeMs } from "../_utils/formatTimeMs";
 
 // custom hooks
@@ -22,24 +22,26 @@ import UserInfo from "./UserInfo";
 export default function ActualGamePage({ id }: { id: string | undefined }) {
   const { data: session } = useSession();
 
-  const gameId = id;
-
   const { socket, loading, joinGameDataFormRequest, gameData } =
     useGameConnection({
-      gameId: gameId,
+      gameId: id,
     });
 
   // handle game events for modals
   const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
-  const handleOpponentDrawOffer = () => {
+
+  const handleOpponentDrawOffer = useCallback(() => {
     setOpponentDrawOffer(true);
-  };
+  }, []);
+
   // Handle current player draw offer
   const [isDrawOffer, setDrawOffer] = useState(false);
   const [isDrawOfferRejected, setDrawOfferRejected] = useState(false);
-  const handleRejectDrawOffer = () => {
+
+  const handleRejectDrawOffer = useCallback(() => {
     setDrawOfferRejected(true);
-  };
+  }, []);
+
   useEffect(() => {
     if (isDrawOfferRejected) {
       const timer = setTimeout(() => {
@@ -57,7 +59,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   const [endGameStreakModalOpen, setEndGameStreakModalOpen] = useState(false);
   const [gameEndModalOpen, setGameEndModalOpen] = useState(false);
 
-  const handleEndGame = (data: endGameDataInterface) => {
+  const handleEndGame = useCallback((data: endGameDataInterface) => {
     setEndGameData(data);
 
     if (data.winner === "You") {
@@ -65,40 +67,43 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     } else {
       setGameEndModalOpen(true);
     }
-  };
+  }, []);
 
   // timers
-  const [playerOneTime, setPlayerOneTime] = useState(5 * 60 * 1000);
-  const [playerTwoTime, setPlayerTwoTime] = useState(5 * 60 * 1000);
+  const setInitialTime = useCallback(() => {
+    if (!joinGameDataFormRequest?.timeMinutes) return 5 * 60 * 1000;
+    return joinGameDataFormRequest.timeMinutes * 60 * 1000;
+  }, [joinGameDataFormRequest]);
 
-  useLayoutEffect(() => {
-    if (!joinGameDataFormRequest?.timeMinutes) return;
-    setPlayerOneTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
-    setPlayerTwoTime(joinGameDataFormRequest.timeMinutes * 60 * 1000);
-  }, [joinGameDataFormRequest?.timeMinutes]);
+  const [playerOneTime, setPlayerOneTime] = useState(setInitialTime);
+  const [playerTwoTime, setPlayerTwoTime] = useState(setInitialTime);
 
-  const handleTimerUpdate = (times: {
-    playerOneTime: number;
-    playerTwoTime: number;
-  }) => {
-    setPlayerOneTime(times.playerOneTime);
-    setPlayerTwoTime(times.playerTwoTime);
-  };
+  const handleTimerUpdate = useCallback(
+    (times: { playerOneTime: number; playerTwoTime: number }) => {
+      setPlayerOneTime(times.playerOneTime);
+      setPlayerTwoTime(times.playerTwoTime);
+    },
+    [],
+  );
 
   const [inactivityTimer, setInactivityTimer] = useState<null | number>(null);
 
-  const handleInactivityTimerUpdate = (remainingMiliseconds: number) => {
-    setInactivityTimer(remainingMiliseconds);
-  };
+  const handleInactivityTimerUpdate = useCallback(
+    (remainingMiliseconds: number) => {
+      setInactivityTimer(remainingMiliseconds);
+    },
+    [],
+  );
 
   // exception handling
   const [
     exceptionFromBackendChessService,
     setExceptionFromBackendChessService,
   ] = useState<any>(null);
-  const handleExceptionFromBackendChessService = (data: any) => {
+
+  const handleExceptionFromBackendChessService = useCallback((data: any) => {
     setExceptionFromBackendChessService(data);
-  };
+  }, []);
 
   useEffect(() => {
     if (exceptionFromBackendChessService) {
