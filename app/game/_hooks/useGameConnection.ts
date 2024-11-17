@@ -67,8 +67,6 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
   const [gameData, setGameData] = useState<any>(readGameData);
 
   useEffect(() => {
-    if (!joinGameDataFormRequest || !joinGameDataFormRequest.playerId) return;
-
     // connect to ws server
     const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
     setSocket(newSocket);
