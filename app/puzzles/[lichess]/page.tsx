@@ -10,6 +10,8 @@ import {
   PuzzleResponse,
 } from "@/app/lib/interfaces/responses/puzzle-res.interface";
 
+import { useChessGame } from "@/app/game/_hooks/useChessGame";
+
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
@@ -20,6 +22,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoIcon from "@mui/icons-material/Info";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 
 export default function PuzzlePage({
   params,
@@ -29,6 +32,9 @@ export default function PuzzlePage({
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const { game, position, onDrop } = useChessGame("rapid", { color: "white" });
+
   useEffect(() => {
     if (params.lichess) {
       axios
@@ -46,6 +52,12 @@ export default function PuzzlePage({
     }
   }, [params.lichess]);
 
+  useEffect(() => {
+    if (puzzle) {
+      game.load(puzzle.fen);
+    }
+  }, [puzzle]);
+
   const handleCopy = (value: "link" | "fen") => {
     if (value === "link") {
       navigator.clipboard.writeText(window.location.href);
@@ -59,7 +71,7 @@ export default function PuzzlePage({
       {loading && puzzle == null ? (
         <PageLoadSpinner />
       ) : puzzle ? (
-        <section className="mx-auto w-full py-xl lg:max-w-[430px]">
+        <section className="mx-auto w-full space-y-md py-xl lg:max-w-[430px]">
           <StyledTitle
             variant="h2"
             fontFamily="bungee"
@@ -70,7 +82,7 @@ export default function PuzzlePage({
           <div className="text-whites mb-md bg-secondary text-center">
             (...) 4.KNg5 d5 5. exd5 Nxd5 6. Nxf7 Kxf7 7. Qf3+
           </div>
-          <div className="mx-auto mb-xl aspect-square h-96 w-96 bg-primary"></div>
+          <ChessBoardGame game={game} onDrop={onDrop} position={position} />
           <div className="flex justify-center gap-8 bg-secondary py-md text-white">
             <ActionButton
               label={
