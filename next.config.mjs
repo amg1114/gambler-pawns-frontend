@@ -1,35 +1,37 @@
 /** @type {import('next').NextConfig} */
 
-const imagesRemotePatterns =
-  process.env.NEXT_PUBLIC_ENV === "prod"
-    ? [
-        {
-          protocol: "https",
-          hostname: "gamblerpawns-api.up.railway.app",
-          port: "",
-          pathname: "/user_avatars/**",
-        },
-        {
-          protocol: "https",
-          hostname: "gambler-pawns-backend-staging.up.railway.app",
-          port: "",
-          pathname: "/user_avatars/**",
-        },
-      ]
-    : [
-        {
-          protocol: "http",
-          hostname: "localhost",
-          port: "8000",
-          pathname: "/user_avatars/**",
-        },
-      ];
+const onlyInProd = process.env.NEXT_PUBLIC_ENV === "prod";
+
+const imagesRemotePatterns = onlyInProd
+  ? [
+      {
+        protocol: "https",
+        hostname: "gamblerpawns-api.up.railway.app",
+        port: "",
+        pathname: "/user_avatars/**",
+      },
+      {
+        protocol: "https",
+        hostname: "gambler-pawns-backend-staging.up.railway.app",
+        port: "",
+        pathname: "/user_avatars/**",
+      },
+    ]
+  : [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/user_avatars/**",
+      },
+    ];
 
 const nextConfig = {
-  reactStrictMode: process.env.NEXT_PUBLIC_ENV === "prod",
+  reactStrictMode: onlyInProd,
   images: {
     remotePatterns: imagesRemotePatterns,
   },
+  removeConsole: onlyInProd,
   async headers() {
     return [
       {

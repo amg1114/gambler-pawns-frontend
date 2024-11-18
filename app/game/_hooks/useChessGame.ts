@@ -1,60 +1,110 @@
 import { useCallback, useState } from "react";
-import { Chess, Square } from "chess.js";
+import { BLACK, Chess, QUEEN, Square, WHITE } from "chess.js";
 
-type GameModeType = "rapid" | "blitz" | "bullet" | "arcade";
+// aux types
+export type promotionPiece = "q" | "r" | "b" | "n";
 
 interface EndGameDataType {
   winner: string;
   reason: string;
 }
 
+interface MoveConfig {
+  from: Square;
+  to: Square;
+  promotion: promotionPiece;
+}
+
+interface MoveHandlerOptions {
+  playAs: "w" | "b";
+  allowInvalidMoves: boolean;
+}
+
+// hook props
+interface UseChessGameProps {
+  onMoveMade?: (from: string, to: string, promotion: string) => void;
+  onGameEnd?: () => void;
+  moveHandlerOptions?: MoveHandlerOptions;
+}
+
+// hook return type
 interface UseChessGameReturnType {
   position: string;
-  gameHistoryMoves: string[];
-  onDrop: (sourceSquare: Square, targetSquare: Square) => boolean;
-  updateGameFromOpponent: (fen: string, moveHistory: string[]) => void;
-  makeMove: (from: Square, to: Square, promotion?: string) => boolean;
+  movesHistory: string[];
+  makeMove: (
+    from: Square,
+    to: Square,
+    promotionPiece: promotionPiece,
+  ) => boolean;
   game: Chess;
   endGameData: EndGameDataType | null;
+  loadGameFromFen: (fen: string) => void;
+  loadGameFromPgn: (pgn: string) => void;
 }
 
 /**
  * Custom hook to manage a chess game.
  *
- * @param {GameModeType} mode - The mode of the game.
- * @param {any} gameData - The initial data for the game, including the player's color.
- * @param {function} [makeMoveCallback] - Optional callback function to be called when a move is made.
- * @returns {UseChessGameReturnType} - Returns an object containing the current position, game history moves, onDrop function, updateGameFromOpponent function, and innerMakeMove function, endGameData and game instance.
+ * @param {UseChessGameProps} props - The properties for the hook.
+ * @param {function} [props.onMoveMade] - Optional callback function to be called when a move is made.
+ * @param {function} [props.onGameEnd] - Optional callback function to be called when the game ends.
+ * @param {MoveHandlerOptions} [props.moveHandlerOptions={ playAs: "w", allowInvalidMoves: false }] - Options for handling moves, including the color the player is playing as and whether to allow invalid moves.
+ * @returns {UseChessGameReturnType} - Returns an object containing the current position, game history moves, makeMove function, onDropBoard function, game instance, endGameData, loadGameFromFen function, and loadGameFromPgn function.
  */
-export function useChessGame(
-  mode: GameModeType = "rapid",
-  gameData: any,
-  makeMoveCallback?: (from: string, to: string, promotion: string) => void,
-  handleGameEnd?: () => void,
-): UseChessGameReturnType {
+export function useChessGame({
+  onMoveMade,
+  onGameEnd,
+  moveHandlerOptions = { playAs: WHITE, allowInvalidMoves: false },
+}: UseChessGameProps): UseChessGameReturnType {
+  /**
+   * The current state of the chess game.
+   *
+   * This state holds an instance of the Chess game, which is used to manage the game state,
+   * including the board position, move history, and game rules.
+   */
   const [game, setGame] = useState(new Chess());
-  const [movesHistory, setMovesHistory] = useState<string[]>([]);
+
+  /**
+   * The end game data.
+   *
+   * This state holds the data related to the end of the game, including the winner and the reason
+   * for the game's end. It is set when the game ends.
+   */
   const [endGameData, setEndGameData] = useState<EndGameDataType | null>(null);
+
+  /**
+   * Loads the game state from a FEN string.
+   *
+   * @param {string} fen - The FEN string representing the game state.
+   */
+  const loadGameFromFen = useCallback((fen: string) => {
+    const gameCopy = new Chess(fen);
+    setGame(gameCopy);
+  }, []);
+
+  /**
+   * Loads the game state from a PGN string.
+   *
+   * @param {string} pgn - The PGN string representing the game state.
+   */
+  const loadGameFromPgn = useCallback((pgn: string) => {
+    const gameCopy = new Chess();
+    gameCopy.loadPgn(pgn);
+    setGame(gameCopy);
+  }, []);
 
   /**
    * Checks if the game has ended and sets the end game data if it has.
    *
-   * This function checks various conditions to determine if the game has ended,
-   * such as checkmate, insufficient material, stalemate, threefold repetition,
-   * and the 50 moves rule. If the game has ended, it sets the end game data
-   * with the winner and the reason for the game's end, and calls the handleGameEnd
-   * callback if provided.
-   *
-   * @callback handleGameEnd - Optional callback function to be called when the game ends.
+   * @param {Chess} gameCopy - The current game state.
    */
   const checkGameEnd = useCallback(
     (gameCopy: Chess) => {
-      console.info("Checking game end", gameCopy.fen());
       if (!gameCopy.isGameOver()) return;
-      const winner = gameCopy.turn() === "w" ? "b" : "w";
+
+      const winner = gameCopy.turn() === WHITE ? BLACK : WHITE;
       let reason = "";
 
-      // TODO: since game object is mutating probably threfold repetition and 50 moves rule are not working
       if (gameCopy.isCheckmate()) {
         reason = "Check Mate";
       } else if (gameCopy.isInsufficientMaterial()) {
@@ -68,126 +118,109 @@ export function useChessGame(
       }
       console.info(`Game Ended - Winner: ${winner}, Reason: ${reason}`);
       setEndGameData({ winner, reason });
-      handleGameEnd?.();
+      onGameEnd?.();
     },
-    [handleGameEnd],
+    [onGameEnd],
+  );
+
+  /**
+   * Makes a valid move in the chess game.
+   *
+   * @param {MoveConfig} moveConfig - The configuration for the move.
+   * @param {Chess} gameCopy - The current game state.
+   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
+   */
+  const makeValidMove = useCallback(
+    (moveConfig: MoveConfig, gameCopy: Chess) => {
+      try {
+        gameCopy.move(moveConfig);
+
+        return true;
+      } catch {
+        console.warn(`Invalid move ${JSON.stringify(moveConfig)}`);
+        return false;
+      }
+    },
+    [],
+  );
+
+  /**
+   * Makes a forced move in the chess game.
+   *
+   * @param {MoveConfig} moveConfig - The configuration for the move.
+   * @param {Chess} gameCopy - The current game state.
+   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
+   */
+  const makeForcedMove = useCallback(
+    (moveConfig: MoveConfig, gameCopy: Chess) => {
+      // see this thread https://github.com/jhlywa/chess.js/issues/309
+      const pieceFrom = gameCopy.get(moveConfig.from);
+
+      gameCopy.put(pieceFrom, moveConfig.to);
+      gameCopy.remove(moveConfig.from);
+
+      return true;
+    },
+    [],
   );
 
   /**
    * Makes a move in the chess game.
    *
-   * @param {string} from - The starting square of the piece to move (e.g., "e2").
-   * @param {string} to - The ending square of the piece to move (e.g., "e4").
-   * @param {string} promotion - The piece to promote to if a pawn reaches the last rank (e.g., "q" for queen).
-   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
+   * @param {Square} from - The starting square of the piece to move.
+   * @param {Square} to - The ending square of the piece to move.
+   * @param {string} [promotionPiece] - The piece to promote to if a pawn reaches the last rank.
    * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
    */
   const makeMove = useCallback(
-    (from: Square, to: Square, promotionPiece?: string) => {
-      const gameCopy = new Chess(game.fen());
+    (from: Square, to: Square, promotionPiece: promotionPiece = QUEEN) => {
+      const { playAs, allowInvalidMoves } = moveHandlerOptions;
 
-      const moveConfig: any = {
+      if (game.turn() !== playAs) {
+        return false;
+      }
+
+      const gameCopy = new Chess();
+      gameCopy.loadPgn(game.pgn());
+
+      const moveConfig: MoveConfig = {
         from,
         to,
-        promotionPiece: promotionPiece || "q",
+        promotion: promotionPiece,
       };
 
-      if (promotionPiece) {
-        moveConfig.promotion = promotionPiece.toLowerCase();
-      }
+      const moveMade = !allowInvalidMoves
+        ? makeValidMove(moveConfig, gameCopy)
+        : makeForcedMove(moveConfig, gameCopy);
 
-      try {
-        const move = gameCopy.move(moveConfig);
-
-        if (move) {
-          setGame(gameCopy);
-          setMovesHistory([...movesHistory, to]);
-
-          if (makeMoveCallback) {
-            makeMoveCallback(from, to, promotionPiece || "q"); // Emit move thorugh WebSockets
-          }
-          checkGameEnd(gameCopy);
-          return true;
+      if (moveMade) {
+        // Emit move thorugh WebSockets
+        setGame(gameCopy);
+        if (onMoveMade) {
+          onMoveMade(from, to, promotionPiece);
         }
-      } catch {
-        console.warn(
-          `Invalid move from: ${from}, to: ${to}, promotion: ${moveConfig.promotionPiece}`,
-        );
-        return false;
-      }
-      return false;
-    },
-    [game, makeMoveCallback, movesHistory, checkGameEnd],
-  );
-
-  const forceMakeMove = useCallback(
-    (from: Square, to: Square, _promotionPiece?: string): boolean => {
-      // This is the way we can force "invalid" moves for arcade moves
-      // see this thread https://github.com/jhlywa/chess.js/issues/309
-      // TODO: how to handlw promotions here
-
-      const gameCopy = new Chess(game.fen());
-      gameCopy.put(game.get(from), to);
-      gameCopy.remove(from);
-
-      setGame(gameCopy);
-      setMovesHistory([...movesHistory, to]);
-
-      setGame(gameCopy);
-      checkGameEnd(gameCopy);
-      return true;
-    },
-    [checkGameEnd, game, movesHistory],
-  );
-
-  /**
-   * Handles piece drop, validates moves, makes move and emits to WebSocket server.
-   *
-   * @param {Square} sourceSquare - The starting square of the piece to move.
-   * @param {Square} targetSquare - The ending square of the piece to move.
-   * @param {string} promotionPiece - The piece to promote to if a pawn reaches the last rank.
-   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
-   */
-  const onDrop = useCallback(
-    (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
-      // Validate turn (color)
-      const mySide = gameData.color;
-      if (
-        (game.turn() === "b" && mySide === "white") ||
-        (game.turn() === "w" && mySide === "black")
-      ) {
-        return false;
+        checkGameEnd(gameCopy);
       }
 
-      return mode !== "arcade"
-        ? makeMove(sourceSquare, targetSquare, promotionPiece)
-        : forceMakeMove(sourceSquare, targetSquare, promotionPiece);
+      return moveMade;
     },
-    [game, gameData, mode, makeMove, forceMakeMove],
-  );
-
-  /**
-   * Updates the game state from opponent moves.
-   *
-   * @param {string} fen - The FEN string representing the game state.
-   * @param {string[]} moveHistory - The history of moves made in the game.
-   */
-  const updateGameFromOpponent = useCallback(
-    (fen: string, moveHistory: string[]) => {
-      const gameCopy = new Chess(fen);
-      setMovesHistory(moveHistory);
-      setGame(gameCopy);
-    },
-    [],
+    [
+      moveHandlerOptions,
+      game,
+      makeValidMove,
+      makeForcedMove,
+      onMoveMade,
+      checkGameEnd,
+    ],
   );
 
   return {
     position: game.fen(),
-    gameHistoryMoves: movesHistory,
-    onDrop,
-    updateGameFromOpponent,
+    movesHistory: game.history(),
     makeMove,
     game,
     endGameData,
+    loadGameFromFen,
+    loadGameFromPgn,
   };
 }

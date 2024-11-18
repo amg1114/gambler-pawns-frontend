@@ -52,7 +52,7 @@ export default function LoginPage() {
       } else {
         router.push("/");
       }
-    } catch (error) {
+    } catch {
       setErrorMessage("Login Failed, please try again");
       setShowErrorAlert(true);
     }
@@ -141,14 +141,14 @@ export default function LoginPage() {
                 type="submit"
                 className="hover:rounded-md mx-lg w-fit p-sm text-xl font-extrabold text-primary underline underline-offset-8 hover:bg-secondary"
               >
-                Sign In
+                Login
               </button>
               <Link
                 href={"/register"}
                 className="flex w-fit items-center justify-center"
               >
                 <p className="rounded-md mx-md p-sm text-xl font-extrabold text-primary underline underline-offset-8 hover:bg-secondary">
-                  Sign Up
+                  Register
                 </p>
               </Link>
             </div>

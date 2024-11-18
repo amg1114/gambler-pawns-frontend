@@ -149,30 +149,40 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     }
   }, [playerOneTime, playerTwoTime, loading, gameData]);
 
+  // TODO: resolver la dependencia circular entre useChessGame y useChessWebSocket
+  // Una vez resuelta ver como se refactoriza la logica de este componente
+  /// TODO: poner todos los handlers en useCallback
   //Hook to validate and handle moves
-  const chessGame = useChessGame(
-    joinGameDataFormRequest?.mode,
-    gameData,
-    (from, to, promotion) => {
+  const chessGame = useChessGame({
+    onMoveMade: (from: string, to: string, promotion: string) => {
       setInactivityTimer(null);
-      makeMove(from, to, promotion);
+      emitWebsocketMakeMove(from, to, promotion);
     },
-  );
+    moveHandlerOptions: {
+      playAs: side === "white" ? "w" : "b",
+      allowInvalidMoves: false,
+    },
+  });
 
   // Hook to manage in-game events
-  const { makeMove, acceptDraw, rejectDraw, offerDraw, resignGame } =
-    useChessWebSocket(
-      socket,
-      joinGameDataFormRequest?.playerId,
-      chessGame.updateGameFromOpponent,
-      handleTimerUpdate,
-      handleOpponentDrawOffer,
-      handleRejectDrawOffer,
-      handleEndGame,
-      handleInactivityTimerUpdate,
-      handleExceptionFromBackendChessService,
-      gameData,
-    );
+  const {
+    emitWebsocketMakeMove,
+    emitWebsocketAcceptDraw,
+    emitWebsocketRejectDraw,
+    emitWebsocketOfferDraw,
+    emitWebsocketResignGame,
+  } = useChessWebSocket(
+    socket,
+    joinGameDataFormRequest?.playerId,
+    chessGame.loadGameFromPgn,
+    handleTimerUpdate,
+    handleOpponentDrawOffer,
+    handleRejectDrawOffer,
+    handleEndGame,
+    handleInactivityTimerUpdate,
+    handleExceptionFromBackendChessService,
+    gameData,
+  );
 
   if (loading || !gameData) {
     return (
@@ -196,7 +206,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           <p>{`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}</p>
         ) : null}
         <p>
-          {chessGame.gameHistoryMoves.map(
+          {chessGame.movesHistory.map(
             (move, index) =>
               `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
           )}
@@ -208,7 +218,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
         />
         <ChessBoardGame
           position={chessGame.position}
-          onDrop={chessGame.onDrop}
+          onDrop={chessGame.makeMove}
           side={side}
           arePremovesAllowed={joinGameDataFormRequest?.mode === "bullet"}
           game={chessGame.game}
@@ -240,7 +250,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
         }}
         handleYes={() => {
           setResignModalOpen(false);
-          resignGame();
+          emitWebsocketResignGame();
         }}
       />
       <OfferDrawModal
@@ -249,7 +259,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
           setDrawOffer(false);
         }}
         handleYes={() => {
-          offerDraw();
+          emitWebsocketOfferDraw();
           setDrawOffer(false);
         }}
       />
@@ -257,11 +267,11 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
         isOpen={isOpponentDrawOffer}
         acceptDraw={() => {
           setOpponentDrawOffer(false);
-          acceptDraw();
+          emitWebsocketAcceptDraw();
         }}
         rejectDraw={() => {
           setOpponentDrawOffer(false);
-          rejectDraw();
+          emitWebsocketRejectDraw();
         }}
       />
       <StreakModal
