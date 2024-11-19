@@ -143,7 +143,6 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       emitWebsocketMakeMove(from, to, promotion);
     },
     moveHandlerOptions: {
-      playAs: side === "white" ? WHITE : BLACK,
       allowInvalidMoves: false,
     },
   });

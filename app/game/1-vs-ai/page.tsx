@@ -10,14 +10,7 @@ export default function BotPage() {
   // TODO: in the future have a form with options after game such as engine level (like elo), side, game mode
   const [isProcessingMove, setIsProcessingMove] = useState(false);
 
-  const {
-    game,
-    position,
-    makeMove,
-    makeMoveWithoutTurnValidation,
-    endGameData,
-    clearGame,
-  } = useChessGame({
+  const { game, position, makeMove, endGameData, clearGame } = useChessGame({
     onMoveMade: () => {
       setIsProcessingMove(true);
     },
@@ -46,19 +39,13 @@ export default function BotPage() {
           bestMove.slice(2, 4) as Square,
         ];
 
-        makeMoveWithoutTurnValidation(from, to, QUEEN);
+        makeMove(from, to);
         setIsProcessingMove(false);
       }
     };
 
     makeBotMove();
-  }, [
-    bestMove,
-    game,
-    makeMove,
-    isProcessingMove,
-    makeMoveWithoutTurnValidation,
-  ]);
+  }, [bestMove, game, makeMove, isProcessingMove, ,]);
 
   return (
     <div className="p-4 container mx-auto">
@@ -71,7 +58,7 @@ export default function BotPage() {
       />
       <EndGameAgainsBotModal
         isOpen={endGameData !== null}
-        onNewGame={() => clearGame()}
+        onNewGame={clearGame}
         winner={game.isDraw() ? "Draw" : game.turn() === WHITE ? "Bot" : "You"}
         reason={endGameData?.reason || ""}
       />

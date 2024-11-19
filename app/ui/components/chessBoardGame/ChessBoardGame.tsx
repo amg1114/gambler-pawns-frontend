@@ -195,6 +195,15 @@ export function ChessBoardGame({
     (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
       if (!game || !onDrop) return false;
 
+      // check if turn is valid
+      const isInvalidTurn =
+        (game.turn() === WHITE && side === "black") ||
+        (game.turn() === BLACK && side === "white");
+
+      if (isInvalidTurn) {
+        console.log("Invalid turn");
+        return false;
+      }
       const sourcePiece = game.get(sourceSquare);
       const targetPiece = game.get(targetSquare);
 
@@ -236,7 +245,7 @@ export function ChessBoardGame({
 
       return result;
     },
-    [game, handleCastling, onDrop],
+    [game, handleCastling, onDrop, side],
   );
 
   /**
