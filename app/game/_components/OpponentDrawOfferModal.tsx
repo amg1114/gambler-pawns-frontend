@@ -15,7 +15,7 @@ const OpponentDrawOfferModal: React.FC<DrawModalProps> = ({
   acceptDraw,
   rejectDraw,
 }) => {
-  if (isOpen) {
+  if (!isOpen)
     return (
       <GameAlert close={rejectDraw}>
         <StyledTitle
@@ -43,7 +43,6 @@ const OpponentDrawOfferModal: React.FC<DrawModalProps> = ({
         </div>
       </GameAlert>
     );
-  }
 };
 
 export default OpponentDrawOfferModal;

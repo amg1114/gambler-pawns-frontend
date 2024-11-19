@@ -42,9 +42,7 @@ export function useChessWebSocket(
 ): UseChessWebSocketReturnType {
   // hadlers for game events socket listeners
 
-  /**
-   * Listens for a move made by the opponent.
-   */
+  /** Listens for a move made by the opponent. */
   const handleMoveMade = useCallback(
     (data: any) => {
       // Update local game state with server's game instance PGN
@@ -53,9 +51,7 @@ export function useChessWebSocket(
     [onOpponentMove],
   );
 
-  /**
-   * Handles timer updates.
-   */
+  /** Handles timer updates.*/
   const handleTimerUpdate = useCallback(
     (data: any) => {
       onTimerUpdate({
@@ -66,9 +62,7 @@ export function useChessWebSocket(
     [onTimerUpdate],
   );
 
-  /**
-   * Handles inactivity countdown updates.
-   */
+  /** Handles inactivity countdown updates. */
   const handleInactivityCountdownUpdate = useCallback(
     (data: any) => {
       onInactivityTimerUpdate(data.remainingMiliseconds);
@@ -76,23 +70,17 @@ export function useChessWebSocket(
     [onInactivityTimerUpdate],
   );
 
-  /**
-   * Handles a draw offer from the opponent.
-   */
+  /** Handles a draw offer from the opponent. */
   const handleDrawOffered = useCallback(() => {
     onDrawOffer(true);
   }, [onDrawOffer]);
 
-  /**
-   * Handles the rejection of a draw offer.
-   */
+  /** Handles the rejection of a draw offer. */
   const handleDrawRejected = useCallback(() => {
     onDrawOfferRejected();
   }, [onDrawOfferRejected]);
 
-  /**
-   * Handles the end of the game.
-   */
+  /** Handles the end of the game. */
   const handleGameEnd = useCallback(
     (data: any) => {
       const mySide = gameData?.color;
@@ -129,9 +117,7 @@ export function useChessWebSocket(
     [gameData?.color, onGameEnd],
   );
 
-  /**
-   * Handles game exceptions.
-   */
+  /** Handles game exceptions. */
   const handleException = useCallback(
     (data: any) => {
       onGameException(data);
@@ -176,9 +162,7 @@ export function useChessWebSocket(
   ]);
 
   // functions to emit events
-  /**
-   * Emits event to make a move.
-   */
+  /** Emits event to make a move. */
   const emitWebsocketMakeMove = useCallback(
     (from: string, to: string, promotion: string) => {
       if (socket) {
@@ -188,9 +172,7 @@ export function useChessWebSocket(
     [socket, playerId],
   );
 
-  /**
-   * Emits event to accept a draw offer.
-   */
+  /** Emits event to accept a draw offer.*/
   const emitWebsocketAcceptDraw = useCallback(() => {
     if (socket) {
       socket.emit("game:acceptDraw", {
@@ -200,9 +182,7 @@ export function useChessWebSocket(
     }
   }, [socket, playerId, gameData?.gameId]);
 
-  /**
-   * Emits event to reject a draw offer.
-   */
+  /** Emits event to reject a draw offer. */
   const emitWebsocketRejectDraw = useCallback(() => {
     if (socket) {
       socket.emit("game:rejectDraw", {
@@ -212,9 +192,7 @@ export function useChessWebSocket(
     }
   }, [socket, playerId, gameData?.gameId]);
 
-  /**
-   * Emits event to offer a draw to the opponent.
-   */
+  /** Emits event to offer a draw to the opponent.*/
   const emitWebsocketOfferDraw = useCallback(() => {
     if (socket) {
       socket.emit("game:offerDraw", {
@@ -224,9 +202,7 @@ export function useChessWebSocket(
     }
   }, [socket, playerId, gameData?.gameId]);
 
-  /**
-   * Emits event to resign the game.
-   */
+  /** Emits event to resign the game.*/
   const emitWebsocketResignGame = useCallback(() => {
     if (socket) {
       socket.emit("game:resign", { playerId });

@@ -31,10 +31,17 @@ interface UseChessGameProps {
 interface UseChessGameReturnType {
   position: string;
   movesHistory: string[];
+  getTurn: "w" | "b";
+  clearGame: () => void;
   makeMove: (
     from: Square,
     to: Square,
-    promotionPiece: promotionPiece,
+    promotionPiece?: promotionPiece,
+  ) => boolean;
+  makeMoveWithoutTurnValidation: (
+    from: Square,
+    to: Square,
+    promotionPiece?: promotionPiece,
   ) => boolean;
   game: Chess;
   endGameData: EndGameDataType | null;
@@ -91,6 +98,11 @@ export function useChessGame({
     const gameCopy = new Chess();
     gameCopy.loadPgn(pgn);
     setGame(gameCopy);
+  }, []);
+
+  const clearGame = useCallback(() => {
+    setGame(new Chess());
+    setEndGameData(null);
   }, []);
 
   /**
@@ -165,18 +177,25 @@ export function useChessGame({
   );
 
   /**
-   * Makes a move in the chess game.
+   * Executes a move in the chess game.
    *
    * @param {Square} from - The starting square of the piece to move.
    * @param {Square} to - The ending square of the piece to move.
-   * @param {string} [promotionPiece] - The piece to promote to if a pawn reaches the last rank.
-   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
+   * @param {promotionPiece} promotionPiece - The piece to promote to if a pawn reaches the last rank.
+   * @param {boolean} validateTurn - Whether to validate the player's turn.
+   * @param {boolean} allowInvalidMoves - Whether to allow invalid moves.
+   * @returns {boolean} - Returns true if the move was made, otherwise false.
    */
-  const makeMove = useCallback(
-    (from: Square, to: Square, promotionPiece: promotionPiece = QUEEN) => {
-      const { playAs, allowInvalidMoves } = moveHandlerOptions;
-
-      if (game.turn() !== playAs) return false;
+  const executeMove = useCallback(
+    (
+      from: Square,
+      to: Square,
+      promotionPiece: promotionPiece,
+      validateTurn: boolean,
+      allowInvalidMoves: boolean,
+    ): boolean => {
+      if (validateTurn && game.turn() !== moveHandlerOptions.playAs)
+        return false;
 
       const gameCopy = new Chess();
       gameCopy.loadPgn(game.pgn());
@@ -202,19 +221,57 @@ export function useChessGame({
       return moveMade;
     },
     [
-      moveHandlerOptions,
       game,
+      moveHandlerOptions,
       makeValidMove,
       makeForcedMove,
-      onMoveMade,
       checkGameEnd,
+      onMoveMade,
     ],
+  );
+
+  /**
+   * Makes a valid move in the chess game.
+   *
+   * @param {MoveConfig} moveConfig - The configuration for the move.
+   * @param {Chess} gameCopy - A copy of the current game state.
+   * @returns {boolean} - Returns true if the move is valid and was made, otherwise false.
+   */
+  const makeMove = useCallback(
+    (from: Square, to: Square, promotionPiece: promotionPiece = QUEEN) => {
+      return executeMove(
+        from,
+        to,
+        promotionPiece,
+        true,
+        moveHandlerOptions.allowInvalidMoves,
+      );
+    },
+    [moveHandlerOptions, executeMove],
+  );
+
+  /**
+   * Makes a move in the chess game without turn validation (you can make moves for the Opponent).
+   *
+   * @param {Square} from - The starting square of the piece to move.
+   * @param {Square} to - The ending square of the piece to move.
+   * @param {promotionPiece} [promotionPiece=QUEEN] - The piece to promote to if a pawn reaches the last rank.
+   * @returns {boolean} - Returns true if the move was made, otherwise false.
+   */
+  const makeMoveWithoutTurnValidation = useCallback(
+    (from: Square, to: Square, promotionPiece: promotionPiece = QUEEN) => {
+      return executeMove(from, to, promotionPiece, false, false);
+    },
+    [executeMove],
   );
 
   return {
     position: game.fen(),
     movesHistory: game.history(),
+    getTurn: game.turn(),
+    clearGame,
     makeMove,
+    makeMoveWithoutTurnValidation,
     game,
     endGameData,
     loadGameFromFen,
