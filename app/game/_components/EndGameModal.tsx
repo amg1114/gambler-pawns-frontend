@@ -19,8 +19,8 @@ export interface endGameDataInterface {
 
 interface endGameInterface {
   isOpen: boolean;
-  gameMode: string;
-  gameId: string;
+  gameMode: string | undefined;
+  gameId: string | undefined;
   gameData: endGameDataInterface | null;
 }
 
@@ -32,63 +32,63 @@ const EndGameModal = ({
 }: endGameInterface) => {
   const router = useRouter();
 
-  if (isOpen && !!gameData) {
-    return (
-      <GameAlert
-        close={() => {
-          router.push("/");
-          sessionStorage.removeItem("joinGameDataFormRequest");
-          sessionStorage.removeItem("gameData");
-        }}
-      >
-        <StyledTitle variant="h2" extraClasses="pt-md mb-xs text-center">
-          {gameData.winner !== "Draw" ? gameData.winner + " Wins" : "Draw"}
-        </StyledTitle>
-        <StyledTitle variant="h3" extraClasses="mt-xs text-center !h-12">
-          By {" " + gameData.reason}
-        </StyledTitle>
+  if (!isOpen || !gameData) return;
 
-        <div className="grid grid-cols-2">
-          <StyledTitle variant="h4" extraClasses="text-right my-xs">
-            {formatSignedNumber(gameData.moneyGameGiftForWinner as number)}
-          </StyledTitle>
-          <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
-        </div>
+  return (
+    <GameAlert
+      close={() => {
+        router.push("/");
+        sessionStorage.removeItem("joinGameDataFormRequest");
+        sessionStorage.removeItem("gameData");
+      }}
+    >
+      <StyledTitle variant="h2" extraClasses="pt-md mb-xs text-center">
+        {gameData.winner !== "Draw" ? gameData.winner + " Wins" : "Draw"}
+      </StyledTitle>
+      <StyledTitle variant="h3" extraClasses="mt-xs text-center !h-12">
+        By {" " + gameData.reason}
+      </StyledTitle>
 
-        <StyledTitle variant="h4" extraClasses="text-center my-xs  ">
-          {formatSignedNumber(gameData.eloChange) + " "} ELO
+      <div className="grid grid-cols-2">
+        <StyledTitle variant="h4" extraClasses="text-right my-xs">
+          {formatSignedNumber(gameData.moneyGameGiftForWinner as number)}
         </StyledTitle>
-        <div className="grid grid-cols-1 pt-md">
-          <StyledButton
-            variant="primary"
-            extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
-            onClick={() => {
-              sessionStorage.removeItem("joinGameDataFormRequest");
-              sessionStorage.removeItem("gameData");
-              if (gameMode === "arcade") {
-                router.push("game-options/arcade");
-              }
-              router.push("/game-options/classic");
-            }}
-          >
-            New Game
-          </StyledButton>
-          <StyledButton
-            variant="primary"
-            style="outlined"
-            extraClasses="mx-auto !w-36"
-            onClick={() => {
-              router.push(`/rewatch/${gameId}`);
-              sessionStorage.removeItem("joinGameDataFormRequest");
-              sessionStorage.removeItem("gameData");
-            }}
-          >
-            Watch Again
-          </StyledButton>
-        </div>
-      </GameAlert>
-    );
-  }
+        <Image src={Coin} alt="coin" className="my-xs ml-sm size-6" />
+      </div>
+
+      <StyledTitle variant="h4" extraClasses="text-center my-xs  ">
+        {formatSignedNumber(gameData.eloChange) + " "} ELO
+      </StyledTitle>
+      <div className="grid grid-cols-1 pt-md">
+        <StyledButton
+          variant="primary"
+          extraClasses="mx-auto mt-md !w-36 !text-dark-1 mb-md"
+          onClick={() => {
+            sessionStorage.removeItem("joinGameDataFormRequest");
+            sessionStorage.removeItem("gameData");
+            if (gameMode === "arcade") {
+              router.push("game-options/arcade");
+            }
+            router.push("/game-options/classic");
+          }}
+        >
+          New Game
+        </StyledButton>
+        <StyledButton
+          variant="primary"
+          style="outlined"
+          extraClasses="mx-auto !w-36"
+          onClick={() => {
+            router.push(`/rewatch/${gameId}`);
+            sessionStorage.removeItem("joinGameDataFormRequest");
+            sessionStorage.removeItem("gameData");
+          }}
+        >
+          Watch Again
+        </StyledButton>
+      </div>
+    </GameAlert>
+  );
 };
 
 export default EndGameModal;

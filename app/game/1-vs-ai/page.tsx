@@ -1,40 +1,27 @@
 "use client";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
-import { useChessGame } from "../_hooks/useChessGame";
+import { useChessGame } from "../../lib/hooks/useChessGame";
 import { useStockfish } from "./_hooks/useStockfish";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Square } from "chess.js";
+import { useEffect, useState } from "react";
+import { BLACK, QUEEN, Square, WHITE } from "chess.js";
 import EndGameAgainsBotModal from "./_components/EndGameAgainsBotModal";
 
 export default function BotPage() {
   // TODO: in the future have a form with options after game such as engine level (like elo), side, game mode
   const [isProcessingMove, setIsProcessingMove] = useState(false);
 
-  const gameData = useMemo(() => ({ color: "w" }), []);
-
-  const { game, position, onDrop, makeMove, endGameData } = useChessGame(
-    "rapid",
-    gameData,
-  );
-
-  const handleDrop = useCallback(
-    (from: Square, to: Square) => {
-      if (game.turn() !== "w") return false;
-      const moveResult = onDrop(from, to);
-      if (moveResult) {
-        setIsProcessingMove(true);
-      }
-      return moveResult;
+  const { game, position, makeMove, endGameData, clearGame } = useChessGame({
+    onMoveMade: () => {
+      setIsProcessingMove(true);
     },
-    [game, onDrop],
-  );
+  });
 
   const { bestMove, analyzePosition } = useStockfish();
 
   // triggers the bot to analyze the position when it's the bot's turn
   useEffect(() => {
-    if (game.turn() === "b" && isProcessingMove) {
-      analyzePosition(game.fen(), "b");
+    if (isProcessingMove) {
+      analyzePosition(game.fen(), BLACK);
     }
   }, [game, isProcessingMove, analyzePosition]);
 
@@ -42,12 +29,7 @@ export default function BotPage() {
   useEffect(() => {
     const makeBotMove = async () => {
       // only proceed if it's the bot's turn and it's not already processing a move
-      if (
-        game.turn() === "b" &&
-        bestMove &&
-        isProcessingMove &&
-        !game.isGameOver()
-      ) {
+      if (bestMove && isProcessingMove && !game.isGameOver()) {
         console.info("Ejecutando movimiento del bot:", bestMove);
         // small delay to make the bot move more human-like
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -57,26 +39,27 @@ export default function BotPage() {
           bestMove.slice(2, 4) as Square,
         ];
 
-        makeMove(from, to, "q");
+        makeMove(from, to);
         setIsProcessingMove(false);
       }
     };
 
     makeBotMove();
-  }, [bestMove, game, makeMove, isProcessingMove]);
+  }, [bestMove, game, makeMove, isProcessingMove, ,]);
 
   return (
     <div className="p-4 container mx-auto">
       <ChessBoardGame
         position={position}
-        onDrop={handleDrop}
+        onDrop={makeMove}
         side="white"
         game={game}
         arePremovesAllowed={true}
       />
       <EndGameAgainsBotModal
         isOpen={endGameData !== null}
-        winner={game.isDraw() ? "Draw" : game.turn() === "w" ? "Bot" : "You"}
+        onNewGame={clearGame}
+        winner={game.isDraw() ? "Draw" : game.turn() === WHITE ? "Bot" : "You"}
         reason={endGameData?.reason || ""}
       />
     </div>

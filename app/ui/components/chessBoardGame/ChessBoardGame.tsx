@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
-import { Chess } from "chess.js";
+import { BLACK, Chess, KING, QUEEN, ROOK, WHITE } from "chess.js";
+import { promotionPiece } from "@/app/lib/hooks/useChessGame";
 
 const STYLE_COLORS = {
   LIGTH_SQUARES: "#edeed1",
@@ -36,7 +37,7 @@ interface ChessBoardGameProps {
   onDrop?: (
     sourceSquare: Square,
     targetSquare: Square,
-    promotionPiece?: string,
+    promotionPiece: promotionPiece,
   ) => boolean;
   arePremovesAllowed?: boolean;
   game?: Chess;
@@ -63,7 +64,7 @@ export function ChessBoardGame({
     useState<Square | null>(null);
 
   /** Represents the square selected before a move (target square). */
-  const [squareSlectedBeforeMove, setSquareSelectedBeforeMove] =
+  const [squareSelectedBeforeMove, setSquareSelectedBeforeMove] =
     useState<Square | null>(null);
 
   /** Represents the square of the king in check. */
@@ -95,18 +96,18 @@ export function ChessBoardGame({
 
     if (game.isCheck()) {
       setKingInCheck(
-        getPiecePosition(game, { type: "k", color: currentColor })[0],
+        getPiecePosition(game, { type: KING, color: currentColor })[0],
       );
     } else {
       setKingInCheck(null);
     }
 
     if (game.isCheckmate()) {
-      const winner = currentColor === "w" ? "b" : "w";
+      const winner = currentColor === WHITE ? BLACK : WHITE;
 
-      setWinnerKing(getPiecePosition(game, { type: "k", color: winner })[0]);
+      setWinnerKing(getPiecePosition(game, { type: KING, color: winner })[0]);
       setLoserKing(
-        getPiecePosition(game, { type: "k", color: currentColor })[0],
+        getPiecePosition(game, { type: KING, color: currentColor })[0],
       );
     }
   }, [game]);
@@ -123,8 +124,8 @@ export function ChessBoardGame({
       game: Chess,
     ) => {
       return (
-        sourceSquare === (color === "w" ? "e1" : "e8") &&
-        targetSquare === (color === "w" ? "h1" : "h8") &&
+        sourceSquare === (color === WHITE ? "e1" : "e8") &&
+        targetSquare === (color === WHITE ? "h1" : "h8") &&
         game.getCastlingRights(color).k
       );
     },
@@ -143,8 +144,8 @@ export function ChessBoardGame({
       game: Chess,
     ) => {
       return (
-        sourceSquare === (color === "w" ? "e1" : "e8") &&
-        targetSquare === (color === "w" ? "a1" : "a8") &&
+        sourceSquare === (color === WHITE ? "e1" : "e8") &&
+        targetSquare === (color === WHITE ? "a1" : "a8") &&
         game.getCastlingRights(color).q
       );
     },
@@ -162,13 +163,17 @@ export function ChessBoardGame({
       sourceSquare: Square,
       targetSquare: Square,
       color: "w" | "b",
-      onDrop: (sourceSquare: Square, targetSquare: Square) => boolean,
+      onDrop: (
+        sourceSquare: Square,
+        targetSquare: Square,
+        promotionPiece: promotionPiece,
+      ) => boolean,
       game: Chess,
     ): boolean => {
       if (isKingSideCastling(sourceSquare, targetSquare, color, game)) {
-        return onDrop(sourceSquare, color === "w" ? "g1" : "g8");
+        return onDrop(sourceSquare, color === WHITE ? "g1" : "g8", QUEEN);
       } else if (isQueenSideCastling(sourceSquare, targetSquare, color, game)) {
-        return onDrop(sourceSquare, color === "w" ? "c1" : "c8");
+        return onDrop(sourceSquare, color === WHITE ? "c1" : "c8", QUEEN);
       }
       return false;
     },
@@ -188,22 +193,35 @@ export function ChessBoardGame({
    */
   const innerOnDrop = useCallback(
     (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
-      if (!game) return false;
+      if (!game || !onDrop) return false;
 
+      // check if turn is valid
+      const isInvalidTurn =
+        (game.turn() === WHITE && side === "black") ||
+        (game.turn() === BLACK && side === "white");
+
+      if (isInvalidTurn) {
+        console.log("Invalid turn");
+        return false;
+      }
       const sourcePiece = game.get(sourceSquare);
       const targetPiece = game.get(targetSquare);
 
       let result = false;
 
-      if (
-        sourcePiece &&
-        targetPiece &&
-        sourcePiece.color === targetPiece.color &&
-        sourcePiece.type === "k" &&
-        targetPiece.type === "r"
-      ) {
-        if (!onDrop) return false;
+      // check if the move is a castling move
+      const sourceAndTargePresent = !!sourcePiece && !!targetPiece;
+      const sourceAndTargetSameColor = sourcePiece.color === targetPiece.color;
+      const sourceIsKing = sourcePiece.type === KING;
+      const targetIsRook = targetPiece.type === ROOK;
 
+      const isTryingToCastle =
+        sourceAndTargePresent &&
+        sourceAndTargetSameColor &&
+        sourceIsKing &&
+        targetIsRook;
+
+      if (isTryingToCastle) {
         result = handleCastling(
           sourceSquare,
           targetSquare,
@@ -212,7 +230,11 @@ export function ChessBoardGame({
           game,
         );
       } else {
-        result = onDrop?.(sourceSquare, targetSquare, promotionPiece) ?? false;
+        result = onDrop(
+          sourceSquare,
+          targetSquare,
+          (promotionPiece?.[1].toLowerCase() as promotionPiece) || QUEEN,
+        );
       }
 
       if (result) {
@@ -223,7 +245,7 @@ export function ChessBoardGame({
 
       return result;
     },
-    [game, handleCastling, onDrop],
+    [game, handleCastling, onDrop, side],
   );
 
   /**
@@ -239,14 +261,14 @@ export function ChessBoardGame({
   const handlePromotionPieceSelect = useCallback(
     (pieceSelectedToPromote?: string) => {
       if (!promotionInfo) return false;
+      // TODO: validation not working, check why
+      // if the promotion piece is not selected, dont move
+      if (!!pieceSelectedToPromote) return false;
+      console.log(`piece selected to promote: ${pieceSelectedToPromote}`);
 
       const { from, to } = promotionInfo;
 
-      const result = innerOnDrop(
-        from,
-        to,
-        pieceSelectedToPromote?.[1].toLowerCase(),
-      );
+      const result = innerOnDrop(from, to, pieceSelectedToPromote);
 
       setPromotionInfo(null);
       setShowPromotionDialogManually(false);
@@ -280,6 +302,7 @@ export function ChessBoardGame({
             1);
 
       if (!isTryingToPromote) return false;
+      // TODO: validar que el cuadro de promocion no salga cuando no tiene el turno
 
       // save promotion info
       setPromotionInfo({
@@ -443,8 +466,8 @@ export function ChessBoardGame({
         backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
       };
     }
-    if (squareSlectedBeforeMove) {
-      styles[squareSlectedBeforeMove] = {
+    if (squareSelectedBeforeMove) {
+      styles[squareSelectedBeforeMove] = {
         backgroundColor: STYLE_COLORS.SELECTED_SQUARE,
       };
     }
@@ -477,7 +500,7 @@ export function ChessBoardGame({
   }, [
     selectedSquare,
     squareSelectedAfterMove,
-    squareSlectedBeforeMove,
+    squareSelectedBeforeMove,
     rightClickedSquares,
     kingInCheck,
     winnerKing,
