@@ -46,7 +46,7 @@ interface UseChessGameReturnType {
  * Custom hook to manage a chess game.
  *
  * @param {UseChessGameProps} props - The properties for the hook.
- * @param {function} [props.onMoveMade] - Optional callback function to be called when a move is made.
+ * @param {function} [props.onMoveMade] - Optional callback function to be called when a move is made (e.g to emit move by websockets).
  * @param {function} [props.onGameEnd] - Optional callback function to be called when the game ends.
  * @param {MoveHandlerOptions} [props.moveHandlerOptions={ playAs: "w", allowInvalidMoves: false }] - Options for handling moves, including the color the player is playing as and whether to allow invalid moves.
  * @returns {UseChessGameReturnType} - Returns an object containing the current position, game history moves, makeMove function, onDropBoard function, game instance, endGameData, loadGameFromFen function, and loadGameFromPgn function.
@@ -62,7 +62,7 @@ export function useChessGame({
    * This state holds an instance of the Chess game, which is used to manage the game state,
    * including the board position, move history, and game rules.
    */
-  const [game, setGame] = useState(new Chess());
+  const [game, setGame] = useState<Chess>(new Chess());
 
   /**
    * The end game data.
@@ -118,7 +118,9 @@ export function useChessGame({
       }
       console.info(`Game Ended - Winner: ${winner}, Reason: ${reason}`);
       setEndGameData({ winner, reason });
-      onGameEnd?.();
+
+      // call onGameEnd callback if provided
+      if (onGameEnd) onGameEnd();
     },
     [onGameEnd],
   );
@@ -134,7 +136,6 @@ export function useChessGame({
     (moveConfig: MoveConfig, gameCopy: Chess) => {
       try {
         gameCopy.move(moveConfig);
-
         return true;
       } catch {
         console.warn(`Invalid move ${JSON.stringify(moveConfig)}`);
@@ -158,7 +159,6 @@ export function useChessGame({
 
       gameCopy.put(pieceFrom, moveConfig.to);
       gameCopy.remove(moveConfig.from);
-
       return true;
     },
     [],
@@ -176,9 +176,7 @@ export function useChessGame({
     (from: Square, to: Square, promotionPiece: promotionPiece = QUEEN) => {
       const { playAs, allowInvalidMoves } = moveHandlerOptions;
 
-      if (game.turn() !== playAs) {
-        return false;
-      }
+      if (game.turn() !== playAs) return false;
 
       const gameCopy = new Chess();
       gameCopy.loadPgn(game.pgn());
@@ -193,14 +191,13 @@ export function useChessGame({
         ? makeValidMove(moveConfig, gameCopy)
         : makeForcedMove(moveConfig, gameCopy);
 
-      if (moveMade) {
-        // Emit move thorugh WebSockets
-        setGame(gameCopy);
-        if (onMoveMade) {
-          onMoveMade(from, to, promotionPiece);
-        }
-        checkGameEnd(gameCopy);
-      }
+      if (!moveMade) return false;
+
+      setGame(gameCopy);
+      checkGameEnd(gameCopy);
+
+      // call onMoveMade callback if provided
+      if (onMoveMade) onMoveMade(from, to, promotionPiece);
 
       return moveMade;
     },

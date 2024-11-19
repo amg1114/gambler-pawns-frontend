@@ -1,91 +1,115 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatTimeMs } from "../_utils/formatTimeMs";
+import { BLACK, WHITE } from "chess.js";
 
 // custom hooks
-import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import { useGameConnection } from "../_hooks/useGameConnection";
+import { useChessGame } from "../../lib/hooks/useChessGame";
 import { useChessWebSocket } from "../_hooks/useChessWebSocket";
-import { useChessGame } from "../_hooks/useChessGame";
+import { useExceptionHandler } from "../_hooks/useGameExceptionHandler";
+import { useGameTimers } from "../_hooks/useGameTimers";
+
 // components
+import { ChessBoardGame } from "../../ui/components/chessBoardGame/ChessBoardGame";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import OpponentDrawOfferModal from "./OpponentDrawOfferModal";
-import OfferDrawModal from "./OfferDrawModal";
-import ResignGameModal from "./ResignGameModal";
-import EndGameModal, { endGameDataInterface } from "./EndGameModal";
-import StreakModal from "./StreakModal";
 import SkeletonGame from "./SkeletonGame";
 import UserInfo from "./UserInfo";
+import GameModals from "./GameModals";
+import { endGameDataInterface } from "./EndGameModal";
+import { useChessPlayersInfo } from "../_hooks/useChessPlayersInfo";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
-  const { data: session } = useSession();
-
   const { socket, loading, joinGameDataFormRequest, gameData } =
     useGameConnection({
       gameId: id,
     });
 
-  // handle game events for modals
-  const [isOpponentDrawOffer, setOpponentDrawOffer] = useState(false);
+  /** State to manage if the opponent offers a draw */
+  const [isOpponentDrawOfferModalOpen, setIsOpponentDrawOfferModalOpen] =
+    useState(false);
 
+  /** Handler to open the opponent draw offer modal. */
   const handleOpponentDrawOffer = useCallback(() => {
-    setOpponentDrawOffer(true);
+    setIsOpponentDrawOfferModalOpen(true);
   }, []);
 
-  // Handle current player draw offer
-  const [isDrawOffer, setDrawOffer] = useState(false);
-  const [isDrawOfferRejected, setDrawOfferRejected] = useState(false);
+  /** State to manage if you offer a draw */
+  const [isDrawOfferModalOpen, setIsDrawOfferModalOpen] = useState(false);
 
+  const handleDrawOfferCancelled = useCallback(() => {
+    setIsDrawOfferModalOpen(false);
+  }, []);
+
+  /** State to manage if opponet rejects your draw offer*/
+  const [wasDrawOfferRejected, setWasDrawOfferRejected] = useState(false);
+
+  /** Handler to manage if your draw offer is rejected */
   const handleRejectDrawOffer = useCallback(() => {
-    setDrawOfferRejected(true);
+    setWasDrawOfferRejected(true);
   }, []);
 
   useEffect(() => {
-    if (isDrawOfferRejected) {
-      const timer = setTimeout(() => {
-        setDrawOfferRejected(false);
-      }, 10000); // after 10 seconds the message will disappear
+    if (!wasDrawOfferRejected) return;
 
-      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
-    }
-  }, [isDrawOfferRejected]);
+    // Set a timer to hide the message after 10 seconds
+    const timer = setTimeout(() => {
+      setWasDrawOfferRejected(false);
+    }, 10000);
 
-  const [isResignModalOpen, setResignModalOpen] = useState(false);
+    // Clears the timer if the component unmounts or the state changes
+    return () => clearTimeout(timer);
+  }, [wasDrawOfferRejected]);
+
+  /** State to manage if the resign modal is open. */
+  const [isResignModalOpen, setIsResignModalOpen] = useState(false);
+
+  /** Handler to manage if you cancel game resign */
+  const handleResignGameCancelled = useCallback(() => {
+    setIsResignModalOpen(false);
+  }, []);
+
+  /** State to hold game end data if game finishes */
   const [endGameData, setEndGameData] = useState<endGameDataInterface | null>(
     null,
   );
-  const [endGameStreakModalOpen, setEndGameStreakModalOpen] = useState(false);
-  const [gameEndModalOpen, setGameEndModalOpen] = useState(false);
 
+  /** State to manage whether streak modal is show or not */
+  const [isEndGameStreakModalOpen, setIsEndGameStreakModalOpen] =
+    useState(false);
+
+  /** Handler to manage if you close streak modal */
+  const hanldeCloseEndGameStreakModal = useCallback(() => {
+    setIsEndGameStreakModalOpen(false);
+    setIsGameEndModalOpen(true);
+  }, []);
+
+  /** State to manage whether game end modal is show or not */
+  const [isGameEndModalOpen, setIsGameEndModalOpen] = useState(false);
+
+  /** Handler to manage game end */
   const handleEndGame = useCallback((data: endGameDataInterface) => {
     setEndGameData(data);
 
     if (data.winner === "You") {
-      setEndGameStreakModalOpen(true);
+      setIsEndGameStreakModalOpen(true);
     } else {
-      setGameEndModalOpen(true);
+      setIsGameEndModalOpen(true);
     }
   }, []);
 
   // timers
-  const setInitialTime = useCallback(() => {
-    if (!joinGameDataFormRequest?.timeMinutes) return 5 * 60 * 1000;
-    return joinGameDataFormRequest.timeMinutes * 60 * 1000;
+  const setInitialTimeMs = useCallback(() => {
+    const { timeMinutes } = joinGameDataFormRequest;
+    const timeMinutesToMs = (timeMinutes ? timeMinutes : 5) * 60 * 1000;
+    return timeMinutesToMs;
   }, [joinGameDataFormRequest]);
 
-  const [playerOneTime, setPlayerOneTime] = useState(setInitialTime);
-  const [playerTwoTime, setPlayerTwoTime] = useState(setInitialTime);
+  const { playerOneTime, playerTwoTime, handleTimerUpdate } =
+    useGameTimers(setInitialTimeMs());
 
-  const handleTimerUpdate = useCallback(
-    (times: { playerOneTime: number; playerTwoTime: number }) => {
-      setPlayerOneTime(times.playerOneTime);
-      setPlayerTwoTime(times.playerTwoTime);
-    },
-    [],
-  );
-
+  // track inactivity timer
   const [inactivityTimer, setInactivityTimer] = useState<null | number>(null);
 
   const handleInactivityTimerUpdate = useCallback(
@@ -96,70 +120,30 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
   );
 
   // exception handling
-  const [
-    exceptionFromBackendChessService,
-    setExceptionFromBackendChessService,
-  ] = useState<any>(null);
+  const {
+    exception: backendChessServiceException,
+    handleException: handleBackendChessServiceException,
+  } = useExceptionHandler();
 
-  const handleExceptionFromBackendChessService = useCallback((data: any) => {
-    setExceptionFromBackendChessService(data);
-  }, []);
-
-  useEffect(() => {
-    if (exceptionFromBackendChessService) {
-      const timer = setTimeout(() => {
-        setExceptionFromBackendChessService(null);
-      }, 10000); // after 10 seconds the message will disappear
-
-      return () => clearTimeout(timer); // Clears the timer if the component unmounts or the state changes
-    }
-  }, [exceptionFromBackendChessService]);
-
-  // player's info
-  const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
-  const [opponentPlayerInfo, setOpponentPlayerInfo] = useState<any>({});
-  const [side, setSide] = useState<"white" | "black">("white");
-
-  useLayoutEffect(() => {
-    if (loading) return;
-    setSide(gameData.color);
-
-    const blackData = {
-      timer: formatTimeMs(playerTwoTime),
-      nickname: gameData.playerBlack.userInfo.nickname,
-      eloRating: gameData.playerBlack.elo,
-      countryCode: gameData.playerBlack.userInfo.countryCode,
-      userAvatar: gameData.playerBlack.userInfo.userAvatarImg.fileName,
-    };
-
-    const whiteData = {
-      timer: formatTimeMs(playerOneTime),
-      nickname: gameData.playerWhite.userInfo.nickname,
-      eloRating: gameData.playerWhite.elo,
-      countryCode: gameData.playerWhite.userInfo.countryCode,
-      userAvatar: gameData.playerWhite.userInfo.userAvatarImg.fileName,
-    };
-
-    if (gameData.color === "white") {
-      setCurrentPlayerInfo(whiteData);
-      setOpponentPlayerInfo(blackData);
-    } else {
-      setCurrentPlayerInfo(blackData);
-      setOpponentPlayerInfo(whiteData);
-    }
-  }, [playerOneTime, playerTwoTime, loading, gameData]);
+  // load players info
+  const { currentPlayerInfo, opponentPlayerInfo, side } = useChessPlayersInfo(
+    gameData,
+    playerOneTime,
+    playerTwoTime,
+    loading,
+  );
 
   // TODO: resolver la dependencia circular entre useChessGame y useChessWebSocket
-  // Una vez resuelta ver como se refactoriza la logica de este componente
-  /// TODO: poner todos los handlers en useCallback
-  //Hook to validate and handle moves
+  // -> Una vez resuelta ver como se refactoriza la logica de este componente
+
+  // Hook to interact with the chess game instance
   const chessGame = useChessGame({
     onMoveMade: (from: string, to: string, promotion: string) => {
       setInactivityTimer(null);
       emitWebsocketMakeMove(from, to, promotion);
     },
     moveHandlerOptions: {
-      playAs: side === "white" ? "w" : "b",
+      playAs: side === "white" ? WHITE : BLACK,
       allowInvalidMoves: false,
     },
   });
@@ -180,15 +164,39 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     handleRejectDrawOffer,
     handleEndGame,
     handleInactivityTimerUpdate,
-    handleExceptionFromBackendChessService,
+    handleBackendChessServiceException,
     gameData,
   );
 
-  if (loading || !gameData) {
+  /** Handler to manage if you resign the game */
+  const handleResignGameConfirmed = useCallback(() => {
+    emitWebsocketResignGame();
+    setIsResignModalOpen(false);
+  }, [emitWebsocketResignGame]);
+
+  /** Handler to manage if you offer a draw */
+  const handleOfferDrawConfirmed = useCallback(() => {
+    setIsDrawOfferModalOpen(false);
+    emitWebsocketOfferDraw();
+  }, [emitWebsocketOfferDraw]);
+
+  /** Handler to manage that you rejects draw offer from opponent */
+  const handleOpponentDrawOfferRejected = useCallback(() => {
+    setIsOpponentDrawOfferModalOpen(false);
+    emitWebsocketRejectDraw();
+  }, [emitWebsocketRejectDraw]);
+
+  /** Handler to manage that you accepts draw offer from opponent */
+  const handleOpponentDrawOfferAccepted = useCallback(() => {
+    setIsOpponentDrawOfferModalOpen(false);
+    emitWebsocketAcceptDraw();
+  }, [emitWebsocketAcceptDraw]);
+
+  if (loading) {
     return (
       <SkeletonGame
         joinGameDataFormRequest={joinGameDataFormRequest}
-        exceptionFromBackendChessService={exceptionFromBackendChessService}
+        exceptionFromBackendChessService={backendChessServiceException}
       />
     );
   }
@@ -198,13 +206,13 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
       <section className="mx-auto max-w-screen-board">
         {/* TODO: crear un componente separado que se use para mostrar:
           -> 1. excepciones, el timer de inactividad, cuando alguien rechace una oferta de tablas */}
-        {exceptionFromBackendChessService ? (
-          <p>{exceptionFromBackendChessService.message}</p>
-        ) : null}
-        {isDrawOfferRejected ? <p>Draw offer was rejected</p> : null}
-        {inactivityTimer ? (
+        {backendChessServiceException && (
+          <p>{backendChessServiceException.message}</p>
+        )}
+        {wasDrawOfferRejected && <p>Draw offer was rejected</p>}
+        {inactivityTimer && (
           <p>{`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}</p>
-        ) : null}
+        )}
         <p>
           {chessGame.movesHistory.map(
             (move, index) =>
@@ -230,63 +238,35 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
         />
         <StyledButton
           onClick={() => {
-            setDrawOffer(true);
+            setIsDrawOfferModalOpen(true);
           }}
         >
           Offer Draw
         </StyledButton>
         <StyledButton
           onClick={() => {
-            setResignModalOpen(true);
+            setIsResignModalOpen(true);
           }}
         >
           Resign
         </StyledButton>
       </section>
-      <ResignGameModal
-        isOpen={isResignModalOpen}
-        handleNo={() => {
-          setResignModalOpen(false);
-        }}
-        handleYes={() => {
-          setResignModalOpen(false);
-          emitWebsocketResignGame();
-        }}
-      />
-      <OfferDrawModal
-        isOpen={isDrawOffer}
-        handleNo={() => {
-          setDrawOffer(false);
-        }}
-        handleYes={() => {
-          emitWebsocketOfferDraw();
-          setDrawOffer(false);
-        }}
-      />
-      <OpponentDrawOfferModal
-        isOpen={isOpponentDrawOffer}
-        acceptDraw={() => {
-          setOpponentDrawOffer(false);
-          emitWebsocketAcceptDraw();
-        }}
-        rejectDraw={() => {
-          setOpponentDrawOffer(false);
-          emitWebsocketRejectDraw();
-        }}
-      />
-      <StreakModal
-        isOpen={endGameStreakModalOpen}
-        streakNumber={session?.data?.streakDays || 0}
-        onClose={() => {
-          setEndGameStreakModalOpen(false);
-          setGameEndModalOpen(true);
-        }}
-      />
-      <EndGameModal
-        isOpen={gameEndModalOpen}
-        gameData={endGameData as endGameDataInterface | null}
-        gameMode={joinGameDataFormRequest.mode}
-        gameId={id as string}
+      <GameModals
+        gameId={id}
+        gameMode={joinGameDataFormRequest?.mode as string}
+        isResignModalOpen={isResignModalOpen}
+        onResignGameConfirmed={handleResignGameConfirmed}
+        onResignGameCancelled={handleResignGameCancelled}
+        isDrawOfferModalOpen={isDrawOfferModalOpen}
+        onOfferDrawConfirmed={handleOfferDrawConfirmed}
+        onOfferDrawCancelled={handleDrawOfferCancelled}
+        isOpponentDrawOfferModalOpen={isOpponentDrawOfferModalOpen}
+        onAcceptDraw={handleOpponentDrawOfferAccepted}
+        onRejectDraw={handleOpponentDrawOfferRejected}
+        endGameData={endGameData}
+        isGameEndModalOpen={isGameEndModalOpen}
+        isEndGameStreakModalOpen={isEndGameStreakModalOpen}
+        onCloseEndGameStreakModal={hanldeCloseEndGameStreakModal}
       />
     </>
   );

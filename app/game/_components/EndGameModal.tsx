@@ -19,8 +19,8 @@ export interface endGameDataInterface {
 
 interface endGameInterface {
   isOpen: boolean;
-  gameMode: string;
-  gameId: string;
+  gameMode: string | undefined;
+  gameId: string | undefined;
   gameData: endGameDataInterface | null;
 }
 

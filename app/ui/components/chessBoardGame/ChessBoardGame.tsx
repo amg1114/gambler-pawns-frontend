@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
 import { BLACK, Chess, KING, QUEEN, ROOK, WHITE } from "chess.js";
-import { promotionPiece } from "@/app/game/_hooks/useChessGame";
+import { promotionPiece } from "@/app/lib/hooks/useChessGame";
 
 const STYLE_COLORS = {
   LIGTH_SQUARES: "#edeed1",

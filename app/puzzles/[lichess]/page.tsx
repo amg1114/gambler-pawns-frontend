@@ -10,7 +10,7 @@ import {
   PuzzleResponse,
 } from "@/app/lib/interfaces/responses/puzzle-res.interface";
 
-import { useChessGame } from "@/app/game/_hooks/useChessGame";
+import { useChessGame } from "@/app/lib/hooks/useChessGame";
 
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";

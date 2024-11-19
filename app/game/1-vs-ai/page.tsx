@@ -1,6 +1,6 @@
 "use client";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
-import { useChessGame } from "../_hooks/useChessGame";
+import { useChessGame } from "../../lib/hooks/useChessGame";
 import { useStockfish } from "./_hooks/useStockfish";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Square } from "chess.js";
