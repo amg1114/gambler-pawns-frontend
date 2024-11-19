@@ -7,7 +7,7 @@ import "./globals.css";
 import { nunito } from "./ui/fonts";
 
 // components
-import Providers from "./ui/components/Providers";
+import Providers from "./lib/contexts/Providers";
 import Header from "./ui/components/shared/header";
 import Footer from "./ui/components/shared/footer";
 

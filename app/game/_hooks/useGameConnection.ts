@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import io, { Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 interface UseGameConnectionProps {
   gameId: string | undefined;
@@ -48,8 +48,8 @@ const readJoinGameDataFormRequest = (session: Session | null): any | null => {
  * @returns An object containing the socket and loading state.
  */
 export function useGameConnection({ gameId }: UseGameConnectionProps) {
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
+  const { socket } = useWebSocketConnection();
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -66,34 +66,33 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
    */
   const [gameData, setGameData] = useState<any>(readGameData);
 
+  // try to connect to the game
   useEffect(() => {
-    // connect to ws server
-    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
-    setSocket(newSocket);
+    if (!socket) return;
 
-    // when connection is established, join the game or reconnect
-    newSocket.on("connect", () => {
-      if (gameId) {
-        console.log("Trying reconnection", gameId);
-        // Reconnecting to existing game
-        newSocket.emit("game:reconnect", {
-          gameId,
-          playerId: joinGameDataFormRequest.playerId,
-        });
-      } else {
-        console.log("Joining game with data", joinGameDataFormRequest);
-        newSocket.emit("game:join", joinGameDataFormRequest);
-      }
-    });
+    if (gameId) {
+      console.log("Trying reconnection", gameId);
+      // Reconnecting to existing game
+      socket.emit("game:reconnect", {
+        gameId,
+        playerId: joinGameDataFormRequest.playerId,
+      });
+    } else {
+      console.log("Joining game with data", joinGameDataFormRequest);
+      socket.emit("game:join", joinGameDataFormRequest);
+    }
+  }, [gameId, joinGameDataFormRequest, socket]);
 
+  useEffect(() => {
+    if (!socket) return;
     // when reconnected to game
-    newSocket.on("game:reconnected", (data: any) => {
+    socket.on("game:reconnected", (data: any) => {
       setLoading(false);
       console.log("Reconnected to game", data);
     });
 
     // when new game is started
-    newSocket.on("game:started", (data: any) => {
+    socket.on("game:started", (data: any) => {
       console.log("Game started", data);
       sessionStorage.setItem("gameData", JSON.stringify(data));
       setGameData(data);
@@ -103,12 +102,11 @@ export function useGameConnection({ gameId }: UseGameConnectionProps) {
 
     return () => {
       // Disconnect socket when component unmounts
-      newSocket.off("connect");
-      newSocket.off("game:reconnected");
-      newSocket.off("game:started");
-      newSocket.disconnect();
+      socket.off("connect");
+      socket.off("game:reconnected");
+      socket.off("game:started");
     };
-  }, [gameId, joinGameDataFormRequest, router]);
+  }, [gameId, joinGameDataFormRequest, router, socket]);
 
-  return { socket, loading, joinGameDataFormRequest, gameData };
+  return { loading, joinGameDataFormRequest, gameData };
 }

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { formatTimeMs } from "../_utils/formatTimeMs";
-import { BLACK, WHITE } from "chess.js";
 
 // custom hooks
 import { useGameConnection } from "../_hooks/useGameConnection";
@@ -21,10 +20,9 @@ import { endGameDataInterface } from "./EndGameModal";
 import { useChessPlayersInfo } from "../_hooks/useChessPlayersInfo";
 
 export default function ActualGamePage({ id }: { id: string | undefined }) {
-  const { socket, loading, joinGameDataFormRequest, gameData } =
-    useGameConnection({
-      gameId: id,
-    });
+  const { loading, joinGameDataFormRequest, gameData } = useGameConnection({
+    gameId: id,
+  });
 
   /** State to manage if the opponent offers a draw */
   const [isOpponentDrawOfferModalOpen, setIsOpponentDrawOfferModalOpen] =
@@ -101,7 +99,7 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
 
   // timers
   const setInitialTimeMs = useCallback(() => {
-    const { timeMinutes } = joinGameDataFormRequest;
+    const timeMinutes = joinGameDataFormRequest?.timeMinutes;
     const timeMinutesToMs = (timeMinutes ? timeMinutes : 5) * 60 * 1000;
     return timeMinutesToMs;
   }, [joinGameDataFormRequest]);
@@ -155,7 +153,6 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
     emitWebsocketOfferDraw,
     emitWebsocketResignGame,
   } = useChessWebSocket(
-    socket,
     joinGameDataFormRequest?.playerId,
     chessGame.loadGameFromPgn,
     handleTimerUpdate,
@@ -169,8 +166,8 @@ export default function ActualGamePage({ id }: { id: string | undefined }) {
 
   /** Handler to manage if you resign the game */
   const handleResignGameConfirmed = useCallback(() => {
-    emitWebsocketResignGame();
     setIsResignModalOpen(false);
+    emitWebsocketResignGame();
   }, [emitWebsocketResignGame]);
 
   /** Handler to manage if you offer a draw */
