@@ -28,7 +28,7 @@ export default function FriendsPage() {
           <div className="justify-end space-x-sm pr-sm">
             <StyledButton style="outlined" extraClasses="py-xs">
               Delete
-            </StyledButton okaejflaweskgj>
+            </StyledButton>
           </div>
         </div>
         <div className="flex items-center justify-between bg-secondary p-sm">
