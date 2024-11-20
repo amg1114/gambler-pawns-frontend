@@ -126,6 +126,16 @@ export function useChessWebSocket(
     [onGameException],
   );
 
+  /** Handles game reconnection. */
+  const handleGameReconnected = useCallback(
+    (data: any) => {
+      console.log("Reconectando al juego", JSON.stringify(data)); // {pgn: string}
+      // como puedo saber si el juego se ha reconectado?
+      onOpponentMove(data.pgn);
+    },
+    [onOpponentMove],
+  );
+
   useEffect(() => {
     if (!socket) return;
 
@@ -137,6 +147,7 @@ export function useChessWebSocket(
     socket.on("drawRejected", handleDrawRejected);
     socket.on("gameEnd", handleGameEnd);
     socket.on("exception", handleException);
+    socket.on("game:reconnected", handleGameReconnected);
 
     return () => {
       // cleanup listeners when component unmounts
@@ -150,6 +161,7 @@ export function useChessWebSocket(
       socket.off("drawRejected", handleDrawRejected);
       socket.off("gameEnd", handleGameEnd);
       socket.off("exception", handleException);
+      socket.off("game:reconnected", handleGameReconnected);
     };
   }, [
     handleDrawOffered,
@@ -159,6 +171,7 @@ export function useChessWebSocket(
     handleInactivityCountdownUpdate,
     handleMoveMade,
     handleTimerUpdate,
+    handleGameReconnected,
     socket,
   ]);
 
@@ -209,6 +222,19 @@ export function useChessWebSocket(
 
     socket.emit("game:resign", { playerId });
   }, [socket, playerId]);
+
+  /** Emits event to reconnect to game */
+  const emitWebsocketReconnectGame = useCallback(() => {
+    if (!socket) return;
+
+    socket.emit("game:reconnect", { playerId, gameId: gameData?.gameId });
+  }, [socket, playerId, gameData?.gameId]);
+
+  // reconnect to game when component mounts
+  // TODO: verificar si hay una manera mejor de hacer esto, cuando alguien pierda la conexión o cuando intencionalmente recargue la página
+  useEffect(() => {
+    emitWebsocketReconnectGame();
+  }, [emitWebsocketReconnectGame]);
 
   return {
     emitWebsocketMakeMove,
