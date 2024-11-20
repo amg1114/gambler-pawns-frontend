@@ -59,6 +59,9 @@ export default function GamePage() {
     return () => {
       // cleanup socket listeners when component unmounts
       socket.off("game:started", emitGameJoin);
+      // manually disconnect and connect to avoid pairing with disconnected player
+      socket.disconnect();
+      socket.connect();
     };
   }, [socket, handleGameStarted, emitGameJoin]);
 
