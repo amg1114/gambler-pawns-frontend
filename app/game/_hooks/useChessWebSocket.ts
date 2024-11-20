@@ -167,7 +167,7 @@ export function useChessWebSocket(
   const emitWebsocketMakeMove = useCallback(
     (from: string, to: string, promotion: string) => {
       if (!socket) return;
-
+      console.log("Emitiendo movimiento", { playerId, from, to, promotion });
       socket.emit("game:makeMove", { playerId, from, to, promotion });
     },
     [socket, playerId],

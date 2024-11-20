@@ -1,4 +1,4 @@
-import { GameOptions } from "@/app/game-options/_hooks/game-options.hook";
+import { GameOptions } from "@/app/game-options/_hooks/useGameOptions";
 
 export const arraySimplifyGameModes = [
   { id: "All", option: "All" },

@@ -9,9 +9,8 @@ import Clock from "@/app/ui/icons/clock.svg";
 import ArrowDown from "@/app/ui/icons/down-arrow.svg";
 import {
   GameOptions,
-  setGameOptions,
-} from "@/app/game-options/_hooks/game-options.hook";
-import { set } from "zod";
+  useGameOptions,
+} from "@/app/game-options/_hooks/useGameOptions";
 
 interface DropDownOption {
   id: string;
@@ -39,6 +38,9 @@ export default function DropdownButton({
   // Estado para controlar la visibilidad del dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState(dropDown.title);
+
+  const { setGameOptions } = useGameOptions();
+
   // Función para alternar la visibilidad del dropdown
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
