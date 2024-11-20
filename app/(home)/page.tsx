@@ -38,7 +38,7 @@ export default function HomePage() {
         const response = await axios.get(
           `http://[::1]:8000/api/v1/user/${session?.data.userId}/friends`,
         );
-        setFriends(response.data.data.friendsList); // Ajusta la estructura según tu API
+        setFriends(response.data.data.friendsList);
         setTotalFriends(response.data.data.totalFriends);
       } catch (error) {
         console.error("Error fetching friends:", error);
