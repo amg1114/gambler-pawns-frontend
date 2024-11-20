@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
-import { Socket } from "socket.io-client";
 import { endGameDataInterface } from "../_components/EndGameModal";
+import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 interface UseChessWebSocketReturnType {
   emitWebsocketMakeMove: (from: string, to: string, promotion: string) => void;
@@ -26,7 +26,6 @@ interface UseChessWebSocketReturnType {
  * @returns {UseChessWebSocketReturnType} - An object containing functions to make a move, accept a draw, reject a draw, offer a draw, and resign the game.
  */
 export function useChessWebSocket(
-  socket: Socket | null,
   playerId: string,
   onOpponentMove: (pgn: string) => void,
   onTimerUpdate: (times: {
@@ -40,6 +39,8 @@ export function useChessWebSocket(
   onGameException: (data: any) => void,
   gameData: any,
 ): UseChessWebSocketReturnType {
+  const { socket } = useWebSocketConnection();
+
   // hadlers for game events socket listeners
 
   /** Listens for a move made by the opponent. */
@@ -165,48 +166,48 @@ export function useChessWebSocket(
   /** Emits event to make a move. */
   const emitWebsocketMakeMove = useCallback(
     (from: string, to: string, promotion: string) => {
-      if (socket) {
-        socket.emit("game:makeMove", { playerId, from, to, promotion });
-      }
+      if (!socket) return;
+
+      socket.emit("game:makeMove", { playerId, from, to, promotion });
     },
     [socket, playerId],
   );
 
   /** Emits event to accept a draw offer.*/
   const emitWebsocketAcceptDraw = useCallback(() => {
-    if (socket) {
-      socket.emit("game:acceptDraw", {
-        playerId,
-        gameId: gameData?.gameId,
-      });
-    }
+    if (!socket) return;
+
+    socket.emit("game:acceptDraw", {
+      playerId,
+      gameId: gameData?.gameId,
+    });
   }, [socket, playerId, gameData?.gameId]);
 
   /** Emits event to reject a draw offer. */
   const emitWebsocketRejectDraw = useCallback(() => {
-    if (socket) {
-      socket.emit("game:rejectDraw", {
-        playerId,
-        gameId: gameData?.gameId,
-      });
-    }
+    if (!socket) return;
+
+    socket.emit("game:rejectDraw", {
+      playerId,
+      gameId: gameData?.gameId,
+    });
   }, [socket, playerId, gameData?.gameId]);
 
   /** Emits event to offer a draw to the opponent.*/
   const emitWebsocketOfferDraw = useCallback(() => {
-    if (socket) {
-      socket.emit("game:offerDraw", {
-        playerId,
-        gameId: gameData?.gameId,
-      });
-    }
+    if (!socket) return;
+
+    socket.emit("game:offerDraw", {
+      playerId,
+      gameId: gameData?.gameId,
+    });
   }, [socket, playerId, gameData?.gameId]);
 
   /** Emits event to resign the game.*/
   const emitWebsocketResignGame = useCallback(() => {
-    if (socket) {
-      socket.emit("game:resign", { playerId });
-    }
+    if (!socket) return;
+
+    socket.emit("game:resign", { playerId });
   }, [socket, playerId]);
 
   return {

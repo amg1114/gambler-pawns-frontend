@@ -200,10 +200,8 @@ export function ChessBoardGame({
         (game.turn() === WHITE && side === "black") ||
         (game.turn() === BLACK && side === "white");
 
-      if (isInvalidTurn) {
-        console.log("Invalid turn");
-        return false;
-      }
+      if (isInvalidTurn) return false;
+
       const sourcePiece = game.get(sourceSquare);
       const targetPiece = game.get(targetSquare);
 
