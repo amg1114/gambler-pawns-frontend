@@ -9,21 +9,28 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  pnpm_config_cache: $(Pipeline.Workspace)/.pnpm-store
+
 steps:
-- task: UseNode@1
-  inputs:
-    version: '16.x'
-  displayName: 'Install Node.js'
+  - task: Cache@2
+    inputs:
+      key: 'pnpm | "$(Agent.OS)" | pnpm-lock.yaml'
+      path: $(pnpm_config_cache)
+    displayName: Cache pnpm
 
-- script: |
-    npm install
-  displayName: 'npm install'
+  - script: |
+      corepack enable
+      corepack prepare pnpm@latest-9 --activate
+      pnpm config set store-dir $(pnpm_config_cache)
+    displayName: "Setup pnpm"
 
-- script: |
-    npm run build
-  displayName: 'npm build'
+  - script: |
+      pnpm install
+      pnpm run build
+    displayName: "pnpm install and build"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script'
