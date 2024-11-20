@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { BLACK, Chess, QUEEN, Square, WHITE } from "chess.js";
+import { BLACK, Chess, Square, WHITE } from "chess.js";
 
 // aux types
 export type promotionPiece = "q" | "r" | "b" | "n";
@@ -56,7 +56,7 @@ export function useChessGame({
   onMoveMade,
   onGameEnd,
   moveHandlerOptions = { allowInvalidMoves: false },
-}: UseChessGameProps): UseChessGameReturnType {
+}: UseChessGameProps = {}): UseChessGameReturnType {
   /**
    * The current state of the chess game.
    *
