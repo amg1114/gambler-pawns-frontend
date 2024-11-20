@@ -28,7 +28,6 @@ export function useChessPlayersInfo(
   gameData: any,
   playerOneTime: number,
   playerTwoTime: number,
-  loading: boolean,
 ): UseChessPlayersInfoReturnType {
   // player's info
   const [currentPlayerInfo, setCurrentPlayerInfo] = useState<any>({});
@@ -60,7 +59,7 @@ export function useChessPlayersInfo(
       setCurrentPlayerInfo(blackData);
       setOpponentPlayerInfo(whiteData);
     }
-  }, [playerOneTime, playerTwoTime, loading, gameData]);
+  }, [playerOneTime, playerTwoTime, gameData]);
 
   return { currentPlayerInfo, opponentPlayerInfo, side };
 }

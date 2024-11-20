@@ -1,6 +1,9 @@
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
-import { setGameOptions } from "@/app/game-options/_hooks/game-options.hook";
+import { useGameOptions } from "../_hooks/useGameOptions";
+
 export default function BetOption(id: string) {
+  const { setGameOptions } = useGameOptions();
+
   const handleBetSelection = (id: string) => {
     setGameOptions({ bet: +id });
   };

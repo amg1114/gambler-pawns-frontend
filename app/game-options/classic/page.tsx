@@ -8,6 +8,9 @@ import { arrayGameModes } from "@/app/ui/components/DropDown/optionArrays";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import BetOption from "@/app/game-options/_components/bet-options";
+import GameAlert from "@/app/ui/components/modals/GameAlert";
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
 
 // icons
 import ErrorIcon from "@mui/icons-material/Error";
@@ -16,21 +19,16 @@ import Dice from "@/app/ui/icons/dice.svg";
 import Link from "@/app/ui/icons/link-shared.svg";
 
 // hooks
-import {
-  clearGameOptions,
-  getGameOptions,
-  setGameOptions,
-} from "@/app/game-options/_hooks/game-options.hook";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import GameAlert from "@/app/ui/components/modals/GameAlert";
-import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
-import DropdownButton from "@/app/ui/components/DropDown/DropDownButton";
+import { useGameOptions } from "@/app/game-options/_hooks/useGameOptions";
 
 export default function ClassicOptionPage() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [gameMode, setGameMode] = useState<string>("Select a Game Mode");
+
+  const { clearGameOptions, getGameOptions, setGameOptions } = useGameOptions();
 
   const handleCancelSubmission = () => {
     clearGameOptions();
