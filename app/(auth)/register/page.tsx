@@ -53,7 +53,7 @@ export default function RegisterPage() {
         return;
       }
       throw new Error();
-    } catch (error) {
+    } catch {
       setErrorMessage("Register Failed, please try again");
       setShowErrorAlert(true);
     }
@@ -144,14 +144,14 @@ export default function RegisterPage() {
                 type="submit"
                 className="hover:rounded-md mx-lg w-fit p-sm text-xl font-extrabold text-dark-2 underline underline-offset-8 hover:text-2xl"
               >
-                Sign Up
+                Register
               </button>
               <Link
                 href={"/login"}
                 className="flex w-fit items-center justify-center"
               >
                 <p className="rounded-md mx-md p-sm text-xl font-extrabold text-dark-2 underline underline-offset-8 hover:text-2xl">
-                  Sign In
+                  Login
                 </p>
               </Link>
             </div>
