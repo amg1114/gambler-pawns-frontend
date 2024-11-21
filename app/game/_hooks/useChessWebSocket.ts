@@ -129,8 +129,7 @@ export function useChessWebSocket(
   /** Handles game reconnection. */
   const handleGameReconnected = useCallback(
     (data: any) => {
-      console.log("Reconectando al juego", JSON.stringify(data)); // {pgn: string}
-      // como puedo saber si el juego se ha reconectado?
+      // como puedo manejar una perdida de conexión por red?
       onOpponentMove(data.pgn);
     },
     [onOpponentMove],

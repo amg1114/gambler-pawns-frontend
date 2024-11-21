@@ -5,6 +5,7 @@ import { useStockfish } from "./_hooks/useStockfish";
 import { useEffect, useState } from "react";
 import { BLACK, Square, WHITE } from "chess.js";
 import EndGameAgainsBotModal from "./_components/EndGameAgainsBotModal";
+import { lanToFromTo } from "@/app/lib/utils/chessUtils";
 
 export default function BotPage() {
   // TODO: in the future have a form with options after game such as engine level (like elo), side, game mode
@@ -34,10 +35,7 @@ export default function BotPage() {
         // small delay to make the bot move more human-like
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const [from, to] = [
-          bestMove.slice(0, 2) as Square,
-          bestMove.slice(2, 4) as Square,
-        ];
+        const [from, to] = lanToFromTo(bestMove);
 
         makeMove(from, to);
         setIsProcessingMove(false);
