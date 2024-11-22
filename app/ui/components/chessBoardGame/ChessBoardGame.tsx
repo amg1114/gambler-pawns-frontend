@@ -3,6 +3,7 @@ import { Square } from "react-chessboard/dist/chessboard/types";
 import { Chessboard } from "react-chessboard";
 import { BLACK, Chess, KING, QUEEN, ROOK, WHITE } from "chess.js";
 import { promotionPiece } from "@/app/lib/hooks/useChessGame";
+import { getPiecePosition } from "@/app/lib/utils/chessUtils";
 
 const STYLE_COLORS = {
   LIGTH_SQUARES: "#edeed1",
@@ -12,21 +13,6 @@ const STYLE_COLORS = {
   RIGHT_CLICKED_SQUARE: "rgba(255, 0, 0, 0.6)",
   CHECK_SQUARE: "rgba(255, 0, 0, 0.6)",
   WINNER_SQUARE: "rgba(0, 255, 0, 0.6)",
-};
-
-const getPiecePosition = (
-  game: Chess,
-  piece: { type: string; color: string },
-): Square[] => {
-  const squares: Square[] = [];
-  game.board().map((row) => {
-    row.map((p) => {
-      if (p?.color === piece.color && p?.type === piece.type) {
-        squares.push(p.square);
-      }
-    });
-  });
-  return squares;
 };
 
 interface ChessBoardGameProps {
