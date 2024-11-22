@@ -15,38 +15,53 @@ export default function useChessPuzzles(
    * State to manage the queue of solution moves for the chess puzzle.
    */
   const [movesSolutionQueue, setMovesSolutionQueue] = useState<string[]>([]);
+  const [hasUserMoved, setHasUserMoved] = useState<boolean>(true);
+  const [isShowingSolution, setIsShowingSolution] = useState<boolean>(false);
+  const [currentMoveIndex, setCurrentMoveIndex] = useState<number>(0);
 
   /**
-   * State to manage the pending moves for the chess puzzle.
-   *
-   * This state holds the moves that are pending to be made as part of the hint functionality.
-   * When handleHint is called, the first two moves from the solution queue are set as pending moves.
+   * Makes a move from the solution queue.
    */
-  const [pendingMoves, setPendingMoves] = useState<string[]>([]);
+  const makePuzzleMove = useCallback(() => {
+    if (movesSolutionQueue.length === 0) return;
+
+    const [from, to] = lanToFromTo(movesSolutionQueue[0]);
+    makeMove(from, to);
+
+    setMovesSolutionQueue((prev) => prev.slice(1));
+  }, [movesSolutionQueue, makeMove]);
 
   /**
-   * Handles showing the solution by making all moves from the solution queue.
-   *
-   * Executes all moves in the solution queue with a delay between each move.
+   * Handles showing the solution by processing all moves in the queue.
    */
   const onShowSolution = useCallback(() => {
     if (movesSolutionQueue.length === 0) return;
 
-    const executeMoves = async () => {
-      for (const move of movesSolutionQueue) {
-        const [from, to] = lanToFromTo(move);
-        makeMove(from, to);
+    setCurrentMoveIndex(0);
+    setIsShowingSolution(true);
+  }, [movesSolutionQueue]);
 
-        // Delay between moves
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
+  /**
+   * Effect to execute moves in the solution queue when showing the solution.
+   */
+  useEffect(() => {
+    if (!isShowingSolution) return;
+    if (currentMoveIndex >= movesSolutionQueue.length) {
+      setIsShowingSolution(false);
+      return;
+    }
 
-      // Clear the solution queue after showing all moves
-      setMovesSolutionQueue([]);
-    };
+    const timeoutId = setTimeout(() => {
+      makePuzzleMove();
+    }, 1000);
 
-    executeMoves();
-  }, [movesSolutionQueue, makeMove]);
+    return () => clearTimeout(timeoutId);
+  }, [
+    isShowingSolution,
+    currentMoveIndex,
+    makePuzzleMove,
+    movesSolutionQueue.length,
+  ]);
 
   /**
    * Handles providing a hint by making a move from the solution queue.
@@ -54,32 +69,22 @@ export default function useChessPuzzles(
    * Calls handleMove twice with a delay to simulate the opponent's response.
    */
   const handleHint = useCallback(() => {
-    if (movesSolutionQueue.length < 4) return;
+    makePuzzleMove();
+    setHasUserMoved(false);
+  }, [makePuzzleMove]);
 
-    setPendingMoves(movesSolutionQueue.slice(0, 2));
-  }, [movesSolutionQueue]);
-
-  // handle onHint
+  // respond to user move
   useEffect(() => {
-    if (pendingMoves.length >= 2) {
-      const [move1, move2] = pendingMoves.slice(0, 2);
-      const [from, to] = lanToFromTo(move1);
-      const [from2, to2] = lanToFromTo(move2);
+    if (hasUserMoved || movesSolutionQueue.length === 0) return;
 
-      makeMove(from, to);
+    const timeoutId = setTimeout(() => {
+      makePuzzleMove();
 
-      // timeout to simulate the opponent's move
-      const timeoutId = setTimeout(() => {
-        makeMove(from2, to2);
+      setHasUserMoved(true);
+    }, 500);
 
-        // update states
-        setMovesSolutionQueue((prev) => prev.slice(2));
-        setPendingMoves((prev) => prev.slice(2));
-      }, 500);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [pendingMoves, makeMove]);
+    return () => clearTimeout(timeoutId);
+  }, [hasUserMoved, makePuzzleMove, movesSolutionQueue.length]);
 
   return {
     handleHint,
