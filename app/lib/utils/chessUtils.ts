@@ -1,4 +1,4 @@
-import { Square, WHITE } from "chess.js";
+import { Chess, Square, WHITE } from "chess.js";
 
 type Side = "white" | "black";
 
@@ -22,4 +22,28 @@ type FromTo = [Square, Square];
  */
 export const lanToFromTo = (lan: string): FromTo => {
   return [lan.slice(0, 2), lan.slice(2, 4)] as FromTo;
+};
+
+/**
+ * Gets the positions of all pieces of a given type and color on the chessboard.
+ *
+ * @param {Chess} game - The Chess.js game instance.
+ * @param {object} piece - The piece to find positions for.
+ * @param {string} piece.type - The type of the piece (e.g., 'p', 'r', 'n', 'b', 'q', 'k').
+ * @param {string} piece.color - The color of the piece ('w' for white, 'b' for black).
+ * @returns {Square[]} - An array of squares where the pieces are located.
+ */
+export const getPiecePosition = (
+  game: Chess,
+  piece: { type: string; color: string },
+): Square[] => {
+  const squares: Square[] = [];
+  game.board().map((row) => {
+    row.map((p) => {
+      if (p?.color === piece.color && p?.type === piece.type) {
+        squares.push(p.square);
+      }
+    });
+  });
+  return squares;
 };
