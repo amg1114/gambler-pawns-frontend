@@ -1,5 +1,5 @@
 import Image from "next/image";
-import axios from "axios";
+import axios from "@/app/lib/_axios";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { azeret_mono, nunito } from "@/app/ui/fonts";
@@ -42,7 +42,7 @@ export default function GameResume({ options }: GameResumeProps) {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        let url = `http://[::1]:8000/api/v1/game-history?userId=${session?.data.userId}&page=${currentPage}&limit=${itemsPerPage}`;
+        let url = `/game-history?userId=${session?.data.userId}&page=${currentPage}&limit=${itemsPerPage}`;
         if (options.GameMode !== "All") {
           url += `&mode=${options.GameMode}`;
         }

@@ -9,9 +9,6 @@ import SearchUsers from "./_components/search-users";
 export default function FriendsPage() {
   return (
     <div className="mt-lg">
-      <StyledTitle variant="h1" extraClasses="text-center">
-        My Friends
-      </StyledTitle>
       <section className="grid w-[715px] grid-cols-1 gap-12 lg:grid-cols-2">
         <div>
           <StyledTitle variant="h1" extraClasses="text-center">
@@ -20,6 +17,9 @@ export default function FriendsPage() {
           <SearchUsers />
         </div>
         <div>
+          <StyledTitle variant="h1" extraClasses="text-center">
+            My Friends
+          </StyledTitle>
           <div className="flex items-center justify-between bg-secondary p-sm">
             <div className="flex items-center space-x-sm pl-sm">
               <Image
