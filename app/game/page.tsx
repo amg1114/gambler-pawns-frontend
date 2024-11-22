@@ -28,25 +28,29 @@ export default function GamePage() {
 
   const handleGameStarted = useCallback(
     (data: any) => {
-      console.log("Game started", data);
-
       writeToSessionStorage("gameData", data);
-      writeToSessionStorage("joinGameDataFormRequest", joinGameDataFormRequest);
       router.replace(`/game/${data.gameId}`);
     },
-    [joinGameDataFormRequest, router],
+    [router],
   );
 
   const emitGameJoin = useCallback(() => {
     if (!socket) return;
 
-    console.log("Joining game with data", joinGameDataFormRequest);
-
-    socket.emit("game:join", {
-      ...joinGameDataFormRequest,
-    });
+    socket.emit("game:join", joinGameDataFormRequest);
   }, [joinGameDataFormRequest, socket]);
 
+  // to handle connection lost when internet connection is back
+  useEffect(() => {
+    if (!socket) return;
+
+    // TODO: revisar este enfoque, pero en el futuro es necesario agregar un tiempo maxDisconectedTime para no eliminar al socket de los rooms si se reconecta en un tiempo corto
+    if (socket.recovered) {
+      emitGameJoin();
+    }
+  }, [socket, emitGameJoin]);
+
+  // handle joining to a game
   useEffect(() => {
     if (!socket) return;
 
@@ -56,9 +60,12 @@ export default function GamePage() {
     // when new game is started
     socket.on("game:started", handleGameStarted);
 
+    // cleanup socket listeners when component unmounts
     return () => {
-      // cleanup socket listeners when component unmounts
       socket.off("game:started", emitGameJoin);
+      // manually disconnect and connect to trigger backend mechanism which avoid pairing with disconnected player
+      socket.disconnect();
+      socket.connect();
     };
   }, [socket, handleGameStarted, emitGameJoin]);
 

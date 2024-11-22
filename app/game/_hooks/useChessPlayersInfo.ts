@@ -21,7 +21,6 @@ interface UseChessPlayersInfoReturnType {
  * @param {any} gameData - The game data containing information about the players.
  * @param {number} playerOneTime - The current time for player one.
  * @param {number} playerTwoTime - The current time for player two.
- * @param {boolean} loading - Indicates if the game data is still loading.
  * @returns {UseChessPlayersInfoReturnType} - An object containing the current player's info, opponent's info, and the side (color) the player is playing as.
  */
 export function useChessPlayersInfo(
