@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React from "react";
-import aguacate from "../../ui/icons/aguacate.png";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
@@ -10,53 +9,71 @@ interface GameInviteProps {
   gameDescription: string;
   timeAgo: string;
   playerAvatar?: any;
+  type: string;
+  actionText1: string | null;
+  actionLink1: string | null;
+  actionText2: string | null;
+  actionLink2: string | null;
 }
 
 const NotifyCard = ({
   playerName,
   gameDescription,
   timeAgo,
-  playerAvatar = aguacate,
+  playerAvatar,
+  type,
+  actionText1,
+  actionLink1,
+  actionText2,
+  actionLink2,
 }: GameInviteProps) => {
-  const handleAccept = () => {
-    console.log("Invitation accepted");
+  const handleAction1 = () => {
+    console.log(actionLink1);
   };
 
-  const handleDecline = () => {
-    console.log("Invitation declined");
+  const handleAction2 = () => {
+    console.log(actionLink2);
   };
+
   return (
-    <div className="rounded-lg p-4 mx-auto mb-xs max-w-sm">
+    <div className="rounded-lg p-4 mx-auto mb-xl max-w-sm">
       <div className="flex gap-3">
         <div className="flex-shrink-0">
           <Image
             src={playerAvatar}
             alt={`${playerName}'s avatar`}
             className="w-2xl rounded-full"
+            width={52}
+            height={52}
           />
         </div>
 
         <div className="mb-xs flex flex-1 flex-col">
           <div>
             <StyledTitle variant="h3">
-              {playerName} Quiere Jugar Contigo
+              {playerName} {type}
             </StyledTitle>
           </div>
-          <div className="flex items-center gap-2">
-            <StyledParagraph>
-              {gameDescription} Hace {timeAgo}
+          <div>
+            <StyledParagraph extraClasses="mb-xs">
+              {gameDescription}
             </StyledParagraph>
+            <StyledParagraph>Hace {timeAgo}</StyledParagraph>
           </div>
 
           <div className="flex gap-2">
-            <StyledButton onClick={handleAccept}>Play</StyledButton>
-            <StyledButton
-              onClick={handleDecline}
-              variant="primary"
-              style="outlined"
-            >
-              No Thanks
-            </StyledButton>
+            {actionText1 && (
+              <StyledButton onClick={handleAction1}>{actionText1}</StyledButton>
+            )}
+            {actionText2 && (
+              <StyledButton
+                onClick={handleAction2}
+                variant="primary"
+                style="outlined"
+              >
+                {actionText2}
+              </StyledButton>
+            )}
           </div>
         </div>
       </div>
@@ -65,5 +82,3 @@ const NotifyCard = ({
 };
 
 export default NotifyCard;
-
-// Ejemplo de uso del componente
