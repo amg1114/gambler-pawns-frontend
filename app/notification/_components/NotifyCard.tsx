@@ -1,10 +1,13 @@
 import Image from "next/image";
-import React from "react";
+import React, { useCallback } from "react";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
+import router from "next/router";
+import useNotificationsWebSockets from "../_hook/useNotificationsWebSockets";
 
 interface GameInviteProps {
+  id: number;
   playerName: string;
   gameDescription: string;
   timeAgo: string;
@@ -17,6 +20,7 @@ interface GameInviteProps {
 }
 
 const NotifyCard = ({
+  id,
   playerName,
   gameDescription,
   timeAgo,
@@ -27,15 +31,11 @@ const NotifyCard = ({
   actionText2,
   actionLink2,
 }: GameInviteProps) => {
-  const handleAction1 = () => {
-    if (actionLink1 == "evento que no se cual es") {
-      console.log("haga algo");
-    }
-  };
-
-  const handleAction2 = () => {
-    console.log(actionLink2);
-  };
+  const { handleAction1, handleAction2 } = useNotificationsWebSockets(
+    id,
+    actionLink1,
+    actionLink2,
+  );
 
   return (
     <div className="rounded-lg p-4 mx-auto mb-xl max-w-sm">

@@ -1,6 +1,6 @@
 "use client";
 import StyledTitle from "../ui/components/typography/StyledTitle";
-import NotifyCard from "./components/NotifyCard";
+import NotifyCard from "./_components/NotifyCard";
 import axios from "@/app/lib/_axios";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -47,6 +47,7 @@ export default function NotifyPage() {
         {unreadNotifications.map((notification) => (
           <NotifyCard
             key={notification.notificationId}
+            id={notification.notificationId}
             playerName={notification.userWhoSend.nickname ?? "Unknown Player"}
             gameDescription={notification.message}
             playerAvatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
@@ -73,6 +74,7 @@ export default function NotifyPage() {
         {readNotifications.map((notification) => (
           <NotifyCard
             key={notification.notificationId}
+            id={notification.notificationId}
             playerName={notification.userWhoSend.nickname ?? "Unknown Player"}
             playerAvatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
               notification.userWhoSend.userAvatarImg.fileName
