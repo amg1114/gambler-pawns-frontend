@@ -18,6 +18,9 @@ import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGam
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import RewatchControls from "./components/RewatchControls";
+import UserInfo, { userDataInterface } from "@/app/game/_components/UserInfo";
+import { useChessPlayersInfo } from "@/app/game/_hooks/useChessPlayersInfo";
+import { useGameRewatch } from "./hooks/useGameRewacth";
 
 export default function GameHistoryPage({
   params,
@@ -32,12 +35,15 @@ export default function GameHistoryPage({
   const [gameMovesIndex, setGameMovesIndex] = useState<number | null>(null);
   const [gameMoves, setGameMoves] = useState<string[]>([]);
 
+  const { currentPlayer, opponentPlayer } = useGameRewatch(gameRewatch);
+
   useEffect(() => {
     const fetchGame = async () => {
       try {
         const res = await axios.get<RewatchGameRes>(
           `/game/rewatch/${params.id}`,
         );
+
         setGameRewatch(res.data.data);
         loadGameFromPgn(res.data.data.pgn);
       } catch (err) {
@@ -67,14 +73,23 @@ export default function GameHistoryPage({
     setGameMovesIndex(index);
   };
 
-  if (!game) return <PageLoadSpinner />;
+  if (!gameRewatch) return <PageLoadSpinner />;
 
   return (
     <section className="mx-auto mt-xl w-full max-w-[910px]">
       <div className="flex gap-xl">
         <div className="w-full max-w-screen-board shrink-0">
-          <StyledTitle>Rewatch game #{params.id}</StyledTitle>
+          <UserInfo
+            isLoading={false}
+            userData={opponentPlayer!}
+            isCurrentPlayer={false}
+          />
           <ChessBoardGame game={game} position={position} onDrop={makeMove} />
+          <UserInfo
+            isLoading={false}
+            userData={currentPlayer!}
+            isCurrentPlayer={false}
+          />
         </div>
         <div className="flex-1">
           {movesHistory.length > 0 && (

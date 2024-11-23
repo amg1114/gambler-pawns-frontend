@@ -1,3 +1,5 @@
+import { User } from "../models/user.interface";
+
 export interface RewatchGameRes {
   status: boolean;
   statusCode: number;
@@ -22,4 +24,6 @@ export interface RewatchGame {
   gameMode: string;
   resultType: null;
   typePairing: string;
+  whitesPlayer: User;
+  blacksPlayer: User;
 }

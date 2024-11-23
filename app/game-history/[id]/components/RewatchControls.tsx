@@ -5,7 +5,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 export default function RewatchControls({
   pgn,
   gameMovesIndex,
@@ -99,7 +99,13 @@ export default function RewatchControls({
       </ActionButton>
       <Snackbar
         open={snackbarOpen}
-        message={<span>{dialogText} was copied</span>}
+        message={
+          <span className="gam-sm flex items-center">
+            <CheckCircleIcon className="mr-sm text-success" />
+            {dialogText.charAt(0).toUpperCase() + dialogText.slice(1)} was
+            copied.
+          </span>
+        }
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       />
     </div>
