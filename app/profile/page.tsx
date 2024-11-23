@@ -70,7 +70,7 @@ export default function ProfilePage() {
             <ProfileOptionRow href="/profile/edit">
               <AccountCircleRoundedIcon /> Edit Profile
             </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            <ProfileOptionRow href="/game-history">
               <HistoryRoundedIcon />
               Game History
             </ProfileOptionRow>
