@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 
@@ -20,15 +21,26 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   //socket connection
   const [socket, setSocket] = useState<Socket | null>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
-    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL);
+    const options = session?.user
+      ? {
+          auth: {
+            token: session.data.token.replace(/^"|"$/g, ""),
+          },
+        }
+      : {};
+
+    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
+      ...options,
+    });
     setSocket(newSocket);
 
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [session]);
 
   return (
     <WebSocketContext.Provider value={{ socket }}>
