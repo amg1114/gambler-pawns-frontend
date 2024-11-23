@@ -28,7 +28,9 @@ const NotifyCard = ({
   actionLink2,
 }: GameInviteProps) => {
   const handleAction1 = () => {
-    console.log(actionLink1);
+    if (actionLink1 == "evento que no se cual es") {
+      console.log("haga algo");
+    }
   };
 
   const handleAction2 = () => {
@@ -58,7 +60,7 @@ const NotifyCard = ({
             <StyledParagraph extraClasses="mb-xs">
               {gameDescription}
             </StyledParagraph>
-            <StyledParagraph>Hace {timeAgo}</StyledParagraph>
+            <StyledParagraph>{timeAgo}</StyledParagraph>
           </div>
 
           <div className="flex gap-2">

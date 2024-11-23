@@ -8,6 +8,7 @@ import {
   Notification,
   UpdateNotifyResponse,
 } from "../lib/interfaces/responses/notify-res-interface";
+import { formatDistanceToNow } from "date-fns";
 
 export default function NotifyPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -33,21 +34,6 @@ export default function NotifyPage() {
     }
   }, [session]);
 
-  const handleMarkAsRead = (notificationId: number) => {
-    axios
-      .post("/notification/mark-as-read", { notificationId })
-      .then(() => {
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.notificationId === notificationId ? { ...n, isRead: true } : n,
-          ),
-        );
-      })
-      .catch((error) => {
-        console.error("Error marking notification as read:", error);
-      });
-  };
-
   const readNotifications = notifications.filter((n) => n.isRead);
   const unreadNotifications = notifications.filter((n) => !n.isRead);
   console.log(notifications);
@@ -68,7 +54,9 @@ export default function NotifyPage() {
                 ? notification.userWhoSend.userAvatarImg.fileName
                 : "1.png"
             }`}
-            timeAgo={new Date(notification.timeStamp).toLocaleString()} // Formateo de fecha
+            timeAgo={formatDistanceToNow(new Date(notification.timeStamp), {
+              addSuffix: true,
+            })} // Formateo de fecha
             type={notification.type}
             actionText1={notification.actionText1}
             actionText2={notification.actionText2}
@@ -92,7 +80,9 @@ export default function NotifyPage() {
                 : "1.png"
             }`}
             gameDescription={notification.message}
-            timeAgo={new Date(notification.timeStamp).toLocaleString()} // Formateo de fecha
+            timeAgo={formatDistanceToNow(new Date(notification.timeStamp), {
+              addSuffix: true,
+            })} // Formateo de fecha
             type={notification.type}
             actionText1={notification.actionText1}
             actionText2={notification.actionText2}
