@@ -130,7 +130,7 @@ export default function UserInfo(props: UserInfoProps) {
 
   return (
     <>
-      <div className="my-lg flex w-full">
+      <div className="flex w-full">
         {props.isCurrentPlayer ? (
           <CurrentUserInfo {...props.userData} />
         ) : (

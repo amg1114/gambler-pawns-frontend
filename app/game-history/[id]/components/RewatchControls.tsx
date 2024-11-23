@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Move } from "chess.js";
 
 import { Snackbar } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
@@ -13,8 +14,8 @@ export default function RewatchControls({
   changeIndex,
 }: {
   pgn: string;
-  gameMovesIndex: number | null;
-  gameMoves: string[];
+  gameMovesIndex: number;
+  gameMoves: Move[];
   changeIndex: (index: number) => void;
 }) {
   const [dialogText, setDialogText] = useState<string>("");
@@ -53,11 +54,7 @@ export default function RewatchControls({
       <div className="flex w-full gap-md">
         <ActionButton
           onClick={() =>
-            changeIndex(
-              gameMovesIndex === null || gameMovesIndex <= 0
-                ? 0
-                : gameMovesIndex - 1,
-            )
+            changeIndex(gameMovesIndex == -1 ? -1 : gameMovesIndex - 1)
           }
         >
           <NavigateBeforeIcon />
@@ -79,7 +76,7 @@ export default function RewatchControls({
         <ActionButton
           onClick={() =>
             changeIndex(
-              gameMovesIndex === null || gameMovesIndex === gameMoves.length - 1
+              gameMovesIndex === gameMoves.length - 1
                 ? gameMoves.length - 1
                 : gameMovesIndex + 1,
             )
