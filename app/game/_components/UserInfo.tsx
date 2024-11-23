@@ -79,7 +79,7 @@ function OpponentUserInfo({
 
   return (
     <>
-      <figure className="relative mr-md aspect-square w-10 lg:w-14">
+      <figure className="relative aspect-square w-10 lg:w-14">
         <Image
           src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${userAvatar}`}
           alt="Avatar"
@@ -130,7 +130,7 @@ export default function UserInfo(props: UserInfoProps) {
 
   return (
     <>
-      <div className="flex w-full">
+      <div className="flex w-full gap-md">
         {props.isCurrentPlayer ? (
           <CurrentUserInfo {...props.userData} />
         ) : (
