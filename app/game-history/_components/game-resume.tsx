@@ -8,6 +8,7 @@ import { azeret_mono, nunito } from "@/app/ui/fonts";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import capitalizeFirstLetter from "@/app/lib/utils/capitalizeFirstLetter";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
+import StyledLink from "@/app/ui/components/typography/StyledLink";
 
 interface Games {
   total: number;
@@ -21,6 +22,7 @@ interface GamesHistory {
   eloBefore: number;
   mode: string;
   gameDate: string;
+  gameIdEncrypted: string;
 }
 
 type Options = {
@@ -103,9 +105,12 @@ export default function GameResume({ options }: GameResumeProps) {
                   {capitalizeFirstLetter(game.mode)} -{" "}
                   {game.gameDate.split("T")[0]}
                 </li>
-                <StyledButton extraClasses="py-xs px-sm">
+                <StyledLink
+                  href={`/game-history/${game.gameIdEncrypted}`}
+                  extraClasses="py-xs px-sm"
+                >
                   Watch Again
-                </StyledButton>
+                </StyledLink>
               </ul>
             </div>
           ))}
