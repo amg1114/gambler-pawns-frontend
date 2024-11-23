@@ -9,12 +9,12 @@ import Timer from "./Timer";
 //Icons
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-interface userDataInterface {
+export interface userDataInterface {
   nickname: string;
   eloRating: number;
   countryCode: string;
   userAvatar: string;
-  timer: string;
+  timer: string | number;
 }
 
 interface LoadingState {
@@ -130,7 +130,7 @@ export default function UserInfo(props: UserInfoProps) {
 
   return (
     <>
-      <div className="my-lg flex w-full">
+      <div className="flex w-full">
         {props.isCurrentPlayer ? (
           <CurrentUserInfo {...props.userData} />
         ) : (
