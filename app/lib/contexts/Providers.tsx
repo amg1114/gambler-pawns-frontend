@@ -3,6 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 import { WebSocketProvider } from "./WebSocketContext";
+import GlobalNotification from "@/app/ui/components/GlobalNotification";
 
 interface Props {
   children: ReactNode;
@@ -11,7 +12,9 @@ interface Props {
 const Providers = ({ children }: Props) => {
   return (
     <SessionProvider>
-      <WebSocketProvider>{children}</WebSocketProvider>
+      <WebSocketProvider>
+        <GlobalNotification>{children}</GlobalNotification>
+      </WebSocketProvider>
     </SessionProvider>
   );
 };
