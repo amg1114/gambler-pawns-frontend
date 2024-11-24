@@ -1,5 +1,5 @@
 import { userDataInterface } from "@/app/game/_components/UserInfo";
-import { formatTimeMs } from "@/app/game/_utils/formatTimeMs";
+import { formatTimeMs } from "@/app/lib/utils/formatTimeMs";
 import { RewatchGame } from "@/app/lib/interfaces/responses/rewatch-res.interface";
 
 export function useGameRewatch() {
