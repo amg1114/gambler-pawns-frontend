@@ -15,7 +15,7 @@ import UserAvatar from "@/app/ui/components/user/UserAvatar";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import ProfileOptionRow from "../components/ProfileOptionRow";
+import ProfileOptionRow from "../_components/ProfileOptionRow";
 
 // Icons
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";

@@ -123,7 +123,7 @@ export default function Sidebar({
                 </div>
               </Link>
               <Link
-                href={"#"}
+                href={"/notification"}
                 className="flex w-full items-center px-lg pb-2xl"
               >
                 <Image

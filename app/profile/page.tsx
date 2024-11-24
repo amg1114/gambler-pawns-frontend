@@ -10,8 +10,8 @@ import Link from "next/link";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 
-import ProfileOptionRow from "./components/ProfileOptionRow";
-import { ProfileAvatarSelect } from "./components/ProfileAvatarSelect";
+import ProfileOptionRow from "./_components/ProfileOptionRow";
+import { ProfileAvatarSelect } from "./_components/ProfileAvatarSelect";
 
 // Icons
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";

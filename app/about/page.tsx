@@ -1,6 +1,5 @@
 //icons
 import gear from "../ui/icons/gear.svg";
-import aguacate from "../ui/icons/aguacate.png";
 
 //components
 import DevelopmentTeam from "@/app/about/components/DevelopmentTeam";
@@ -10,8 +9,6 @@ import StyledTitle from "../ui/components/typography/StyledTitle";
 import Image from "next/image";
 import { nunito } from "@/app/ui/fonts";
 import { Metadata } from "next";
-import DrawModal from "../game/_components/OpponentDrawOfferModal";
-import EndGameModal from "../game/_components/EndGameModal";
 
 export const metadata: Metadata = {
   title: "About",

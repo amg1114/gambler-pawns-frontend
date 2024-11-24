@@ -2,35 +2,41 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { endGameDataInterface } from "../_components/EndGameModal";
-import { formatTimeMs } from "../_utils/formatTimeMs";
+import { formatTimeMs } from "../../lib/utils/formatTimeMs";
 
 // custom hooks
-import { useGameTimers } from "../_hooks/useGameTimers";
+import { useGameTimers } from "./_hooks/useGameTimers";
 import { useExceptionHandler } from "../_hooks/useGameExceptionHandler";
-import { useChessPlayersInfo } from "../_hooks/useChessPlayersInfo";
+import { useChessPlayersInfo } from "./_hooks/useChessPlayersInfo";
 import { useChessGame } from "@/app/lib/hooks/useChessGame";
-import { useChessWebSocket } from "../_hooks/useChessWebSocket";
+import { useChessWebSocket } from "./_hooks/useChessWebSocket";
 
 // components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import GameModals from "../_components/GameModals";
 import UserInfo from "../_components/UserInfo";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
-import SkeletonGame from "../_components/SkeletonGame";
 import { readFromSessionStorage } from "@/app/lib/utils/sessionStorageUtils";
+import { GameData } from "@/app/lib/interfaces/responses/gameData.interface";
 
 interface DynamicGamePageProps {
   params: { id: string };
 }
 
 export default function DynamicGamePage({ params }: DynamicGamePageProps) {
-  // Reads the join game data form request from session storage.
-  const joinGameDataFormRequest: any = useMemo(
-    () => readFromSessionStorage("joinGameDataFormRequest"),
+  // Reads game data form request from session storage.
+  const gameData: GameData = useMemo(
+    () => readFromSessionStorage("gameData") as GameData,
     [],
   );
 
-  const gameData = useMemo(() => readFromSessionStorage("gameData"), []);
+  const playerId = useMemo(() => {
+    return (
+      gameData.color === "white"
+        ? gameData.playerWhite.userInfo.userId
+        : gameData.playerBlack.userInfo.userId
+    ).toString();
+  }, [gameData]);
 
   /** State to manage if the opponent offers a draw */
   const [isOpponentDrawOfferModalOpen, setIsOpponentDrawOfferModalOpen] =
@@ -107,10 +113,10 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
 
   // timers
   const setInitialTimeMs = useCallback(() => {
-    const timeMinutes = joinGameDataFormRequest?.timeMinutes;
+    const timeMinutes = gameData?.timeInMinutes;
     const timeMinutesToMs = (timeMinutes ? timeMinutes : 5) * 60 * 1000;
     return timeMinutesToMs;
-  }, [joinGameDataFormRequest]);
+  }, [gameData?.timeInMinutes]);
 
   const { playerOneTime, playerTwoTime, handleTimerUpdate } =
     useGameTimers(setInitialTimeMs());
@@ -132,7 +138,7 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
   } = useExceptionHandler();
 
   // load players info
-  const { currentPlayerInfo, opponentPlayerInfo, side } = useChessPlayersInfo(
+  const { currentPlayerInfo, opponentPlayerInfo } = useChessPlayersInfo(
     gameData,
     playerOneTime,
     playerTwoTime,
@@ -157,7 +163,7 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
     emitWebsocketOfferDraw,
     emitWebsocketResignGame,
   } = useChessWebSocket(
-    joinGameDataFormRequest?.playerId,
+    playerId,
     chessGame.loadGameFromPgn,
     handleTimerUpdate,
     handleOpponentDrawOffer,
@@ -192,14 +198,7 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
     emitWebsocketAcceptDraw();
   }, [emitWebsocketAcceptDraw]);
 
-  if (!gameData) {
-    return (
-      <SkeletonGame
-        joinGameDataFormRequest={joinGameDataFormRequest}
-        exceptionFromBackendChessService={backendChessServiceException}
-      />
-    );
-  }
+  if (!gameData) return;
 
   return (
     <>
@@ -227,8 +226,8 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
         <ChessBoardGame
           position={chessGame.position}
           onDrop={chessGame.makeMove}
-          side={side}
-          arePremovesAllowed={joinGameDataFormRequest?.mode === "bullet"}
+          side={gameData.color}
+          arePremovesAllowed={gameData.mode === "bullet"}
           game={chessGame.game}
         />
         <UserInfo
@@ -253,7 +252,7 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
       </section>
       <GameModals
         gameId={params.id}
-        gameMode={joinGameDataFormRequest?.mode as string}
+        gameMode={gameData.mode}
         isResignModalOpen={isResignModalOpen}
         onResignGameConfirmed={handleResignGameConfirmed}
         onResignGameCancelled={handleResignGameCancelled}

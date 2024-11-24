@@ -1,25 +1,21 @@
-"use client";
+//libs
+import { bungee } from "@/app/ui/fonts";
+import { useRouter } from "next/navigation";
 
 //Components
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import UserInfo from "./UserInfo";
-
-//libs
-import { useSession } from "next-auth/react";
-import { bungee } from "@/app/ui/fonts";
-import { useRouter } from "next/navigation";
+import UserInfo, { userDataInterface } from "./UserInfo";
 
 interface SkeletonGameProps {
-  joinGameDataFormRequest: any;
+  userData: userDataInterface;
   exceptionFromBackendChessService?: any;
 }
 
 export default function SkeletonGame({
-  joinGameDataFormRequest,
+  userData,
   exceptionFromBackendChessService,
 }: SkeletonGameProps) {
-  const { data: session } = useSession();
   const router = useRouter();
 
   const handleCancel = () => {
@@ -41,18 +37,7 @@ export default function SkeletonGame({
         </div>
         <ChessBoardGame />
       </div>
-      <UserInfo
-        isLoading={false}
-        isCurrentPlayer
-        userData={{
-          timer: joinGameDataFormRequest?.time || "5:00",
-          nickname:
-            session?.data?.nickname || joinGameDataFormRequest?.playerId,
-          eloRating: joinGameDataFormRequest?.eloRating || 1200,
-          countryCode: session?.data?.countryCode || "co",
-          userAvatar: session?.data?.userAvatarImg?.fileName || "1.png",
-        }}
-      />
+      <UserInfo isLoading={false} isCurrentPlayer userData={userData} />
 
       <StyledButton onClick={handleCancel}>Cancel</StyledButton>
     </section>

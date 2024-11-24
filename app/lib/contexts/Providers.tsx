@@ -3,7 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 import { WebSocketProvider } from "./WebSocketContext";
-import GlobalNotification from "@/app/ui/components/GlobalNotification";
+import GlobalNotification from "@/app/ui/components/GlobalNotificationWrapper";
 
 interface Props {
   children: ReactNode;
