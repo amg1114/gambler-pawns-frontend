@@ -9,7 +9,7 @@ import Timer from "./Timer";
 //Icons
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-interface userDataInterface {
+export interface userDataInterface {
   nickname: string;
   eloRating: number;
   countryCode: string;
