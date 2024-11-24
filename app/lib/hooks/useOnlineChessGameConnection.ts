@@ -25,7 +25,6 @@ export default function useOnlineChessGameConnection() {
   const handleGameStarted = useCallback(
     (data: GameData) => {
       writeToSessionStorage("gameData", data);
-      console.log("Game started:", data);
       router.replace(`/game/${data.gameId}`);
     },
     [router],
