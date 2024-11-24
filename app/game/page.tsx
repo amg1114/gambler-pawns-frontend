@@ -71,9 +71,9 @@ export default function GamePage() {
     };
   }, [socket, emitGameJoin, isFriendRequest]);
 
+  // handle game started event for both (random pairing and friend request)
   useEffect(() => {
     if (!socket) return;
-    if (!isFriendRequest) return;
     socket.on("game:started", handleGameStarted);
     // cleanup socket listeners when component unmounts
     return () => {
