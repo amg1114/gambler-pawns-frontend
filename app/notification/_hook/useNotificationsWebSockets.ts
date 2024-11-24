@@ -36,7 +36,7 @@ export const EVENTS = {
 export default function useNotificationsWebSockets(
   id: number,
   actionLink1: string | null,
-  ActionLink2: string | null,
+  actionLink2: string | null,
 ) {
   const { socket } = useWebSocketConnection();
   const router = useRouter();
@@ -59,29 +59,49 @@ export default function useNotificationsWebSockets(
     });
   }, [socket, id]);
 
+  /** Emits event to accept game invite. */
+  const emitWebSocketAcceptGameInvite = useCallback(() => {
+    if (!socket) return;
+
+    socket.emit(EVENTS.WANTS_TO_PLAY.ACTION_1, {
+      notificationId: id,
+    });
+  }, [socket, id]);
+
+  /** Emits event to reject game invite. */
+  const emitWebSocketRejectGameInvite = useCallback(() => {
+    if (!socket) return;
+
+    socket.emit(EVENTS.WANTS_TO_PLAY.ACTION_2, {
+      notificationId: id,
+    });
+  }, [socket, id]);
+
   /** Handles the action based on the provided Action Link 1. */
-  const handleAction1 = useCallback(() => {
-    if (actionLink1 == EVENTS.REQUEST_TO_BE_FRIEND.ACTION_1) {
+  const handleClickAction = useCallback(() => {
+    if (actionLink1 === EVENTS.REQUEST_TO_BE_FRIEND.ACTION_1) {
       emitWebsocketAcceptFriendship();
       router.push("/friends");
-    } else if (actionLink1 == EVENTS.REQUEST_TO_BE_FRIEND.ACTION_2) {
+    } else if (actionLink2 === EVENTS.REQUEST_TO_BE_FRIEND.ACTION_2) {
       emitWebsocketRejectFriendship();
       router.refresh();
+    } else if (actionLink1 === EVENTS.WANTS_TO_PLAY.ACTION_1) {
+      emitWebSocketAcceptGameInvite();
+      router.push("/game?friend-req=true");
+    } else if (actionLink2 === EVENTS.WANTS_TO_PLAY.ACTION_2) {
+      emitWebSocketRejectGameInvite();
     }
   }, [
     actionLink1,
+    actionLink2,
     emitWebsocketAcceptFriendship,
     emitWebsocketRejectFriendship,
+    emitWebSocketAcceptGameInvite,
+    emitWebSocketRejectGameInvite,
     router,
   ]);
 
-  /** Handles the action based on the provided Action Link 2. */
-  const handleAction2 = useCallback(() => {
-    console.log("Action 2", ActionLink2);
-  }, [ActionLink2]);
-
   return {
-    handleAction1,
-    handleAction2,
+    handleClickAction,
   };
 }

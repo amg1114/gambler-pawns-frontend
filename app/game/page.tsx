@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 import { useCallback, useEffect, useMemo } from "react";
 import { useExceptionHandler } from "./_hooks/useGameExceptionHandler";
@@ -18,7 +18,13 @@ import {
 
 export default function GamePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { socket } = useWebSocketConnection();
+
+  const isFriendRequest = useMemo(
+    () => searchParams.get("friend-req") === "true",
+    [searchParams],
+  );
 
   // Reads the join game data form request from session storage.
   const joinGameDataFormRequest: any = useMemo(
@@ -40,34 +46,40 @@ export default function GamePage() {
     socket.emit("game:join", joinGameDataFormRequest);
   }, [joinGameDataFormRequest, socket]);
 
-  // to handle connection lost when internet connection is back
+  // to handle connection lost when internet connection is back (random pairing)
   useEffect(() => {
     if (!socket) return;
-
+    if (isFriendRequest) return;
     // TODO: revisar este enfoque, pero en el futuro es necesario agregar un tiempo maxDisconectedTime para no eliminar al socket de los rooms si se reconecta en un tiempo corto
     if (socket.recovered) {
       emitGameJoin();
     }
-  }, [socket, emitGameJoin]);
+  }, [socket, emitGameJoin, isFriendRequest]);
 
-  // handle joining to a game
+  // handle joining to a game (random pairing)
   useEffect(() => {
     if (!socket) return;
+    if (isFriendRequest) return;
 
     // join game
     emitGameJoin();
 
-    // when new game is started
-    socket.on("game:started", handleGameStarted);
-
-    // cleanup socket listeners when component unmounts
+    // manually disconnect and connect to trigger backend mechanism which avoid pairing with disconnected player
     return () => {
-      socket.off("game:started", emitGameJoin);
-      // manually disconnect and connect to trigger backend mechanism which avoid pairing with disconnected player
       socket.disconnect();
       socket.connect();
     };
-  }, [socket, handleGameStarted, emitGameJoin]);
+  }, [socket, emitGameJoin, isFriendRequest]);
+
+  useEffect(() => {
+    if (!socket) return;
+    if (!isFriendRequest) return;
+    socket.on("game:started", handleGameStarted);
+    // cleanup socket listeners when component unmounts
+    return () => {
+      socket.off("game:started", handleGameStarted);
+    };
+  }, [socket, handleGameStarted, isFriendRequest]);
 
   // exception handling
   const { exception: backendChessServiceException } = useExceptionHandler();

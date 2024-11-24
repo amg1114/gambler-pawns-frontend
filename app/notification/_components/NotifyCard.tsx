@@ -1,9 +1,7 @@
 import Image from "next/image";
-import React, { useCallback } from "react";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
-import router from "next/router";
 import useNotificationsWebSockets from "../_hook/useNotificationsWebSockets";
 
 interface GameInviteProps {
@@ -31,7 +29,7 @@ const NotifyCard = ({
   actionText2,
   actionLink2,
 }: GameInviteProps) => {
-  const { handleAction1, handleAction2 } = useNotificationsWebSockets(
+  const { handleClickAction } = useNotificationsWebSockets(
     id,
     actionLink1,
     actionLink2,
@@ -65,11 +63,13 @@ const NotifyCard = ({
 
           <div className="flex gap-2">
             {actionText1 && (
-              <StyledButton onClick={handleAction1}>{actionText1}</StyledButton>
+              <StyledButton onClick={handleClickAction}>
+                {actionText1}
+              </StyledButton>
             )}
             {actionText2 && (
               <StyledButton
-                onClick={handleAction2}
+                onClick={handleClickAction}
                 variant="primary"
                 style="outlined"
               >

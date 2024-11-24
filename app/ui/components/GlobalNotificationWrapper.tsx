@@ -2,7 +2,7 @@
 
 import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export default function GlobalNotificationWrapper({
   children,
@@ -13,25 +13,29 @@ export default function GlobalNotificationWrapper({
   const [showNotification, setShowNotification] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const handleNewNotification = useCallback((_data: any) => {
+    setShowNotification(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setShowNotification(false);
+    }, 20000); // 20 seconds
+  }, []);
+
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("notif.new", (_data: any) => {
-      setShowNotification(true);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {
-        setShowNotification(false);
-      }, 20000); // 20 seconds
-    });
+    socket.on("notif.new", handleNewNotification);
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+
+      socket.off("notif.new", handleNewNotification);
     };
-  }, [socket]);
+  }, [socket, handleNewNotification]);
 
   const handleClick = () => {
     setShowNotification(false);
