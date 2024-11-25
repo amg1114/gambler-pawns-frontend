@@ -27,11 +27,13 @@ const imagesRemotePatterns = onlyInProd
     ];
 
 const nextConfig = {
-  reactStrictMode: onlyInProd,
+  reactStrictMode: !onlyInProd,
   images: {
     remotePatterns: imagesRemotePatterns,
   },
-  removeConsole: onlyInProd,
+  compiler: {
+    removeConsole: onlyInProd,
+  },
   async headers() {
     return [
       {
