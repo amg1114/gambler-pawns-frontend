@@ -79,7 +79,7 @@ const EndGameModal = ({
           style="outlined"
           extraClasses="mx-auto !w-36"
           onClick={() => {
-            router.push(`/rewatch/${gameId}`);
+            router.push(`/game-history/${gameId}`);
             sessionStorage.removeItem("joinGameDataFormRequest");
             sessionStorage.removeItem("gameData");
           }}
