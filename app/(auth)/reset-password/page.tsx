@@ -38,7 +38,7 @@ function ResetPasswordPage() {
 
   useEffect(() => {
     if (!token) router.push("/");
-  }, [token]);
+  }, [token, router]);
 
   const onSubmit: SubmitHandler<ResetPasswordForm> = async (data) => {
     console.log("Entrando al onSubmit");
@@ -59,7 +59,7 @@ function ResetPasswordPage() {
         return;
       }
       throw new Error();
-    } catch (error) {
+    } catch {
       setErrorMessage("Failed to reset password, please try again");
       setShowErrorAlert(true);
     }

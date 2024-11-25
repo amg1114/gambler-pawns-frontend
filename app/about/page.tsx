@@ -2,7 +2,7 @@
 import gear from "../ui/icons/gear.svg";
 
 //components
-import DevelopmentTeam from "@/app/about/components/DevelopmentTeam";
+import DevelopmentTeam from "@/app/about/_components/DevelopmentTeam";
 import StyledParagraph from "../ui/components/typography/StyledParagraph";
 import StyledTitle from "../ui/components/typography/StyledTitle";
 

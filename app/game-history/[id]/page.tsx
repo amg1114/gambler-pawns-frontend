@@ -16,9 +16,9 @@ import {
 // components
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
-import RewatchControls from "./components/RewatchControls";
+import RewatchControls from "./_components/RewatchControls";
 import UserInfo, { userDataInterface } from "@/app/game/_components/UserInfo";
-import { useGameRewatch } from "./hooks/useGameRewacth";
+import { useGameRewatch } from "./_hooks/useGameRewacth";
 
 export default function GameHistoryPage({
   params,

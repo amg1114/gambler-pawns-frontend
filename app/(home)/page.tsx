@@ -1,5 +1,5 @@
 "use client";
-import StatsCard from "./Components/StatsCard";
+import StatsCard from "./_components/StatsCard";
 import Image from "next/image";
 import Board from "../ui/icons/board.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -9,7 +9,7 @@ import Fire from "../ui/icons/fire.svg";
 import Arcade from "../ui/icons/arcade.svg";
 import Classic from "../ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
-import FriendModal from "./Components/FriendModal";
+import FriendModal from "./_components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import aguacate from "../ui/icons/aguacate.png";

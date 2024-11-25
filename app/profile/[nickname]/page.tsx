@@ -50,11 +50,11 @@ export default function UserProfilePage({
           }
           setUser(res.data.data);
         })
-        .catch((err) => {
+        .catch(() => {
           router.push("/404");
         });
     }
-  }, [params.nickname]);
+  }, [params.nickname, router]);
 
   useEffect(() => {
     if (session?.data?.nickname === user?.nickname) {
