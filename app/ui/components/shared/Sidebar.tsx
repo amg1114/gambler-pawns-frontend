@@ -140,8 +140,8 @@ export default function Sidebar({
           )}
           <ul className="space-y-2 pt-lg text-base font-black">
             {sideBarOptions.map((option) => (
-              <li key={option.name} className="flex items-center px-lg">
-                <Link href={option.link}>
+              <li key={option.name}>
+                <Link href={option.link} className="flex items-center px-lg">
                   <Image
                     src={option.image}
                     alt=""
