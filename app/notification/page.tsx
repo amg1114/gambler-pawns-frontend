@@ -36,7 +36,6 @@ export default function NotifyPage() {
 
   const readNotifications = notifications.filter((n) => n.isRead);
   const unreadNotifications = notifications.filter((n) => !n.isRead);
-  console.log(notifications);
   return (
     <div className="mt-xl w-auto grid-cols-2 gap-14 lg:grid">
       {/* Sección de notificaciones no leídas */}
