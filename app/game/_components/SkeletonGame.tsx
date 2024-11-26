@@ -26,7 +26,7 @@ export default function SkeletonGame({
   return (
     <section className="mx-auto flex max-w-screen-board flex-col items-center justify-center">
       {exceptionFromBackendChessService && (
-        <ShowMessage message={exceptionFromBackendChessService.message}/>
+        <ShowMessage message={exceptionFromBackendChessService.message} />
       )}
       <UserInfo isLoading />
       <div className="relative w-full">
