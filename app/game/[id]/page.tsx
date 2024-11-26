@@ -209,9 +209,13 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
         {backendChessServiceException && (
           <ShowMessage message={backendChessServiceException.message} />
         )}
-        {wasDrawOfferRejected && <ShowMessage message="Draw offer was rejected"/>}
+        {wasDrawOfferRejected && (
+          <ShowMessage message="Draw offer was rejected" />
+        )}
         {inactivityTimer && (
-          <ShowMessage message={`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}/>
+          <ShowMessage
+            message={`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}
+          />
         )}
         <p>
           {chessGame.movesHistory.map(
@@ -219,7 +223,7 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
               `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
           )}
         </p>
-        
+
         <UserInfo
           isLoading={false}
           userData={opponentPlayerInfo}
