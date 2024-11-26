@@ -21,8 +21,8 @@ export default function NewNotification({
   );
 
   const handleNotificationClick = () => {
-    onNotificationRead();
     handleClickAction();
+    onNotificationRead();
   };
 
   return (

@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { WebSocketProvider } from "./WebSocketContext";
 import GlobalNotificationWrapper from "@/app/ui/components/notifications/GlobalNotificationWrapper";
 import { NotificationContextProvider } from "./NotificationContext";
+import { GameContextProvider } from "./GameDataContext";
 
 interface Props {
   children: ReactNode;
@@ -15,7 +16,9 @@ const Providers = ({ children }: Props) => {
     <SessionProvider>
       <WebSocketProvider>
         <NotificationContextProvider>
-          <GlobalNotificationWrapper>{children}</GlobalNotificationWrapper>
+          <GameContextProvider>
+            <GlobalNotificationWrapper>{children}</GlobalNotificationWrapper>
+          </GameContextProvider>
         </NotificationContextProvider>
       </WebSocketProvider>
     </SessionProvider>
