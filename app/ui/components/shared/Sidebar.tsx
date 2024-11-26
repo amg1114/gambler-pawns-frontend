@@ -12,11 +12,11 @@ import ranking from "@/app/ui/icons/ranking.svg";
 import aiIcon from "@/app/ui/icons/helmet.svg";
 import puzzlesIcon from "@/app/ui/icons/puzzle.svg";
 import arcadeIcon from "@/app/ui/icons/pacman.svg";
-import avatar from "@/app/ui/icons/avatar-male.svg";
 import notification from "@/app/ui/icons/notification.svg";
 
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 export default function Sidebar({
   isSidebarOpen,
@@ -25,7 +25,7 @@ export default function Sidebar({
 }: {
   isSidebarOpen: boolean;
   isMounted: boolean;
-  session: any;
+  session: Session | null;
 }) {
   const router = useRouter();
   const sideBarOptions = [
@@ -49,17 +49,17 @@ export default function Sidebar({
   const gameOptions = [
     {
       name: "Classic",
-      link: "/classic",
+      link: "/game-options/classic",
       image: ChessTile,
     },
     {
       name: "Arcade",
-      link: "/arcade",
+      link: "/game-options/arcade",
       image: arcadeIcon,
     },
     {
       name: "1 VS AI",
-      link: "/ai",
+      link: "/1-vs-ai",
       image: aiIcon,
     },
     {
@@ -110,14 +110,19 @@ export default function Sidebar({
                 href="/profile"
                 className="flex w-full items-center justify-center p-md hover:bg-secondary"
               >
-                <Image src={avatar} alt="avatar" width={50} height={50} />
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${session.data.userAvatarImg.fileName}`}
+                  alt="avatar"
+                  width={50}
+                  height={50}
+                />
                 <div className="flex flex-col p-xs">
-                  <p className="text-xl font-black">Morbid</p>
+                  <p className="text-xl font-black">{session.data.nickname}</p>
                   <p>My profile</p>
                 </div>
               </Link>
               <Link
-                href={"#"}
+                href={"/notification"}
                 className="flex w-full items-center px-lg pb-2xl"
               >
                 <Image
@@ -135,20 +140,19 @@ export default function Sidebar({
           )}
           <ul className="space-y-2 pt-lg text-base font-black">
             {sideBarOptions.map((option) => (
-              <li key={option.name} className="flex items-center px-lg">
-                <Image
-                  src={option.image}
-                  alt=""
-                  width={40}
-                  height={40}
-                  className="max-h-6 pr-sm"
-                />
-                <a
-                  href={option.link}
-                  className="text-md block p-sm px-md text-light hover:text-primary hover:underline hover:underline-offset-4"
-                >
-                  {option.name}
-                </a>
+              <li key={option.name}>
+                <Link href={option.link} className="flex items-center px-lg">
+                  <Image
+                    src={option.image}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="max-h-6 pr-sm"
+                  />
+                  <span className="text-md block p-sm px-md text-light hover:text-primary hover:underline hover:underline-offset-4">
+                    {option.name}
+                  </span>
+                </Link>
               </li>
             ))}
             <div className="flex h-full flex-col overflow-y-auto pb-md">

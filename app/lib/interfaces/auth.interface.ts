@@ -1,72 +1,43 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  nickname: z
-    .string()
-    .min(3, { message: "Please enter a valid username" })
-    .max(20, { message: "Please enter a valid username" }),
-  password: z
-    .string()
-    .min(8, {
-      message: "Please enter a valid password, more than 8 characters",
-    })
-    .refine((password) => /[A-Z]/.test(password), {
-      message: "Please enter a valid password, at least one uppercase letter",
-    })
-    .refine((password) => /[a-z]/.test(password), {
-      message: "Please enter a valid password, at least one lowercase letter",
-    })
-    .refine((password) => /[0-9]/.test(password), {
-      message: "Please enter a valid password, at least one number",
-    })
-    .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
+const passwordField = z
+  .string()
+  .min(8, {
+    message: "Please enter a valid password, more than 8 characters",
+  })
+  .refine((password) => /[A-Z]/.test(password), {
+    message: "Please enter a valid password, at least one uppercase letter",
+  })
+  .refine((password) => /[a-z]/.test(password), {
+    message: "Please enter a valid password, at least one lowercase letter",
+  })
+  .refine((password) => /[0-9]/.test(password), {
+    message: "Please enter a valid password, at least one number",
+  })
+  .refine(
+    (password) =>
+      /[-._!"`'#%&,:;<>=@{}~\$\(\)\*\+\/\\\?\[\]\^\|]+/.test(password),
+    {
       message: "Please enter a valid password, at least one special character",
-    }),
+    },
+  );
+
+const nicknameField = z
+  .string()
+  .min(3, { message: "Please enter a valid username" })
+  .max(20, { message: "Please enter a valid username" });
+
+export const loginSchema = z.object({
+  nickname: nicknameField,
+  password: passwordField,
 });
 
 export const registerSchema = z
   .object({
-    nickname: z
-      .string()
-      .min(3, { message: "Please enter a valid username" })
-      .max(20, { message: "Please enter a valid username" }),
+    nickname: nicknameField,
     email: z.string().email({ message: "Please enter a valid email" }),
-    password: z
-      .string()
-      .min(8, {
-        message: "Please enter a valid password, more than 8 characters",
-      })
-      .refine((password) => /[A-Z]/.test(password), {
-        message: "Please enter a valid password, at least one uppercase letter",
-      })
-      .refine((password) => /[a-z]/.test(password), {
-        message: "Please enter a valid password, at least one lowercase letter",
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: "Please enter a valid password, at least one number",
-      })
-      .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
-        message:
-          "Please enter a valid password, at least one special character",
-      }),
-    confirmpassword: z
-      .string()
-      .min(8, {
-        message: "Please enter a valid password, more than 8 characters",
-      })
-      .refine((password) => /[A-Z]/.test(password), {
-        message: "Please enter a valid password, at least one uppercase letter",
-      })
-      .refine((password) => /[a-z]/.test(password), {
-        message: "Please enter a valid password, at least one lowercase letter",
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: "Please enter a valid password, at least one number",
-      })
-      .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
-        message:
-          "Please enter a valid password, at least one special character",
-      }),
+    password: passwordField,
+    confirmpassword: passwordField,
   })
   .refine((data) => data.password === data.confirmpassword, {
     message: "Passwords do not match",
@@ -79,42 +50,8 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    newPassword: z
-      .string()
-      .min(8, {
-        message: "Please enter a valid password, more than 8 characters",
-      })
-      .refine((password) => /[A-Z]/.test(password), {
-        message: "Please enter a valid password, at least one uppercase letter",
-      })
-      .refine((password) => /[a-z]/.test(password), {
-        message: "Please enter a valid password, at least one lowercase letter",
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: "Please enter a valid password, at least one number",
-      })
-      .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
-        message:
-          "Please enter a valid password, at least one special character",
-      }),
-    confirmPassword: z
-      .string()
-      .min(8, {
-        message: "Please enter a valid password, more than 8 characters",
-      })
-      .refine((password) => /[A-Z]/.test(password), {
-        message: "Please enter a valid password, at least one uppercase letter",
-      })
-      .refine((password) => /[a-z]/.test(password), {
-        message: "Please enter a valid password, at least one lowercase letter",
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: "Please enter a valid password, at least one number",
-      })
-      .refine((password) => /[!@#$%^&*(),.?]/.test(password), {
-        message:
-          "Please enter a valid password, at least one special character",
-      }),
+    newPassword: passwordField,
+    confirmPassword: passwordField,
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match",

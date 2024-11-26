@@ -7,14 +7,9 @@ import "./globals.css";
 import { nunito } from "./ui/fonts";
 
 // components
-import Providers from "./ui/components/Providers";
+import Providers from "./lib/contexts/Providers";
 import Header from "./ui/components/shared/header";
 import Footer from "./ui/components/shared/footer";
-
-import Sidebar from "./ui/components/shared/Sidebar";
-import { useState } from "react";
-
-//const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +36,7 @@ export default function RootLayout({
             <Header />
             {children}
           </main>
-          <Footer />|
+          <Footer />
         </Providers>
       </body>
     </html>

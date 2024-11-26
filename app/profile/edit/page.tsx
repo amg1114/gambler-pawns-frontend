@@ -44,7 +44,6 @@ export default function ProfileEditPage() {
   const [changes, setChanges] = useState<Partial<User> | null>(null);
 
   const [isFormChanged, setIsFormChanged] = useState(false);
-  const [isPasswordChanged, setIsPasswordChanged] = useState(false);
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -160,8 +159,10 @@ export default function ProfileEditPage() {
     }
 
     axios
-      .patch<UpdateUserResponse>(`/user/${session?.data.userId}`, changes)
-      .then((res) => {
+      .patch<UpdateUserResponse>(`/user/${session?.data.userId}`, changes, {
+        headers: { Authorization: `Bearer ${session?.data.token}` },
+      })
+      .then(() => {
         updateSession()
           .then(() => {
             setShowSuccessAlert(true);

@@ -1,5 +1,5 @@
 "use client";
-import StatsCard from "./Components/StatsCard";
+import StatsCard from "./_components/StatsCard";
 import Image from "next/image";
 import Board from "../ui/icons/board.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -9,12 +9,13 @@ import Fire from "../ui/icons/fire.svg";
 import Arcade from "../ui/icons/arcade.svg";
 import Classic from "../ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
-import FriendModal from "./Components/FriendModal";
+import FriendModal from "./_components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
+import StyledLink from "../ui/components/typography/StyledLink";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -37,9 +38,7 @@ export default function HomePage() {
         const response = await axios.get(
           `http://[::1]:8000/api/v1/user/${session?.data.userId}/friends`,
         );
-        console.log("Response data:", response.data);
-        console.log("Friends:", response.data.data.friendsList);
-        setFriends(response.data.data.friendsList); // Ajusta la estructura según tu API
+        setFriends(response.data.data.friendsList);
         setTotalFriends(response.data.data.totalFriends);
       } catch (error) {
         console.error("Error fetching friends:", error);
@@ -68,27 +67,26 @@ export default function HomePage() {
         <Image src={Board} alt="" className="w-full" />
       </div>
       <div className="w-auto space-y-8">
-        <StyledTitle
-          variant="h1"
-          extraClasses="text-left text-center space-y-6"
-        >
+        <StyledTitle variant="h1" extraClasses="text-center space-y-6">
           SELECT GAME MODE
         </StyledTitle>
         <div className="space-y-4">
-          <StyledButton
+          <StyledLink
             variant="primary"
             style="outlined"
-            extraClasses="w-full !text-light !h-12"
+            extraClasses="flex items-center justify-center w-full !text-light !h-12"
+            href="/game-options/classic"
           >
             Single Player
-          </StyledButton>
-          <StyledButton
+          </StyledLink>
+          <StyledLink
             variant="primary"
             style="filled"
-            extraClasses="w-full !text-dark-1 !h-12"
+            extraClasses="flex items-center justify-center w-full !text-dark-1 !h-12"
+            href="/game-options/arcade"
           >
             Arcade
-          </StyledButton>
+          </StyledLink>
           <StyledButton
             variant="primary"
             style="outlined"

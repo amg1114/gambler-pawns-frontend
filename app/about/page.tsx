@@ -1,9 +1,8 @@
 //icons
 import gear from "../ui/icons/gear.svg";
-import aguacate from "../ui/icons/aguacate.png";
 
 //components
-import DevelopmentTeam from "@/app/about/components/DevelopmentTeam";
+import DevelopmentTeam from "@/app/about/_components/DevelopmentTeam";
 import StyledParagraph from "../ui/components/typography/StyledParagraph";
 import StyledTitle from "../ui/components/typography/StyledTitle";
 

@@ -4,7 +4,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 //components
 import StyledInput from "@/app/ui/components/forms/StyledInput";
@@ -42,7 +41,7 @@ export default function ForgotPasswordPage() {
         return;
       }
       throw new Error();
-    } catch (error) {
+    } catch {
       setErrorMessage("Failed to send recovery email, please try again");
       setShowErrorAlert(true);
     }
