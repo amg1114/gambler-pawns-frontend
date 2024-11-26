@@ -3,7 +3,8 @@
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 import { WebSocketProvider } from "./WebSocketContext";
-import GlobalNotification from "@/app/ui/components/GlobalNotificationWrapper";
+import GlobalNotificationWrapper from "@/app/ui/components/notifications/GlobalNotificationWrapper";
+import { NotificationContextProvider } from "./NotificationContext";
 
 interface Props {
   children: ReactNode;
@@ -13,7 +14,9 @@ const Providers = ({ children }: Props) => {
   return (
     <SessionProvider>
       <WebSocketProvider>
-        <GlobalNotification>{children}</GlobalNotification>
+        <NotificationContextProvider>
+          <GlobalNotificationWrapper>{children}</GlobalNotificationWrapper>
+        </NotificationContextProvider>
       </WebSocketProvider>
     </SessionProvider>
   );
