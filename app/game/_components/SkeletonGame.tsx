@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import UserInfo, { userDataInterface } from "./UserInfo";
+import ShowMessage from "./ShowMessage";
 
 interface SkeletonGameProps {
   userData: userDataInterface;
@@ -25,7 +26,7 @@ export default function SkeletonGame({
   return (
     <section className="mx-auto flex max-w-screen-board flex-col items-center justify-center">
       {exceptionFromBackendChessService && (
-        <p>{exceptionFromBackendChessService.message}</p>
+        <ShowMessage message={exceptionFromBackendChessService.message}/>
       )}
       <UserInfo isLoading />
       <div className="relative w-full">
