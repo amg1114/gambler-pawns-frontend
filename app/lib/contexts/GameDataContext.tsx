@@ -6,7 +6,10 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { writeToSessionStorage } from "../utils/sessionStorageUtils";
+import {
+  readFromSessionStorage,
+  writeToSessionStorage,
+} from "../utils/sessionStorageUtils";
 import { useWebSocketConnection } from "../contexts/WebSocketContext";
 import { GameData } from "../interfaces/responses/gameData.interface";
 
@@ -27,7 +30,9 @@ const GameContext = createContext<GameContextType | null>(null);
 export const GameContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [gameData, setGameData] = useState<GameData | null>(null);
+  const [gameData, setGameData] = useState<GameData | null>(
+    readFromSessionStorage("gameData"),
+  );
   const router = useRouter();
   const { socket } = useWebSocketConnection();
 

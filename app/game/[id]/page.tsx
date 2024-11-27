@@ -16,21 +16,17 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import GameModals from "../_components/GameModals";
 import UserInfo from "../_components/UserInfo";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
-import { readFromSessionStorage } from "@/app/lib/utils/sessionStorageUtils";
-import { GameData } from "@/app/lib/interfaces/responses/gameData.interface";
+import { useGameContext } from "@/app/lib/contexts/GameDataContext";
 
 interface DynamicGamePageProps {
   params: { id: string };
 }
 
 export default function DynamicGamePage({ params }: DynamicGamePageProps) {
-  // Reads game data form request from session storage.
-  const gameData: GameData = useMemo(
-    () => readFromSessionStorage("gameData") as GameData,
-    [],
-  );
+  const { gameData } = useGameContext();
 
   const playerId = useMemo(() => {
+    if (!gameData) return "";
     return (
       gameData.color === "white"
         ? gameData.playerWhite.userInfo.userId
