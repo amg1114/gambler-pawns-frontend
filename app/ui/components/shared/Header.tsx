@@ -9,7 +9,7 @@ import Logo from "@/app/ui/icons/logo.svg";
 import Coin from "@/app/ui/icons/coin.svg";
 import Fire from "@/app/ui/icons/fire.svg";
 import { useEffect, useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "./SideBar/Sidebar";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import useToggleState from "@/app/lib/hooks/useToggleState";
 
