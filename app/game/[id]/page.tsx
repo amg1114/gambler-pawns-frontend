@@ -224,11 +224,13 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
           )}
         </p>
 
-        <UserInfo
-          isLoading={false}
-          userData={opponentPlayerInfo}
-          isCurrentPlayer={false}
-        />
+        <div className="mb-md mt-lg">
+          <UserInfo
+            isLoading={false}
+            userData={opponentPlayerInfo}
+            isCurrentPlayer={false}
+          />
+        </div>
         <ChessBoardGame
           position={chessGame.position}
           onDrop={chessGame.makeMove}
@@ -236,11 +238,13 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
           arePremovesAllowed={gameData.mode === "bullet"}
           game={chessGame.game}
         />
-        <UserInfo
-          isLoading={false}
-          userData={currentPlayerInfo}
-          isCurrentPlayer
-        />
+        <div className="my-md mb-lg">
+          <UserInfo
+            isLoading={false}
+            userData={currentPlayerInfo}
+            isCurrentPlayer
+          />
+        </div>
         <StyledButton
           onClick={() => {
             setIsDrawOfferModalOpen(true);
