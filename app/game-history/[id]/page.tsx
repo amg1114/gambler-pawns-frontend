@@ -100,7 +100,7 @@ export default function GameHistoryPage({
             <UserInfo
               isLoading={false}
               userData={currentPlayer!}
-              isCurrentPlayer={false}
+              isCurrentPlayer={true}
             />
           </div>
         </div>
