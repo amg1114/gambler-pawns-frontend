@@ -19,6 +19,7 @@ import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGam
 import { readFromSessionStorage } from "@/app/lib/utils/sessionStorageUtils";
 import { GameData } from "@/app/lib/interfaces/responses/gameData.interface";
 import ShowMessage from "../_components/ShowMessage";
+import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
 
 interface DynamicGamePageProps {
   params: { id: string };
@@ -217,12 +218,10 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
             message={`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}
           />
         )}
-        <p>
-          {chessGame.movesHistory.map(
-            (move, index) =>
-              `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
-          )}
-        </p>
+        <MovesHistory
+          movesHistory={chessGame.movesHistory}
+          extraClasses="mt-lg"
+        />
 
         <div className="mb-md mt-lg">
           <UserInfo
