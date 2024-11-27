@@ -24,7 +24,7 @@ interface UseChessPlayersInfoReturnType {
  * @returns {UseChessPlayersInfoReturnType} - An object containing the current player's info, opponent's info, and the side (color) the player is playing as.
  */
 export function useChessPlayersInfo(
-  gameData: GameData,
+  gameData: GameData | null,
   playerOneTime: number,
   playerTwoTime: number,
 ): UseChessPlayersInfoReturnType {
