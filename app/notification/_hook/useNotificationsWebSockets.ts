@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 import { useRouter } from "next/navigation";
-import useOnlineChessGameConnection from "@/app/lib/hooks/useOnlineChessGameConnection";
 
 export const notificationTypes = {
   WANTS_TO_PLAY: "Wants to play with you",
@@ -41,9 +40,6 @@ export default function useNotificationsWebSockets(
 ) {
   const { socket } = useWebSocketConnection();
   const router = useRouter();
-
-  /** Hook call for handle game:start event */
-  useOnlineChessGameConnection();
 
   /** Emits event to accept friendship. */
   const emitWebsocketAcceptFriendship = useCallback(() => {
