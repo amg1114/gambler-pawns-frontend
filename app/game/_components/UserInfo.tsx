@@ -39,9 +39,8 @@ function CurrentUserInfo({
   if (!countryCode) return null;
   return (
     <>
-      <div className="flex items-center justify-center">
-        <Timer>{timer}</Timer>
-      </div>
+      <Timer>{timer}</Timer>
+
       <div className="ml-sm flex flex-grow items-end justify-end space-x-2">
         <span
           className={`fi fi-${countryCode.toLocaleLowerCase()} ml-md text-xl`}
