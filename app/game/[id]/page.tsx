@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { endGameDataInterface } from "../_components/EndGameModal";
 import { formatTimeMs } from "../../lib/utils/formatTimeMs";
+import UserInfo from "../_components/UserInfo";
 
 // custom hooks
 import { useGameTimers } from "./_hooks/useGameTimers";
@@ -10,14 +11,12 @@ import { useExceptionHandler } from "../_hooks/useGameExceptionHandler";
 import { useChessPlayersInfo } from "./_hooks/useChessPlayersInfo";
 import { useChessGame } from "@/app/lib/hooks/useChessGame";
 import { useChessWebSocket } from "./_hooks/useChessWebSocket";
+import { useGameContext } from "@/app/lib/contexts/GameDataContext";
 
 // components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import GameModals from "../_components/GameModals";
-import UserInfo from "../_components/UserInfo";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
-import { readFromSessionStorage } from "@/app/lib/utils/sessionStorageUtils";
-import { GameData } from "@/app/lib/interfaces/responses/gameData.interface";
 import ShowMessage from "../_components/ShowMessage";
 import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
 
@@ -26,13 +25,10 @@ interface DynamicGamePageProps {
 }
 
 export default function DynamicGamePage({ params }: DynamicGamePageProps) {
-  // Reads game data form request from session storage.
-  const gameData: GameData = useMemo(
-    () => readFromSessionStorage("gameData") as GameData,
-    [],
-  );
+  const { gameData } = useGameContext();
 
   const playerId = useMemo(() => {
+    if (!gameData) return "";
     return (
       gameData.color === "white"
         ? gameData.playerWhite.userInfo.userId
@@ -244,20 +240,22 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
             isCurrentPlayer
           />
         </div>
-        <StyledButton
-          onClick={() => {
-            setIsDrawOfferModalOpen(true);
-          }}
-        >
-          Offer Draw
-        </StyledButton>
-        <StyledButton
-          onClick={() => {
-            setIsResignModalOpen(true);
-          }}
-        >
-          Resign
-        </StyledButton>
+        <div className="flex justify-between">
+          <StyledButton
+            onClick={() => {
+              setIsDrawOfferModalOpen(true);
+            }}
+          >
+            Offer Draw
+          </StyledButton>
+          <StyledButton
+            onClick={() => {
+              setIsResignModalOpen(true);
+            }}
+          >
+            Resign
+          </StyledButton>
+        </div>
       </section>
       <GameModals
         gameId={params.id}

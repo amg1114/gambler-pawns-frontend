@@ -3,7 +3,7 @@
 // libs
 import axios from "@/app/lib/_axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 
 import {
   Puzzle,
@@ -36,15 +36,19 @@ export default function PuzzlePage({
   const { loadGameFromFen, position, game, makeMove, movesHistory } =
     useChessGame();
 
-  const { setMovesSolutionQueue, handleHint, onShowSolution } =
-    useChessPuzzles(makeMove);
+  const {
+    setMovesSolutionQueue,
+    handleHint,
+    onShowSolution,
+    makeMoveInBoardPuzzles,
+  } = useChessPuzzles(makeMove, game);
 
   // fetch data
   // TODO: crear un indice en la bd sobre lihessId
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (params.lichess) {
       axios
         .get<PuzzleResponse>(`/puzzle/${params.lichess}`)
@@ -89,7 +93,7 @@ export default function PuzzlePage({
       <ChessBoardGame
         side={side}
         game={game}
-        onDrop={makeMove}
+        onDrop={makeMoveInBoardPuzzles}
         position={position}
       />
       <div className="flex justify-center gap-8 bg-secondary py-md text-white">

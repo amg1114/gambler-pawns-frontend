@@ -7,7 +7,6 @@ import SkeletonGame from "./_components/SkeletonGame";
 import { readFromSessionStorage } from "../lib/utils/sessionStorageUtils";
 import { useSession } from "next-auth/react";
 import useJoinToRandomPairingGame from "./_hooks/useJoinToRandomPairingGame";
-import useOnlineChessGameConnection from "../lib/hooks/useOnlineChessGameConnection";
 
 // TODO: we should to save joinGameDataFormRequest, and gameData in a global state
 // -> to avoid losing the data when the component unmounts.
@@ -32,8 +31,6 @@ export default function GamePage() {
 
   // call this hook conditionally, only when the user is joining a random pairing game
   useJoinToRandomPairingGame(!isFriendRequest, joinGameDataFormRequest);
-  // handle game started event
-  useOnlineChessGameConnection();
 
   const currentUserData = useMemo(
     () => ({

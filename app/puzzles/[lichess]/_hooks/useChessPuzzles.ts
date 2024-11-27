@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Square } from "chess.js";
+import { Chess, Square } from "chess.js";
 import { lanToFromTo } from "@/app/lib/utils/chessUtils";
+import { promotionPiece } from "@/app/lib/hooks/useChessGame";
 
 /**
  * Custom hook to manage chess puzzles.
@@ -9,20 +10,41 @@ import { lanToFromTo } from "@/app/lib/utils/chessUtils";
  * @returns
  */
 export default function useChessPuzzles(
-  makeMove: (from: Square, to: Square) => void,
+  makeMove: (
+    from: Square,
+    to: Square,
+    promotionPiece?: promotionPiece,
+  ) => boolean,
+  game: Chess,
 ) {
+  //TODO: use reducer to manage complex state
+
   /**
    * State to manage the queue of solution moves for the chess puzzle.
    */
   const [movesSolutionQueue, setMovesSolutionQueue] = useState<string[]>([]);
-  const [hasUserMoved, setHasUserMoved] = useState<boolean>(true);
-  const [isShowingSolution, setIsShowingSolution] = useState<boolean>(false);
-  const [currentMoveIndex, setCurrentMoveIndex] = useState<number>(0);
 
   /**
-   * Makes a move from the solution queue.
+   * State to track if the user has moved.
    */
-  const makePuzzleMove = useCallback(() => {
+  const [isUserMoving, setIsUserMoving] = useState<boolean>(true);
+
+  /**
+   * State to track if the solution is being shown.
+   */
+  const [isShowingSolution, setIsShowingSolution] = useState<boolean>(false);
+
+  /**
+   * State to track the current move index when showing the solution.
+   */
+  const [currentMoveIndex, setCurrentMoveIndex] = useState<number>(0);
+
+  const [moveWasWrong, setMoveWasWrong] = useState<boolean>(false);
+
+  /**
+   * Helper function to make a move from the solution queue.
+   */
+  const makeMoveFromQueue = useCallback(() => {
     if (movesSolutionQueue.length === 0) return;
 
     const [from, to] = lanToFromTo(movesSolutionQueue[0]);
@@ -52,14 +74,15 @@ export default function useChessPuzzles(
     }
 
     const timeoutId = setTimeout(() => {
-      makePuzzleMove();
-    }, 1000);
+      makeMoveFromQueue();
+      setCurrentMoveIndex((prev) => prev + 1);
+    }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [
     isShowingSolution,
     currentMoveIndex,
-    makePuzzleMove,
+    makeMoveFromQueue,
     movesSolutionQueue.length,
   ]);
 
@@ -69,26 +92,57 @@ export default function useChessPuzzles(
    * Calls handleMove twice with a delay to simulate the opponent's response.
    */
   const handleHint = useCallback(() => {
-    makePuzzleMove();
-    setHasUserMoved(false);
-  }, [makePuzzleMove]);
+    makeMoveFromQueue();
+    setIsUserMoving(false);
+  }, [makeMoveFromQueue]);
 
   // respond to user move
   useEffect(() => {
-    if (hasUserMoved || movesSolutionQueue.length === 0) return;
+    if (isUserMoving || movesSolutionQueue.length === 0) return;
 
     const timeoutId = setTimeout(() => {
-      makePuzzleMove();
-
-      setHasUserMoved(true);
+      makeMoveFromQueue();
+      setIsUserMoving(true);
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [hasUserMoved, makePuzzleMove, movesSolutionQueue.length]);
+  }, [isUserMoving, makeMoveFromQueue, movesSolutionQueue.length]);
+
+  const makeMoveInBoardPuzzles = useCallback(
+    (from: Square, to: Square, promotionPiece: promotionPiece = "q") => {
+      if (movesSolutionQueue.length === 0) return false;
+
+      const correctMove = lanToFromTo(movesSolutionQueue[0]);
+      const isWrongMove = from !== correctMove[0] || to !== correctMove[1];
+      if (isWrongMove) {
+        setMoveWasWrong(true);
+        return makeMove(from, to, promotionPiece);
+      }
+
+      setIsUserMoving(false);
+      const result = makeMove(from, to, promotionPiece);
+
+      setMovesSolutionQueue((prev) => prev.slice(1));
+      return result;
+    },
+    [makeMove, movesSolutionQueue],
+  );
+
+  useEffect(() => {
+    if (!moveWasWrong) return;
+
+    const timeoutId = setTimeout(() => {
+      game.undo();
+      setMoveWasWrong(false);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [game, moveWasWrong]);
 
   return {
     handleHint,
     onShowSolution,
     setMovesSolutionQueue,
+    makeMoveInBoardPuzzles,
   };
 }
