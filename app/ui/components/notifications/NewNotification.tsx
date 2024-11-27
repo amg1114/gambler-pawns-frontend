@@ -34,14 +34,14 @@ export default function NewNotification({
         {newNotification.title}
       </StyledTitle>
       <Image
-        src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${newNotification.userWhoSend.userAvatarImg.fileName}`}
-        alt={`${newNotification.userWhoSend.nickname}'s avatar`}
+        src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${newNotification.userWhoSend?.userAvatarImg.fileName}`}
+        alt={`${newNotification.userWhoSend?.nickname}'s avatar`}
         className="mx-auto mb-md w-2xl rounded-full"
         width={52}
         height={52}
       />
       <StyledParagraph extraClasses="text-center">
-        {newNotification.userWhoSend.nickname} {newNotification.message}
+        {newNotification.userWhoSend?.nickname} {newNotification.message}
       </StyledParagraph>
       <div className="flex justify-center">
         {newNotification.actionText1 && (
