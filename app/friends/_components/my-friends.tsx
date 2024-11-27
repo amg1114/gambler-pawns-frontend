@@ -57,6 +57,7 @@ export default function MyFriends() {
       .catch((error) => {
         console.error("Error deleting friend:", error);
       });
+    setFriends(friends.filter((friend) => friend.userId !== friendId));
   };
 
   useEffect(() => {
@@ -106,7 +107,7 @@ export default function MyFriends() {
                 </StyledButton>
                 <StyledButton
                   style="outlined"
-                  extraClasses="py-xs border-error hover:text-error text-error"
+                  extraClasses="p-sm"
                   onClick={() => handleDelete(friend.userId)}
                 >
                   Delete
