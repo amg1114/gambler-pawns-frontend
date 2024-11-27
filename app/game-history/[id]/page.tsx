@@ -19,6 +19,7 @@ import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 import RewatchControls from "./_components/RewatchControls";
 import UserInfo, { userDataInterface } from "@/app/game/_components/UserInfo";
 import { useGameRewatch } from "./_hooks/useGameRewacth";
+import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
 
 export default function GameHistoryPage({
   params,
@@ -88,9 +89,7 @@ export default function GameHistoryPage({
       <div className="flex flex-wrap gap-xl">
         <div className="w-full shrink-0 md:max-w-screen-board">
           {movesHistory.length > 0 && (
-            <div className="text-whites mb-lg bg-secondary text-center md:hidden">
-              (...) 4.KNg5 d5 5. exd5 Nxd5 6. Nxf7 Kxf7 7. Qf3+
-            </div>
+            <MovesHistory movesHistory={movesHistory} />
           )}
           <div className="mb-lg">
             <UserInfo
