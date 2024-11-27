@@ -89,7 +89,7 @@ export default function GameHistoryPage({
       <div className="flex flex-wrap gap-xl">
         <div className="w-full shrink-0 md:max-w-screen-board">
           {movesHistory.length > 0 && (
-            <MovesHistory movesHistory={movesHistory} />
+            <MovesHistory movesHistory={movesHistory} extraClasses="mb-md" />
           )}
           <div className="mb-lg">
             <UserInfo
