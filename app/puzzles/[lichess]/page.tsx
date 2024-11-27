@@ -24,6 +24,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
+import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
 
 export default function PuzzlePage({
   params,
@@ -85,11 +86,8 @@ export default function PuzzlePage({
       </StyledTitle>
       {/* TODO: llamar al comonente del historial de movimientos */}
       {movesHistory.length > 0 && (
-        <div className="text-whites mb-md bg-secondary text-center">
-          (...) 4.KNg5 d5 5. exd5 Nxd5 6. Nxf7 Kxf7 7. Qf3+
-        </div>
+        <MovesHistory extraClasses="mt-lg" movesHistory={movesHistory} />
       )}
-      <p>{puzzle.solution}</p>
       <ChessBoardGame
         side={side}
         game={game}

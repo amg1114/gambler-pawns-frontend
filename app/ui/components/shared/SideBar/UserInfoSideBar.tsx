@@ -35,14 +35,14 @@ export default function UserInfoSideBar({ session }: UserInfoSideBarProps) {
         className="relative flex w-full items-center px-lg pb-2xl"
       >
         {newNotification && (
-          <span className="bg-red-500 absolute right-0 top-0 h-3 w-3 rounded-full"></span>
+          <span className="absolute top-0 z-10 h-[10px] w-[10px] rounded-full bg-error"></span>
         )}
         <Image
           src={notification}
           alt="notification icon"
           width={40}
           height={40}
-          className="max-h-6 pr-sm"
+          className="m-[1px] max-h-6 pr-sm"
         />
         <div className="flex flex-col pr-xs">
           <p className="px-md text-base font-black">Notify</p>
