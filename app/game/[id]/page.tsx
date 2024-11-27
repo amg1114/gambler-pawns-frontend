@@ -18,6 +18,7 @@ import UserInfo from "../_components/UserInfo";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import { readFromSessionStorage } from "@/app/lib/utils/sessionStorageUtils";
 import { GameData } from "@/app/lib/interfaces/responses/gameData.interface";
+import ShowMessage from "../_components/ShowMessage";
 
 interface DynamicGamePageProps {
   params: { id: string };
@@ -206,11 +207,15 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
         {/* TODO: crear un componente separado que se use para mostrar:
           -> 1. excepciones, el timer de inactividad, cuando alguien rechace una oferta de tablas */}
         {backendChessServiceException && (
-          <p>{backendChessServiceException.message}</p>
+          <ShowMessage message={backendChessServiceException.message} />
         )}
-        {wasDrawOfferRejected && <p>Draw offer was rejected</p>}
+        {wasDrawOfferRejected && (
+          <ShowMessage message="Draw offer was rejected" />
+        )}
         {inactivityTimer && (
-          <p>{`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}</p>
+          <ShowMessage
+            message={`Inactivity timer: ${formatTimeMs(inactivityTimer)}`}
+          />
         )}
         <p>
           {chessGame.movesHistory.map(
@@ -218,11 +223,14 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
               `${(index + 1) % 2 === 1 ? Math.floor(index / 2) + 1 + "." : ","} ${move} `,
           )}
         </p>
-        <UserInfo
-          isLoading={false}
-          userData={opponentPlayerInfo}
-          isCurrentPlayer={false}
-        />
+
+        <div className="mb-md mt-lg">
+          <UserInfo
+            isLoading={false}
+            userData={opponentPlayerInfo}
+            isCurrentPlayer={false}
+          />
+        </div>
         <ChessBoardGame
           position={chessGame.position}
           onDrop={chessGame.makeMove}
@@ -230,11 +238,13 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
           arePremovesAllowed={gameData.mode === "bullet"}
           game={chessGame.game}
         />
-        <UserInfo
-          isLoading={false}
-          userData={currentPlayerInfo}
-          isCurrentPlayer
-        />
+        <div className="my-md mb-lg">
+          <UserInfo
+            isLoading={false}
+            userData={currentPlayerInfo}
+            isCurrentPlayer
+          />
+        </div>
         <StyledButton
           onClick={() => {
             setIsDrawOfferModalOpen(true);
