@@ -38,7 +38,9 @@ export default function SkeletonGame({
         </div>
         <ChessBoardGame />
       </div>
-      <UserInfo isLoading={false} isCurrentPlayer userData={userData} />
+      <div className="mb-lg mt-md">
+        <UserInfo isLoading={false} isCurrentPlayer userData={userData} />
+      </div>
 
       <StyledButton onClick={handleCancel}>Cancel</StyledButton>
     </section>
