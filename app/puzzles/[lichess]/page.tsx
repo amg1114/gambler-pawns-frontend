@@ -84,10 +84,8 @@ export default function PuzzlePage({
       <StyledTitle variant="h2" fontFamily="bungee" extraClasses="text-center">
         Puzzle #{puzzle.lichessId}
       </StyledTitle>
-      {/* TODO: llamar al comonente del historial de movimientos */}
-      {movesHistory.length > 0 && (
-        <MovesHistory extraClasses="mt-lg" movesHistory={movesHistory} />
-      )}
+      <MovesHistory extraClasses="mt-lg" movesHistory={movesHistory} />
+
       <ChessBoardGame
         side={side}
         game={game}

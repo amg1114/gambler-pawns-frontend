@@ -105,9 +105,8 @@ export default function GameHistoryPage({
           </div>
         </div>
         <div className="flex-1">
-          {movesHistory.length > 0 && (
-            <MovesHistory movesHistory={movesHistory} extraClasses="mb-md" />
-          )}
+          <MovesHistory movesHistory={movesHistory} extraClasses="mb-md" />
+
           <RewatchControls
             pgn={gameRewatch?.pgn || ""}
             gameMovesIndex={gameMovesIndex!}
