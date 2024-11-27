@@ -5,6 +5,7 @@ import Image from "next/image";
 import { nunito } from "@/app/ui/fonts";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 // Importing components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -16,6 +17,7 @@ interface userAvatarImg {
   userAvatarImgId: number;
 }
 interface User {
+  isFriend: boolean;
   userId: number;
   nickname: string;
   userAvatarImg: userAvatarImg;
@@ -29,9 +31,16 @@ export default function SearchUsers() {
   const [searchUser, setSearchUser] = useState("");
   const [users, setUsers] = useState<Users>({ data: [] });
   const [currentPage, setCurrentPage] = useState(1);
+  const { socket } = useWebSocketConnection();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchUser(e.target.value);
+  };
+
+  const handleAddFriend = (userId: number) => {
+    socket?.emit("notif:friendRequest", {
+      receiverId: userId,
+    });
   };
 
   useEffect(() => {
@@ -84,12 +93,16 @@ export default function SearchUsers() {
                   {user.nickname}
                 </span>
               </div>
-              <StyledButton
-                style="outlined"
-                extraClasses="py-xs justify-end px-sm"
-              >
-                Añadir amigo
-              </StyledButton>
+
+              {!user.isFriend && (
+                <StyledButton
+                  style="outlined"
+                  extraClasses="py-xs justify-end px-sm"
+                  onClick={() => handleAddFriend(user.userId)}
+                >
+                  Añadir amigo
+                </StyledButton>
+              )}
             </div>
           ))}
         </div>
