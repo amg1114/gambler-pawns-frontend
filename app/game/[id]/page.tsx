@@ -244,20 +244,22 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
             isCurrentPlayer
           />
         </div>
-        <StyledButton
-          onClick={() => {
-            setIsDrawOfferModalOpen(true);
-          }}
-        >
-          Offer Draw
-        </StyledButton>
-        <StyledButton
-          onClick={() => {
-            setIsResignModalOpen(true);
-          }}
-        >
-          Resign
-        </StyledButton>
+        <div className="flex justify-between">
+          <StyledButton
+            onClick={() => {
+              setIsDrawOfferModalOpen(true);
+            }}
+          >
+            Offer Draw
+          </StyledButton>
+          <StyledButton
+            onClick={() => {
+              setIsResignModalOpen(true);
+            }}
+          >
+            Resign
+          </StyledButton>
+        </div>
       </section>
       <GameModals
         gameId={params.id}
