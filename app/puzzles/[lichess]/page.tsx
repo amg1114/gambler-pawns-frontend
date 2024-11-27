@@ -25,6 +25,7 @@ import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
+import EndPuzzleModal from "./_components/EndPuzzleModal";
 
 export default function PuzzlePage({
   params,
@@ -41,6 +42,7 @@ export default function PuzzlePage({
     handleHint,
     onShowSolution,
     makeMoveInBoardPuzzles,
+    hasGameEnded,
   } = useChessPuzzles(makeMove, game);
 
   // fetch data
@@ -81,6 +83,13 @@ export default function PuzzlePage({
     navigator.clipboard.writeText(puzzle!.fen);
   };
 
+  const [shouldShowSolution, setShouldShowSoultion] = useState(false);
+
+  const handleShowSolution = () => {
+    setShouldShowSoultion(true);
+    onShowSolution();
+  };
+
   if (loading || !puzzle) return <PageLoadSpinner />;
 
   return (
@@ -89,7 +98,9 @@ export default function PuzzlePage({
         Puzzle #{puzzle.lichessId}
       </StyledTitle>
       <MovesHistory extraClasses="mt-lg" movesHistory={movesHistory} />
-
+      {shouldShowSolution && (
+        <p className="text-center text-lg">{`solution: ${puzzle.solution}`}</p>
+      )}
       <ChessBoardGame
         side={side}
         game={game}
@@ -125,7 +136,7 @@ export default function PuzzlePage({
             </>
           }
           icon={<InfoIcon className="h-8 w-8" />}
-          onClick={onShowSolution}
+          onClick={handleShowSolution}
         />
         <ActionButton
           label={
@@ -148,6 +159,7 @@ export default function PuzzlePage({
           onClick={() => router.push("/puzzles")}
         />
       </div>
+      {hasGameEnded && <EndPuzzleModal />}
     </section>
   );
 }

@@ -16,12 +16,14 @@ import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
 import StyledLink from "../ui/components/typography/StyledLink";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const [friends, setFriends] = useState<FriendsHome[]>([]);
   const [totalFriends, setTotalFriends] = useState<number>(0);
   const [firstTime, setFirstTime] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "loading") {
@@ -77,7 +79,7 @@ export default function HomePage() {
             extraClasses="flex items-center justify-center w-full !text-light !h-12"
             href="/game-options/classic"
           >
-            Single Player
+            Play Online
           </StyledLink>
           <StyledLink
             variant="primary"
@@ -91,6 +93,7 @@ export default function HomePage() {
             variant="primary"
             style="outlined"
             extraClasses="w-full !text-light !h-12"
+            onClick={() => router.push("game/1-vs-ai")}
           >
             Against AI
           </StyledButton>
@@ -176,11 +179,7 @@ export default function HomePage() {
           <></>
         )}
       </div>
-      {firstTime ? (
-        <FirstTimeModal close={() => setFirstTime(false)}> </FirstTimeModal>
-      ) : (
-        <></>
-      )}
+      {firstTime && <FirstTimeModal close={() => setFirstTime(false)} />}
     </div>
   );
 }

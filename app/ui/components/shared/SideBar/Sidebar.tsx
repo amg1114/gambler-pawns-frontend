@@ -60,7 +60,7 @@ export default function Sidebar({
     },
     {
       name: "1 VS AI",
-      link: "/1-vs-ai",
+      link: "game/1-vs-ai",
       image: aiIcon,
     },
     {
