@@ -9,8 +9,9 @@ import Logo from "@/app/ui/icons/logo.svg";
 import Coin from "@/app/ui/icons/coin.svg";
 import Fire from "@/app/ui/icons/fire.svg";
 import { useEffect, useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "./SideBar/Sidebar";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import useToggleState from "@/app/lib/hooks/useToggleState";
 
 function ConditionalRendering({
   coins,
@@ -46,19 +47,13 @@ function ConditionalRendering({
 }
 
 export default function Header() {
-  // Estado para controlar si el sidebar está abierto o cerrado
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, toggleSideBar] = useToggleState();
   const [isMounted, setIsMounted] = useState(false);
 
   // Funcion para evitar parpadeo en pantallas pequeñas
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // Función que alterna el estado del sidebar
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
 
   const { data: session } = useSession();
 
@@ -69,7 +64,7 @@ export default function Header() {
           <div className="flex items-center justify-start rtl:justify-end">
             <button
               type="button"
-              onClick={toggleSidebar}
+              onClick={toggleSideBar}
               className="inline-flex items-center rounded-base p-xs text-sm text-primary hover:bg-secondary focus:outline-none focus:ring-2 min-[1200px]:invisible"
             >
               <MenuRoundedIcon />

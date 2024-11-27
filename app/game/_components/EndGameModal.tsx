@@ -8,7 +8,7 @@ import Image from "next/image";
 import Coin from "../../ui/icons/coin.svg";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import { useRouter } from "next/navigation";
-import { formatSignedNumber } from "../_utils/formatSignedNumber";
+import { formatSignedNumber } from "../[id]/_utils/formatSignedNumber";
 
 export interface endGameDataInterface {
   winner: string;
@@ -79,7 +79,7 @@ const EndGameModal = ({
           style="outlined"
           extraClasses="mx-auto !w-36"
           onClick={() => {
-            router.push(`/rewatch/${gameId}`);
+            router.push(`/game-history/${gameId}`);
             sessionStorage.removeItem("joinGameDataFormRequest");
             sessionStorage.removeItem("gameData");
           }}

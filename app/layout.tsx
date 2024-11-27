@@ -8,8 +8,8 @@ import { nunito } from "./ui/fonts";
 
 // components
 import Providers from "./lib/contexts/Providers";
-import Header from "./ui/components/shared/header";
-import Footer from "./ui/components/shared/footer";
+import Header from "./ui/components/shared/Header";
+import Footer from "./ui/components/shared/Footer";
 
 export const metadata: Metadata = {
   title: {
@@ -36,7 +36,7 @@ export default function RootLayout({
             <Header />
             {children}
           </main>
-          <Footer />|
+          <Footer />
         </Providers>
       </body>
     </html>

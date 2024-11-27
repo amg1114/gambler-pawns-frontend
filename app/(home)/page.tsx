@@ -1,5 +1,5 @@
 "use client";
-import StatsCard from "./Components/StatsCard";
+import StatsCard from "./_components/StatsCard";
 import Image from "next/image";
 import Board from "../ui/icons/board.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -9,7 +9,7 @@ import Fire from "../ui/icons/fire.svg";
 import Arcade from "../ui/icons/arcade.svg";
 import Classic from "../ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
-import FriendModal from "./Components/FriendModal";
+import FriendModal from "./_components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "@/app/lib/_axios";
 import aguacate from "../ui/icons/aguacate.png";
@@ -38,7 +38,7 @@ export default function HomePage() {
         const response = await axios.get(
           `/user/${session?.data.userId}/friends`,
         );
-        setFriends(response.data.data.friendsList); // Ajusta la estructura según tu API
+        setFriends(response.data.data.friendsList);
         setTotalFriends(response.data.data.totalFriends);
       } catch (error) {
         console.error("Error fetching friends:", error);

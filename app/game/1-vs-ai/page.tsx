@@ -5,6 +5,9 @@ import { useStockfish } from "./_hooks/useStockfish";
 import { useEffect, useState } from "react";
 import { BLACK, Square, WHITE } from "chess.js";
 import EndGameAgainsBotModal from "./_components/EndGameAgainsBotModal";
+import { lanToFromTo } from "@/app/lib/utils/chessUtils";
+import UserInfo from "../_components/UserInfo";
+import { useSession } from "next-auth/react";
 
 export default function BotPage() {
   // TODO: in the future have a form with options after game such as engine level (like elo), side, game mode
@@ -34,10 +37,7 @@ export default function BotPage() {
         // small delay to make the bot move more human-like
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const [from, to] = [
-          bestMove.slice(0, 2) as Square,
-          bestMove.slice(2, 4) as Square,
-        ];
+        const [from, to] = lanToFromTo(bestMove);
 
         makeMove(from, to);
         setIsProcessingMove(false);
@@ -47,8 +47,24 @@ export default function BotPage() {
     makeBotMove();
   }, [bestMove, game, makeMove, isProcessingMove, ,]);
 
+  const { data: userData } = useSession();
+
   return (
-    <div className="p-4 container mx-auto">
+    <div className="mx-auto max-w-screen-board">
+      <div className="my-lg">
+        <UserInfo
+          isCurrentPlayer={false}
+          isLoading={false}
+          userData={{
+            nickname: "AI Ultra Killer Bot",
+            eloRating: 6666,
+            countryCode: "RU",
+            userAvatar: "23.png",
+            timer: Infinity,
+          }}
+        />
+      </div>
+
       <ChessBoardGame
         position={position}
         onDrop={makeMove}
@@ -62,6 +78,23 @@ export default function BotPage() {
         winner={game.isDraw() ? "Draw" : game.turn() === WHITE ? "Bot" : "You"}
         reason={endGameData?.reason || ""}
       />
+      <div className="my-lg">
+        <UserInfo
+          isCurrentPlayer
+          isLoading={false}
+          userData={{
+            nickname: userData?.data.nickname || "Guest",
+            eloRating: userData?.data.eloRapid || 1200,
+            countryCode: userData?.data.countryCode || "us",
+            userAvatar: userData?.data.userAvatarImg.fileName || "1.png",
+            timer: Infinity,
+          }}
+        />
+      </div>
+
+      <div className="my-md w-full bg-secondary p-sm text-center">
+        GO! Survive the AI Ultra Killer
+      </div>
     </div>
   );
 }

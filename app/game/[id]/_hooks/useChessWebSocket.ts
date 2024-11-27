@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { endGameDataInterface } from "../_components/EndGameModal";
+import { endGameDataInterface } from "../../_components/EndGameModal";
 import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 interface UseChessWebSocketReturnType {
@@ -13,7 +13,6 @@ interface UseChessWebSocketReturnType {
 /**
  * Custom hook to manage WebSocket connections and events for a chess game.
  *
- * @param {Socket | null} socket - The WebSocket connection.
  * @param {string} playerId - The ID of the player.
  * @param {function} onOpponentMove - Function to update the game state from the opponent's move.
  * @param {function} onTimerUpdate - Function to handle timer updates.
@@ -129,8 +128,6 @@ export function useChessWebSocket(
   /** Handles game reconnection. */
   const handleGameReconnected = useCallback(
     (data: any) => {
-      console.log("Reconectando al juego", JSON.stringify(data)); // {pgn: string}
-      // como puedo saber si el juego se ha reconectado?
       onOpponentMove(data.pgn);
     },
     [onOpponentMove],
@@ -180,7 +177,6 @@ export function useChessWebSocket(
   const emitWebsocketMakeMove = useCallback(
     (from: string, to: string, promotion: string) => {
       if (!socket) return;
-      console.log("Emitiendo movimiento", { playerId, from, to, promotion });
       socket.emit("game:makeMove", { playerId, from, to, promotion });
     },
     [socket, playerId],
@@ -192,7 +188,7 @@ export function useChessWebSocket(
 
     socket.emit("game:acceptDraw", {
       playerId,
-      gameId: gameData?.gameId,
+      gameId: gameData.gameId,
     });
   }, [socket, playerId, gameData?.gameId]);
 
@@ -202,7 +198,7 @@ export function useChessWebSocket(
 
     socket.emit("game:rejectDraw", {
       playerId,
-      gameId: gameData?.gameId,
+      gameId: gameData.gameId,
     });
   }, [socket, playerId, gameData?.gameId]);
 
@@ -212,7 +208,7 @@ export function useChessWebSocket(
 
     socket.emit("game:offerDraw", {
       playerId,
-      gameId: gameData?.gameId,
+      gameId: gameData.gameId,
     });
   }, [socket, playerId, gameData?.gameId]);
 
@@ -226,8 +222,8 @@ export function useChessWebSocket(
   /** Emits event to reconnect to game */
   const emitWebsocketReconnectGame = useCallback(() => {
     if (!socket) return;
-
-    socket.emit("game:reconnect", { playerId, gameId: gameData?.gameId });
+    if (!socket.recovered) return;
+    socket.emit("game:reconnect", { playerId, gameId: gameData.gameId });
   }, [socket, playerId, gameData?.gameId]);
 
   // reconnect to game when component mounts

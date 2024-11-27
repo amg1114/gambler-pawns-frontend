@@ -27,11 +27,13 @@ const imagesRemotePatterns = onlyInProd
     ];
 
 const nextConfig = {
-  reactStrictMode: onlyInProd,
+  reactStrictMode: false, //!onlyInProd, TODO: Random pairing logic not workign with strict mode
   images: {
     remotePatterns: imagesRemotePatterns,
   },
-  removeConsole: onlyInProd,
+  compiler: {
+    removeConsole: onlyInProd,
+  },
   async headers() {
     return [
       {

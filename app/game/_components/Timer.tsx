@@ -8,7 +8,7 @@ export default function Timer({
 }) {
   return (
     <div
-      className={`flex items-center rounded-base bg-primary p-xs align-middle font-bold text-dark-1 ${extraClasses}`}
+      className={`flex items-center self-center rounded-base bg-primary p-xs align-middle font-bold text-dark-1 ${extraClasses}`}
     >
       <AccessTimeIcon className="text-light-1 mx-xs" />
       {children}

@@ -9,12 +9,12 @@ import Timer from "./Timer";
 //Icons
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-interface userDataInterface {
+export interface userDataInterface {
   nickname: string;
   eloRating: number;
   countryCode: string;
   userAvatar: string;
-  timer: string;
+  timer: string | number;
 }
 
 interface LoadingState {
@@ -39,9 +39,8 @@ function CurrentUserInfo({
   if (!countryCode) return null;
   return (
     <>
-      <div className="flex items-center justify-center">
-        <Timer>{timer}</Timer>
-      </div>
+      <Timer>{timer}</Timer>
+
       <div className="ml-sm flex flex-grow items-end justify-end space-x-2">
         <span
           className={`fi fi-${countryCode.toLocaleLowerCase()} ml-md text-xl`}
@@ -79,7 +78,7 @@ function OpponentUserInfo({
 
   return (
     <>
-      <figure className="relative mr-md aspect-square w-10 lg:w-14">
+      <figure className="relative aspect-square w-10 lg:w-14">
         <Image
           src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${userAvatar}`}
           alt="Avatar"
@@ -130,7 +129,7 @@ export default function UserInfo(props: UserInfoProps) {
 
   return (
     <>
-      <div className="my-lg flex w-full">
+      <div className="flex w-full gap-md">
         {props.isCurrentPlayer ? (
           <CurrentUserInfo {...props.userData} />
         ) : (

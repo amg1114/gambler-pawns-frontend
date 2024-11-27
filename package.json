@@ -24,6 +24,7 @@
     "axios": "^1.7.7",
     "chess.js": "1.0.0-beta.8",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "flag-icons": "^7.2.3",
     "gambler-pawns-frontend": "link:",
     "jose": "^5.9.6",
