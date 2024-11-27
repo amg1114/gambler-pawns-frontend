@@ -11,7 +11,7 @@ import Classic from "../ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
 import FriendModal from "./_components/FriendModal";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "@/app/lib/_axios";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
@@ -36,7 +36,7 @@ export default function HomePage() {
     const fetchFriends = async () => {
       try {
         const response = await axios.get(
-          `http://[::1]:8000/api/v1/user/${session?.data.userId}/friends`,
+          `/user/${session?.data.userId}/friends`,
         );
         setFriends(response.data.data.friendsList);
         setTotalFriends(response.data.data.totalFriends);
