@@ -43,8 +43,6 @@ export default function ProfileEditPage() {
   const [form, setForm] = useState<User | null>(null);
   const [changes, setChanges] = useState<Partial<User> | null>(null);
 
-  const [isFormChanged, setIsFormChanged] = useState(false);
-
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -146,8 +144,6 @@ export default function ProfileEditPage() {
             [property]: value,
           },
     );
-
-    setIsFormChanged(true);
   };
 
   const handleSubmit = () => {
@@ -274,7 +270,6 @@ export default function ProfileEditPage() {
             onClick={() => {
               setForm(null);
               setChanges(null);
-              setIsFormChanged(false);
               router.back();
             }}
           >

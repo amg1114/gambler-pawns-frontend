@@ -6,7 +6,7 @@ import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "../ui/components/typography/StyledParagraph";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import Fire from "../ui/icons/fire.svg";
-import Arcade from "../ui/icons/arcade.svg";
+//import Arcade from "../ui/icons/arcade.svg";
 import Classic from "../ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
 import FriendModal from "./_components/FriendModal";
@@ -81,14 +81,14 @@ export default function HomePage() {
           >
             Play Online
           </StyledLink>
-          <StyledLink
+          {/* <StyledLink
             variant="primary"
             style="filled"
             extraClasses="flex items-center justify-center w-full !text-dark-1 !h-12"
             href="/game-options/arcade"
           >
             Arcade
-          </StyledLink>
+          </StyledLink> */}
           <StyledButton
             variant="primary"
             style="outlined"
@@ -101,6 +101,7 @@ export default function HomePage() {
             variant="primary"
             style="outlined"
             extraClasses="w-full !text-light !h-12"
+            onClick={() => router.push("puzzles")}
           >
             Puzzles
           </StyledButton>
@@ -126,13 +127,13 @@ export default function HomePage() {
                   statValue={session.data.eloRapid}
                   description=""
                 />
-                <StatsCard
+                {/* <StatsCard
                   title="Arcade"
                   imgSrc={Arcade}
                   imgAlt="Arcade Mode Icon"
                   statValue={session.data.eloArcade}
                   description="XP"
-                />
+                /> */}
               </div>
             </div>
 

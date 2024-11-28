@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import aguacate from "../../ui/icons/aguacate.png";
 import Image from "next/image";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
-import { profile } from "console";
 
 interface FriendProps {
   avatar: any;

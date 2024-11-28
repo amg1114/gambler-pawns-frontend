@@ -55,12 +55,12 @@ function CurrentUserInfo({
             width="112"
             height="112"
           />
-          <button
+          {/* <button
             className="absolute aspect-square rounded-full bg-gray-2 p-xs"
             style={{ bottom: "-8px", left: "-4px" }}
           >
             <AddCircleOutlineIcon className="text-t-secondary" />
-          </button>
+          </button> */}
         </figure>
       </div>
     </>

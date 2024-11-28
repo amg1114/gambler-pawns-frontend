@@ -131,11 +131,14 @@ export default function LoginPage() {
                 {errors.password.message}
               </span>
             )}
-            <Link href="/forgot-password" className="flex justify-end py-sm">
-              <p className="underline-offset-4 hover:text-primary hover:underline">
+            <p className="flex justify-end py-sm">
+              <Link
+                href="/forgot-password"
+                className="underline-offset-4 hover:text-primary hover:underline"
+              >
                 Forgot password?
-              </p>
-            </Link>
+              </Link>
+            </p>
             <div className="flex items-center justify-center pt-lg">
               <button
                 type="submit"
