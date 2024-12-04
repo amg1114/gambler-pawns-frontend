@@ -11,6 +11,8 @@ pool:
 
 variables:
   pnpm_config_cache: $(Pipeline.Workspace)/.pnpm-store
+  group: StaticWebAppSecrets
+
 
 steps:
   - task: Cache@2
