@@ -6,11 +6,11 @@ import ChessTile from "@/app/ui/icons/chess-tile.svg";
 import aboutIcon from "@/app/ui/icons/aboutIcon.svg";
 import clubIcon from "@/app/ui/icons/group.svg";
 import homeIcon from "@/app/ui/icons/home.svg";
-import store from "@/app/ui/icons/store.svg";
-import ranking from "@/app/ui/icons/ranking.svg";
+// import store from "@/app/ui/icons/store.svg";
+// import ranking from "@/app/ui/icons/ranking.svg";
 import aiIcon from "@/app/ui/icons/helmet.svg";
 import puzzlesIcon from "@/app/ui/icons/puzzle.svg";
-import arcadeIcon from "@/app/ui/icons/pacman.svg";
+// import arcadeIcon from "@/app/ui/icons/pacman.svg";
 
 // components
 import Image from "next/image";
@@ -40,11 +40,11 @@ export default function Sidebar({
       link: "/about",
       image: aboutIcon,
     },
-    {
-      name: "Ranking",
-      link: "/ranking",
-      image: ranking,
-    },
+    // {
+    //   name: "Ranking",
+    //   link: "/ranking",
+    //   image: ranking,
+    // },
   ];
 
   const gameOptions = [
@@ -53,14 +53,14 @@ export default function Sidebar({
       link: "/game-options/classic",
       image: ChessTile,
     },
-    {
-      name: "Arcade",
-      link: "/game-options/arcade",
-      image: arcadeIcon,
-    },
+    // {
+    //   name: "Arcade",
+    //   link: "/game-options/arcade",
+    //   image: arcadeIcon,
+    // },
     {
       name: "1 VS AI",
-      link: "/1-vs-ai",
+      link: "game/1-vs-ai",
       image: aiIcon,
     },
     {
@@ -73,15 +73,15 @@ export default function Sidebar({
   if (session) {
     sideBarOptions.push(
       {
-        name: "Clubs",
-        link: "/club",
+        name: "Friends",
+        link: "/friends",
         image: clubIcon,
       },
-      {
-        name: "Store",
-        link: "/store",
-        image: store,
-      },
+      // {
+      //   name: "Store",
+      //   link: "/store",
+      //   image: store,
+      // },
     );
   }
   const onClickLogin = () => {

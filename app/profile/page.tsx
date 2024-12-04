@@ -17,7 +17,7 @@ import { ProfileAvatarSelect } from "./_components/ProfileAvatarSelect";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
-import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
+// import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
 import SupervisedUserCircleRoundedIcon from "@mui/icons-material/SupervisedUserCircleRounded";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
@@ -74,15 +74,15 @@ export default function ProfilePage() {
               <HistoryRoundedIcon />
               Game History
             </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            {/* <ProfileOptionRow href="/profile">
               <ShowChartRoundedIcon /> User statistics
-            </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            </ProfileOptionRow> */}
+            <ProfileOptionRow href="/friends">
               <SupervisedUserCircleRoundedIcon /> My friends
             </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            {/* <ProfileOptionRow href="/profile">
               <DriveFileRenameOutlineRoundedIcon /> Customize
-            </ProfileOptionRow>
+            </ProfileOptionRow> */}
           </nav>
         </section>
 

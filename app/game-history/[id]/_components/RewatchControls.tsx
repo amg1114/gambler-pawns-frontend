@@ -45,10 +45,6 @@ export default function RewatchControls({
     return () => clearTimeout(timeout);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
     <div className="flex w-full flex-wrap justify-center bg-secondary p-md">
       <div className="flex w-full gap-md">
@@ -92,7 +88,7 @@ export default function RewatchControls({
       </ActionButton>
       <ActionButton>
         <ContentCopyIcon onClick={() => handleCopy("pgn")} />
-        Copy PNG
+        Copy PGN
       </ActionButton>
       <Snackbar
         open={snackbarOpen}

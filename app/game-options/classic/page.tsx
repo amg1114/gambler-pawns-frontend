@@ -126,9 +126,6 @@ export default function ClassicOptionPage() {
             Play vs. a Friend
           </StyledButton>
         </div>
-        <div>
-          <StyledButton>Friends</StyledButton>
-        </div>
 
         <div className="flex items-center justify-center p-md">
           <StyledButton

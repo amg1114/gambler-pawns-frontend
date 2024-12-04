@@ -41,6 +41,8 @@ export default function useChessPuzzles(
 
   const [moveWasWrong, setMoveWasWrong] = useState<boolean>(false);
 
+  // const [hasPuzzleEnded, setHasPuzzleEnded] = useState<boolean>(false);
+
   /**
    * Helper function to make a move from the solution queue.
    */
@@ -67,11 +69,14 @@ export default function useChessPuzzles(
    * Effect to execute moves in the solution queue when showing the solution.
    */
   useEffect(() => {
+    console.log(
+      "showing solution",
+      movesSolutionQueue,
+      "index",
+      currentMoveIndex,
+    );
     if (!isShowingSolution) return;
-    if (currentMoveIndex >= movesSolutionQueue.length) {
-      setIsShowingSolution(false);
-      return;
-    }
+    if (movesSolutionQueue.length === 0) return;
 
     const timeoutId = setTimeout(() => {
       makeMoveFromQueue();
@@ -84,6 +89,7 @@ export default function useChessPuzzles(
     currentMoveIndex,
     makeMoveFromQueue,
     movesSolutionQueue.length,
+    movesSolutionQueue,
   ]);
 
   /**
@@ -108,6 +114,18 @@ export default function useChessPuzzles(
     return () => clearTimeout(timeoutId);
   }, [isUserMoving, makeMoveFromQueue, movesSolutionQueue.length]);
 
+  /**
+   * Makes a move in the chess puzzle board.
+   *
+   * This function checks if the move is correct based on the solution queue.
+   * If the move is correct, it updates the state and makes the move on the board.
+   * If the move is incorrect, it sets the moveWasWrong state and makes the move on the board.
+   *
+   * @param {Square} from - The starting square of the move.
+   * @param {Square} to - The ending square of the move.
+   * @param {promotionPiece} [promotionPiece="q"] - The piece to promote to, if applicable.
+   * @returns {boolean} - Returns true if the move was made successfully, false otherwise.
+   */
   const makeMoveInBoardPuzzles = useCallback(
     (from: Square, to: Square, promotionPiece: promotionPiece = "q") => {
       if (movesSolutionQueue.length === 0) return false;
@@ -128,6 +146,7 @@ export default function useChessPuzzles(
     [makeMove, movesSolutionQueue],
   );
 
+  // undo user move if was wrong
   useEffect(() => {
     if (!moveWasWrong) return;
 
@@ -139,10 +158,18 @@ export default function useChessPuzzles(
     return () => clearTimeout(timeoutId);
   }, [game, moveWasWrong]);
 
+  // check if puzzle has ended
+  // useEffect(() => {
+  //   if (movesSolutionQueue.length === 0) {
+  //     setHasPuzzleEnded(true);
+  //   }
+  // }, [game, movesSolutionQueue]);
+
   return {
     handleHint,
     onShowSolution,
     setMovesSolutionQueue,
     makeMoveInBoardPuzzles,
+    hasGameEnded: movesSolutionQueue.length === 0,
   };
 }

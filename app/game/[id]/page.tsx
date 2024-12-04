@@ -241,18 +241,10 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
           />
         </div>
         <div className="flex justify-between">
-          <StyledButton
-            onClick={() => {
-              setIsDrawOfferModalOpen(true);
-            }}
-          >
+          <StyledButton onClick={() => setIsDrawOfferModalOpen(true)}>
             Offer Draw
           </StyledButton>
-          <StyledButton
-            onClick={() => {
-              setIsResignModalOpen(true);
-            }}
-          >
+          <StyledButton onClick={() => setIsResignModalOpen(true)}>
             Resign
           </StyledButton>
         </div>
