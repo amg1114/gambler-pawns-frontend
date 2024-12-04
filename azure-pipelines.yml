@@ -29,3 +29,9 @@ steps:
       pnpm install
       pnpm run build
     displayName: "pnpm install and build"
+    
+  - task: AzureStaticWebApp@0
+    inputs:
+      app_location: "/.next" # Ruta donde se generan los archivos estáticos
+      api_location: ""      # Déjalo vacío si no tienes una API
+      output_location: ""   # Déjalo vacío si no es necesario
