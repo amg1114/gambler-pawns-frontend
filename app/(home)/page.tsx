@@ -15,6 +15,7 @@ import axios from "@/app/lib/_axios";
 import aguacate from "../ui/icons/aguacate.png";
 import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
+import { useRouter } from "next/navigation";
 import StyledLink from "../ui/components/typography/StyledLink";
 
 export default function HomePage() {
@@ -22,6 +23,8 @@ export default function HomePage() {
   const [friends, setFriends] = useState<FriendsHome[]>([]);
   const [totalFriends, setTotalFriends] = useState<number>(0);
   const [firstTime, setFirstTime] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "loading") {
@@ -52,7 +55,7 @@ export default function HomePage() {
 
   return (
     <div className="mt-xl w-auto grid-cols-2 gap-14 lg:grid">
-      <div className="w-auto space-y-8">
+      <div className="w-auto space-y-8 pb-lg">
         <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
           <StyledTitle
             variant="h2"
@@ -60,8 +63,15 @@ export default function HomePage() {
           >
             Welcome to gambler pawns {session?.data.nickname}
           </StyledTitle>
-          <StyledParagraph extraClasses="text-left text-slate-500 ">
-            Enjoy chess with our new features, learn more in about
+
+          <StyledParagraph extraClasses="text-left text-slate-500">
+            Enjoy chess with our new features, learn more in&nbsp;
+            <StyledLink
+              href="/about"
+              extraClasses="py-none px-none rounded-none"
+            >
+              about
+            </StyledLink>
           </StyledParagraph>
         </div>
         <Image src={Board} alt="" className="w-full" />
@@ -71,33 +81,36 @@ export default function HomePage() {
           SELECT GAME MODE
         </StyledTitle>
         <div className="space-y-4">
-          <StyledLink
-            variant="primary"
-            style="outlined"
-            extraClasses="flex items-center justify-center w-full !text-light !h-12"
-            href="/game-options/classic"
-          >
-            Single Player
-          </StyledLink>
-          <StyledLink
+          <StyledButton
             variant="primary"
             style="filled"
-            extraClasses="flex items-center justify-center w-full !text-dark-1 !h-12"
-            href="/game-options/arcade"
+            extraClasses="flex items-center justify-center w-full !h-12"
+            onClick={() => router.push("/game-options/classic")}
           >
-            Arcade
-          </StyledLink>
+            Single Player
+          </StyledButton>
+          {/* Pagina a la que dirige hecha pero el modo de juego no esta listo 
           <StyledButton
             variant="primary"
             style="outlined"
-            extraClasses="w-full !text-light !h-12"
+            extraClasses="flex items-center justify-center w-full !h-12"
+            onClick={() => router.push("/game-options/arcade")}
+          >
+            Arcade
+          </StyledButton> */}
+          <StyledButton
+            variant="primary"
+            style="filled"
+            extraClasses="w-full !h-12"
+            onClick={() => router.push("/game/1-vs-IA")}
           >
             Against AI
           </StyledButton>
           <StyledButton
             variant="primary"
-            style="outlined"
-            extraClasses="w-full !text-light !h-12"
+            style="filled"
+            extraClasses="w-full !h-12"
+            onClick={() => router.push("/puzzles")}
           >
             Puzzles
           </StyledButton>
