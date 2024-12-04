@@ -10,9 +10,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  pnpm_config_cache: $(Pipeline.Workspace)/.pnpm-store
-  group: StaticWebAppSecrets
-
+- group: StaticWebAppSecrets
+- name: pnpm_config_cache    # Declaración de la variable específica
+  value: $(Pipeline.Workspace)/.pnpm-store
 
 steps:
   - task: Cache@2
