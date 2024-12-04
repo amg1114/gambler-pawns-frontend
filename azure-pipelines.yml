@@ -35,3 +35,5 @@ steps:
       app_location: "/.next" # Ruta donde se generan los archivos estáticos
       api_location: ""      # Déjalo vacío si no tienes una API
       output_location: ""   # Déjalo vacío si no es necesario
+    env:
+      AZURE_STATIC_WEB_APPS_API_TOKEN: $(AZURE_STATIC_WEB_APPS_API_TOKEN) # Token desde variables
