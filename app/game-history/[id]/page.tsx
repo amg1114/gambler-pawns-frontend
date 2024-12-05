@@ -62,14 +62,14 @@ export default function GameHistoryPage({
     };
 
     fetchGame();
-  }, [params.id, router]);
+  }, [formatPlayersData, loadGameFromPgn, params.id, router]);
 
   useEffect(() => {
     if (gameMoves.length == 0) {
       setGameMoves(game.history({ verbose: true }));
       setGameMovesIndex(movesHistory.length - 1);
     }
-  }, [game]);
+  }, [game, gameMoves.length, movesHistory.length]);
 
   const handleIndexChange = (index: number) => {
     if (index == gameMovesIndex) return;
@@ -95,7 +95,10 @@ export default function GameHistoryPage({
               isCurrentPlayer={false}
             />
           </div>
-          <ChessBoardGame game={game} position={position} onDrop={makeMove} />
+          <div className="mx-auto max-w-screen-board">
+            <ChessBoardGame game={game} position={position} onDrop={makeMove} />
+          </div>
+
           <div className="mt-lg">
             <UserInfo
               isLoading={false}

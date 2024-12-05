@@ -101,12 +101,15 @@ export default function PuzzlePage({
       {shouldShowSolution && (
         <p className="text-center text-lg">{`solution: ${puzzle.solution}`}</p>
       )}
-      <ChessBoardGame
-        side={side}
-        game={game}
-        onDrop={makeMoveInBoardPuzzles}
-        position={position}
-      />
+      <div className="mx-auto max-w-screen-board">
+        <ChessBoardGame
+          side={side}
+          game={game}
+          onDrop={makeMoveInBoardPuzzles}
+          position={position}
+        />
+      </div>
+
       <div className="flex justify-center gap-8 bg-secondary py-md text-white">
         <ActionButton
           label={
