@@ -17,6 +17,7 @@ import { FriendsHome } from "@/app/lib/interfaces/responses/friendsHome-res.inte
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
 import StyledLink from "@/app/ui/components/typography/StyledLink";
 import { useRouter } from "next/navigation";
+import { ChessBoardGame } from "../ui/components/chessBoardGame/ChessBoardGame";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -74,7 +75,7 @@ export default function HomePage() {
             </StyledLink>
           </StyledParagraph>
         </div>
-        <Image src={Board} alt="" className="w-full" />
+        <ChessBoardGame />
       </div>
       <div className="w-auto space-y-8">
         <StyledTitle variant="h1" extraClasses="text-center space-y-6">

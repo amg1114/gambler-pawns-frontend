@@ -492,34 +492,32 @@ export function ChessBoardGame({
   ]);
 
   return (
-    <div className="mx-auto max-w-screen-board">
-      <Chessboard
-        id="StyledBoard"
-        boardOrientation={side}
-        position={position}
-        customBoardStyle={{
-          borderRadius: "8px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-        }}
-        customDarkSquareStyle={{
-          backgroundColor: bgDarkSquaresColor,
-        }}
-        customLightSquareStyle={{
-          backgroundColor: bgLightSquaresColor,
-        }}
-        customPieces={customPieces}
-        onPieceDrop={innerOnDrop}
-        customDropSquareStyle={{
-          boxShadow: `inset 0 0 2px 6px ${STYLE_COLORS.SQUARE_TO_DROP}`,
-        }}
-        customSquareStyles={customSquareStyles}
-        onSquareRightClick={handleRightClick}
-        onSquareClick={handleSquareClick}
-        arePremovesAllowed={arePremovesAllowed}
-        onPromotionPieceSelect={handlePromotionPieceSelect}
-        onPromotionCheck={handlePromotionCheck}
-        showPromotionDialog={showPromotionDialogManually}
-      />
-    </div>
+    <Chessboard
+      id="StyledBoard"
+      boardOrientation={side}
+      position={position}
+      customBoardStyle={{
+        borderRadius: "8px",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+      }}
+      customDarkSquareStyle={{
+        backgroundColor: bgDarkSquaresColor,
+      }}
+      customLightSquareStyle={{
+        backgroundColor: bgLightSquaresColor,
+      }}
+      customPieces={customPieces}
+      onPieceDrop={innerOnDrop}
+      customDropSquareStyle={{
+        boxShadow: `inset 0 0 2px 6px ${STYLE_COLORS.SQUARE_TO_DROP}`,
+      }}
+      customSquareStyles={customSquareStyles}
+      onSquareRightClick={handleRightClick}
+      onSquareClick={handleSquareClick}
+      arePremovesAllowed={arePremovesAllowed}
+      onPromotionPieceSelect={handlePromotionPieceSelect}
+      onPromotionCheck={handlePromotionCheck}
+      showPromotionDialog={showPromotionDialogManually}
+    />
   );
 }
