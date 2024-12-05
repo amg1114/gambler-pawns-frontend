@@ -1,22 +1,21 @@
 "use client";
 import StatsCard from "./_components/StatsCard";
 import Image from "next/image";
-import Board from "../ui/icons/board.svg";
+import Board from "@/app/ui/icons/board.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import StyledParagraph from "../ui/components/typography/StyledParagraph";
+import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
-import Fire from "../ui/icons/fire.svg";
+import Fire from "@/app/ui/icons/fire.svg";
 //import Arcade from "../ui/icons/arcade.svg";
-import Classic from "../ui/icons/classic.svg";
+import Classic from "@/app/ui/icons/classic.svg";
 import { useSession } from "next-auth/react";
 import FriendModal from "./_components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "@/app/lib/_axios";
-import aguacate from "../ui/icons/aguacate.png";
-import { FriendsHome } from "../lib/interfaces/responses/friendsHome-res.interface";
+import aguacate from "@/app/ui/icons/aguacate.png";
+import { FriendsHome } from "@/app/lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
-import { useRouter } from "next/navigation";
-import StyledLink from "../ui/components/typography/StyledLink";
+import StyledLink from "@/app/ui/components/typography/StyledLink";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
@@ -55,8 +54,8 @@ export default function HomePage() {
   }, [session]);
 
   return (
-    <div className="mt-xl w-auto grid-cols-2 gap-14 lg:grid">
-      <div className="w-auto space-y-8 pb-lg">
+    <div className="mx-auto mt-xl w-auto grid-cols-2 gap-14 max-md:w-10/12 max-[570px]:w-auto lg:grid">
+      <div className="w-auto space-y-8 pb-2xl">
         <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
           <StyledTitle
             variant="h2"
@@ -88,7 +87,7 @@ export default function HomePage() {
             extraClasses="flex items-center justify-center w-full !h-12"
             onClick={() => router.push("/game-options/classic")}
           >
-            Single Player
+            Play Online
           </StyledButton>
           {/* Pagina a la que dirige hecha pero el modo de juego no esta listo 
           <StyledButton
@@ -103,7 +102,7 @@ export default function HomePage() {
             variant="primary"
             style="filled"
             extraClasses="w-full !h-12"
-            onClick={() => router.push("/game/1-vs-IA")}
+            onClick={() => router.push("/game/1-vs-ai")}
           >
             Against AI
           </StyledButton>
