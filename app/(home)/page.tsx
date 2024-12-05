@@ -1,7 +1,5 @@
 "use client";
 import StatsCard from "./_components/StatsCard";
-import Image from "next/image";
-import Board from "@/app/ui/icons/board.svg";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
