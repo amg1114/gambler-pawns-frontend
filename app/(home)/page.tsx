@@ -122,7 +122,7 @@ export default function HomePage() {
               <StyledTitle variant="h3" extraClasses="text-left text-base ">
                 My stats
               </StyledTitle>
-              <div className="grid grid-cols-3 justify-items-center">
+              <div className="grid grid-cols-2 justify-items-center">
                 <StatsCard
                   title="Streak"
                   imgSrc={Fire}
