@@ -16,26 +16,27 @@ export default function UserInfoSideBar({ session }: UserInfoSideBarProps) {
     <>
       <Link
         href="/profile"
-        className="flex w-full items-center justify-center p-md hover:bg-secondary"
+        className="flex w-full items-center justify-center p-md hover:shadow-lg hover:scale-95 hover:duration-300"
       >
         <Image
           src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${session.data.userAvatarImg.fileName}`}
           alt="avatar"
           width={50}
           height={50}
+          className="mr-md"
         />
-        <div className="flex flex-col p-xs">
+        <div className="flex flex-col">
           <p className="text-xl font-black">{session.data.nickname}</p>
           <p>My profile</p>
         </div>
       </Link>
       <Link
         onClick={() => markLastNewNotificationAsRead()}
-        href={"/notification"}
-        className="relative flex w-full items-center px-lg pb-2xl"
+        href="/notification"
+        className="relative flex w-max items-center m-lg mb-2xl hover:text-primary hover:underline hover:underline-offset-4 hover:text-lg hover:duration-300"
       >
         {newNotification && (
-          <span className="absolute top-0 z-10 h-[10px] w-[10px] rounded-full bg-error"></span>
+          <span className="absolute top-0 z-10 h-[10px] w-[10px] rounded-full bg-error "></span>
         )}
         <Image
           src={notification}
@@ -44,9 +45,9 @@ export default function UserInfoSideBar({ session }: UserInfoSideBarProps) {
           height={40}
           className="m-[1px] max-h-6 pr-sm"
         />
-        <div className="flex flex-col pr-xs">
-          <p className="px-md text-base font-black">Notify</p>
-        </div>
+        <span className="px-md text-base font-black">
+          Notify
+        </span>
       </Link>
     </>
   );

@@ -11,6 +11,7 @@ import homeIcon from "@/app/ui/icons/home.svg";
 import aiIcon from "@/app/ui/icons/helmet.svg";
 import puzzlesIcon from "@/app/ui/icons/puzzle.svg";
 // import arcadeIcon from "@/app/ui/icons/pacman.svg";
+import historyIcon from "@/app/ui/icons/history-icon.svg";
 
 // components
 import Image from "next/image";
@@ -19,16 +20,46 @@ import { nunito } from "@/app/ui/fonts";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import UserInfoSideBar from "./UserInfoSideBar";
 
+
+// 
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import CloseIcon from '@mui/icons-material/Close';
+import useSidebarToggle from "../_hooks/useSidebarToggle";
+import { useState } from "react";
+
+const gameOptions = [
+  {
+    name: "Classic",
+    link: "/game-options/classic",
+    image: ChessTile,
+  },
+  // {
+  //   name: "Arcade",
+  //   link: "/game-options/arcade",
+  //   image: arcadeIcon,
+  // },
+  {
+    name: "1 VS AI",
+    link: "game/1-vs-ai",
+    image: aiIcon,
+  },
+  {
+    name: "Puzzles",
+    link: "/puzzles",
+    image: puzzlesIcon,
+  },
+];
+
+
+
 export default function Sidebar({
-  isSidebarOpen,
-  isMounted,
   session,
 }: {
-  isSidebarOpen: boolean;
-  isMounted: boolean;
   session: Session | null;
 }) {
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  useSidebarToggle(isSidebarOpen, setIsSidebarOpen);
   const sideBarOptions = [
     {
       name: "Home",
@@ -47,29 +78,6 @@ export default function Sidebar({
     // },
   ];
 
-  const gameOptions = [
-    {
-      name: "Classic",
-      link: "/game-options/classic",
-      image: ChessTile,
-    },
-    // {
-    //   name: "Arcade",
-    //   link: "/game-options/arcade",
-    //   image: arcadeIcon,
-    // },
-    {
-      name: "1 VS AI",
-      link: "game/1-vs-ai",
-      image: aiIcon,
-    },
-    {
-      name: "Puzzles",
-      link: "/puzzles",
-      image: puzzlesIcon,
-    },
-  ];
-
   if (session) {
     sideBarOptions.push(
       {
@@ -82,6 +90,11 @@ export default function Sidebar({
       //   link: "/store",
       //   image: store,
       // },
+      {
+        name: "History",
+        link: "/game/history",
+        image: historyIcon,
+      },
     );
   }
   const onClickLogin = () => {
@@ -90,57 +103,67 @@ export default function Sidebar({
   const onClickSignUp = () => {
     router.push("/register");
   };
-
+  
+  const toggleSideBar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+    console.log(isSidebarOpen);
+  }
+  
   return (
-    <div className="flex">
+    <div className="flex w-full z-10 " id="sidebar-toggle">
+      <button
+        type="button"
+        onClick={toggleSideBar}
+        className="inline-flex z-10 items-center rounded-base text-sm text-primary hover:bg-secondary focus:outline-none focus:ring-2 min-[1400px]:invisible"
+      >
+        {isSidebarOpen ? <CloseIcon fontSize="large" /> : <MenuRoundedIcon fontSize="large" />}
+      </button>
       <aside
         id="default-sidebar"
-        className={`fixed h-full ${nunito.className} left-0 top-[82px] z-40 w-max transform border-r-2 border-t-secondary bg-dark-2 transition-transform min-[1200px]:translate-x-0 ${
-          isMounted
-            ? isSidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
-            : "invisible"
-        } `}
+        className={`fixed h-full ${nunito.className} border-r-primary border-t-2 shadow-[rgba(0,0,15,0.5)_10px_5px_0px_0px] left-0 top-[69px] z-40 w-[210px] transform border-t-secondary bg-dark-2 transition-transform min-[1400px]:translate-x-0 ${isSidebarOpen
+          ? "translate-x-0"
+          : "-translate-x-full"
+          } `}
         aria-label="Sidebar"
       >
-        <div className="h-full overflow-y-auto pb-lg">
+        <div className="flex flex-col overflow-y-auto pb-lg">
           {session && <UserInfoSideBar session={session} />}
-          <ul className="space-y-2 pt-lg text-base font-black">
+          <ul className="space-y-1 text-base font-black">
             {sideBarOptions.map((option) => (
               <li key={option.name}>
-                <Link href={option.link} className="flex items-center px-lg">
+                <Link href={option.link} className="flex items-center px-lg hover:text-primary hover:underline hover:underline-offset-4 hover:text-lg hover:duration-300">
                   <Image
                     src={option.image}
                     alt={`icon of ${option.name}`}
                     width={40}
                     height={40}
-                    className="max-h-6 pr-sm"
+                    className="max-h-6 items-center pr-sm "
                   />
-                  <span className="text-md block p-sm px-md text-light hover:text-primary hover:underline hover:underline-offset-4">
+                  <span className="text-md block p-sm px-md  ">
                     {option.name}
                   </span>
                 </Link>
               </li>
             ))}
-            <div className="flex h-full flex-col overflow-y-auto pb-md">
               {gameOptions.map((option) => (
-                <li key={option.name} className="flex items-center px-lg pb-md">
-                  <Image
-                    src={option.image}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="max-h-6 items-center pr-sm"
-                  />
-                  <a
-                    href={option.link}
-                    className="text-md block p-sm text-light hover:text-primary hover:underline hover:underline-offset-4"
-                  >
-                    {option.name}
-                  </a>
+                <li key={option.name}>
+                  <Link href={option.link} className="flex items-center px-lg hover:text-primary hover:underline hover:underline-offset-4 hover:text-lg hover:duration-300">
+                    <Image
+                      src={option.image}
+                      alt={`icon of ${option.name}`}
+                      width={40}
+                      height={40}
+                      className="max-h-6 items-center pr-sm"
+                    />
+                    <span
+                      className="text-md block p-sm px-md  "
+                    >
+                      {option.name}
+                    </span>
+                  </Link>
                 </li>
               ))}
+            <div className="flex flex-col overflow-y-auto pb-lg">
             </div>
             {!session && (
               <>
