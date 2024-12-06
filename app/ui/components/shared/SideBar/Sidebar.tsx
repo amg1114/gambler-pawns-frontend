@@ -103,7 +103,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
   };
 
   return (
-    <div className="z-10 flex  w-full" id="sidebar-toggle">
+    <div className="z-10 flex w-full" id="sidebar-toggle">
       <button
         type="button"
         onClick={toggleSideBar}
@@ -129,7 +129,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
               <li key={option.name}>
                 <Link
                   href={option.link}
-                  className="flex items-center mx-lg hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
+                  className="mx-lg flex items-center hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
                 >
                   <Image
                     src={option.image}
@@ -148,7 +148,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
               <li key={option.name}>
                 <Link
                   href={option.link}
-                  className="flex items-center mx-lg hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
+                  className="mx-lg flex items-center hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
                 >
                   <Image
                     src={option.image}
@@ -166,7 +166,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
             <div className="flex flex-col overflow-y-auto pb-lg"></div>
             {!session && (
               <>
-                <div className="pt-3xl p-md px-xl">
+                <div className="p-md px-xl pt-3xl">
                   <StyledButton onClick={onClickLogin} extraClasses="w-full ">
                     Login
                   </StyledButton>

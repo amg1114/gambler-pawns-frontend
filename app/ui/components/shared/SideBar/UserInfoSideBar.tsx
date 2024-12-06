@@ -16,7 +16,7 @@ export default function UserInfoSideBar({ session }: UserInfoSideBarProps) {
     <>
       <Link
         href="/profile"
-        className="flex w-[200px]  px-md hover:underline hover:text-primary hover:scale-105 hover:duration-300"
+        className="flex w-[200px] px-md hover:scale-105 hover:text-primary hover:underline hover:duration-300"
       >
         <Image
           src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${session.data.userAvatarImg.fileName}`}
@@ -25,8 +25,10 @@ export default function UserInfoSideBar({ session }: UserInfoSideBarProps) {
           height={50}
           className="mx-md"
         />
-        <div className="flex flex-col truncate ">
-          <p className="text-lg font-black overflow-hidden text-ellipsis">{session.data.nickname}</p>
+        <div className="flex flex-col truncate">
+          <p className="overflow-hidden text-ellipsis text-lg font-black">
+            {session.data.nickname}
+          </p>
           <p>My profile</p>
         </div>
       </Link>
