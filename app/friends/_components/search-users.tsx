@@ -26,11 +26,27 @@ interface Users {
   data: User[];
 }
 
+//TODO: Create a backend endpoint to handle friend requests
+const getFriendRequestsFromStorage = (): number[] => {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("friendRequests");
+    return stored ? JSON.parse(stored) : [];
+  }
+  return [];
+};
+
+const saveFriendRequestsToStorage = (requests: number[]) => {
+  localStorage.setItem("friendRequests", JSON.stringify(requests));
+};
+
 export default function SearchUsers() {
   const { data: session } = useSession();
   const [searchUser, setSearchUser] = useState("");
   const [users, setUsers] = useState<Users>({ data: [] });
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, _setCurrentPage] = useState(1);
+  const [friendRequested, setFriendRequested] = useState<number[]>(
+    getFriendRequestsFromStorage(),
+  );
   const { socket } = useWebSocketConnection();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +56,11 @@ export default function SearchUsers() {
   const handleAddFriend = (userId: number) => {
     socket?.emit("notif:friendRequest", {
       receiverId: userId,
+    });
+    setFriendRequested((prev) => {
+      const newRequests = [...prev, userId];
+      saveFriendRequestsToStorage(newRequests);
+      return newRequests;
     });
   };
 
@@ -63,7 +84,7 @@ export default function SearchUsers() {
   }, [session, searchUser, currentPage]);
 
   return (
-    <div className="flex w-full flex-col items-center justify-center space-y-md">
+    <div className="space-y-md">
       <div className="w-full">
         <StyledInput
           type="text"
@@ -95,13 +116,25 @@ export default function SearchUsers() {
               </div>
 
               {!user.isFriend && (
-                <StyledButton
-                  style="outlined"
-                  extraClasses="py-xs justify-end px-sm"
-                  onClick={() => handleAddFriend(user.userId)}
-                >
-                  Añadir amigo
-                </StyledButton>
+                <>
+                  {friendRequested?.includes(user.userId) ? (
+                    <StyledButton
+                      style="outlined"
+                      extraClasses="py-xs justify-end px-sm opacity-50 pointer-events-none"
+                      disabled
+                    >
+                      Request Sent
+                    </StyledButton>
+                  ) : (
+                    <StyledButton
+                      style="outlined"
+                      extraClasses="py-xs justify-end px-sm"
+                      onClick={() => handleAddFriend(user.userId)}
+                    >
+                      Add Friend
+                    </StyledButton>
+                  )}
+                </>
               )}
             </div>
           ))}
