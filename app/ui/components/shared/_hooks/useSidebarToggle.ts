@@ -21,11 +21,10 @@ const useSidebarToggle = (
         container &&
         container?.contains(event.target as Node) &&
         sidebar &&
-        !sidebar.contains(event.target as Node) 
+        !sidebar.contains(event.target as Node)
       ) {
         setIsSidebarOpen(false);
       }
-      
     };
 
     window.addEventListener("resize", handleResize);
