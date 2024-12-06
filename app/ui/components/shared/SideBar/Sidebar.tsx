@@ -122,14 +122,14 @@ export default function Sidebar({ session }: { session: Session | null }) {
         } `}
         aria-label="Sidebar"
       >
-        <div className="flex flex-col overflow-y-auto pb-lg">
+        <div className="flex flex-col overflow-y-auto py-lg">
           {session && <UserInfoSideBar session={session} />}
           <ul className="space-y-1 text-base font-black">
             {sideBarOptions.map((option) => (
               <li key={option.name}>
                 <Link
                   href={option.link}
-                  className="flex items-center px-lg hover:text-lg hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
+                  className="mx-lg flex items-center hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
                 >
                   <Image
                     src={option.image}
@@ -138,7 +138,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
                     height={40}
                     className="max-h-6 items-center pr-sm"
                   />
-                  <span className="text-md block p-sm px-md">
+                  <span className="text-md block p-sm pl-md">
                     {option.name}
                   </span>
                 </Link>
@@ -148,7 +148,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
               <li key={option.name}>
                 <Link
                   href={option.link}
-                  className="flex items-center px-lg hover:text-lg hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
+                  className="mx-lg flex items-center hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
                 >
                   <Image
                     src={option.image}
@@ -166,7 +166,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
             <div className="flex flex-col overflow-y-auto pb-lg"></div>
             {!session && (
               <>
-                <div className="p-md px-xl">
+                <div className="p-md px-xl pt-3xl">
                   <StyledButton onClick={onClickLogin} extraClasses="w-full ">
                     Login
                   </StyledButton>
