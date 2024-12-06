@@ -7,7 +7,7 @@ import MyFriends from "./_components/my-friends";
 import { useState } from "react";
 
 export default function FriendsPage() {
-  const [friendshipChangeCounter, setFriendshipChangeCounter] = useState(0);
+  const [_friendshipChangeCounter, setFriendshipChangeCounter] = useState(0);
 
   const handleFriendshipChange = () => {
     setFriendshipChangeCounter((prev) => prev + 1);
