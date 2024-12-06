@@ -1,11 +1,11 @@
 "use client";
 //icons
-import githubIcon from "../../ui/icons/githubIcon.svg";
-import aguacate from "../../ui/icons/aguacate.png";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import {
   Avatar,
   AvatarRes,
 } from "@/app/lib/interfaces/responses/avatars-res.interface";
+import SvgIcon from "@mui/material/SvgIcon";
 
 //components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -26,14 +26,13 @@ interface DeveloperCardProps {
 }
 
 const DeveloperCard = ({ username, avatar }: DeveloperCardProps) => (
-  <div className="flex flex-col items-center pr-md">
+  <div className="flex flex-col items-center">
     <a
       href={`https://github.com/${username}`}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex flex-col items-center transition-all duration-300"
     >
-      {/* Contenedor del Avatar con Hover */}
       <div className="relative flex items-center justify-center rounded-full transition-shadow duration-300 group-hover:shadow-[0_0_20px_5px_rgba(135,206,235,0.8)]">
         <Image
           src={avatar}
@@ -43,7 +42,6 @@ const DeveloperCard = ({ username, avatar }: DeveloperCardProps) => (
           height={100}
         />
       </div>
-      {/* Nombre del usuario con Hover */}
       <StyledTitle
         variant="h2"
         extraClasses="text-sm md:text-md lg:text-lg !mb-none !text-primary mt-2 transition-all duration-300 group-hover:text-secondary"
@@ -64,7 +62,17 @@ const DevelopmentTeam = () => {
     { username: "AMG1114", avatar: "5.png" },
     { username: "JSebastianMarin", avatar: "2.png" },
   ];
-  console.log(avatars);
+  const repositories = [
+    {
+      name: "Frontend",
+      url: "https://github.com/amg1114/gambler-pawns-frontend",
+    },
+    {
+      name: "Backend",
+      url: "https://github.com/amg1114/gambler-pawns-backend",
+    },
+  ];
+
   useEffect(() => {
     axios
       .get<AvatarRes>("/assets/avatars")
@@ -75,9 +83,7 @@ const DevelopmentTeam = () => {
           throw new Error("Error fetching avatars");
         }
       })
-      .catch((error) => {
-        console.error("Error fetching avatars: ", error);
-      });
+      .catch((error) => console.error("Error fetching avatars:", error));
   }, []);
 
   const getAvatarUrl = (icon: string) => {
@@ -93,7 +99,6 @@ const DevelopmentTeam = () => {
         variant="h1"
         extraClasses="w-80 items-center md:w-full lg:w-full xl:w-full  pt-2xl !text-primary mx-auto"
       >
-        {" "}
         Development team
       </StyledTitle>
       <div className="grid grid-cols-2 gap-md md:grid-cols-3 lg:grid-cols-3">
@@ -103,6 +108,26 @@ const DevelopmentTeam = () => {
             username={dev.username}
             avatar={getAvatarUrl(dev.avatar)}
           />
+        ))}
+        <SvgIcon
+          component={GitHubIcon}
+          className="mb-0 col-start-2 mx-auto mt-xl size-xl"
+        />
+      </div>
+
+      <div className="mt-sm flex justify-center gap-md">
+        {repositories.map((repo, index) => (
+          <a
+            key={index}
+            href={repo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-sm"
+          >
+            <span className="text-primary transition-colors duration-300 group-hover:text-secondary">
+              {repo.name}
+            </span>
+          </a>
         ))}
       </div>
       <div className="mb-none mt-lg">
