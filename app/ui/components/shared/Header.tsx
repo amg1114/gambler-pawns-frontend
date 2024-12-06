@@ -9,6 +9,8 @@ import Logo from "@/app/ui/icons/logo.svg";
 import Coin from "@/app/ui/icons/coin.svg";
 import Fire from "@/app/ui/icons/fire.svg";
 import Sidebar from "./SideBar/Sidebar";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import useToggleState from "@/app/lib/hooks/useToggleState";
 import Link from "next/link";
 
 function ConditionalRendering({
@@ -53,17 +55,16 @@ export default function Header() {
         <div className="flex w-1/3 bg-dark-1 px-sm max-[370px]:w-1/4">
           <Sidebar session={session} />
         </div>
-        <Link href="/">
-          <Image
-            src={Logo}
-            alt="logo"
-            width={106}
-            height={38.74}
-            className="h-auto w-auto max-[200px]:sr-only"
-            priority
-          />
+        <Link href="/" passHref>
+            <Image
+              src={Logo}
+              alt="logo"
+              width={106}
+              height={38.74}
+              className="h-auto w-auto max-[200px]:sr-only"
+              priority
+            />
         </Link>
-
         <ConditionalRendering
           coins={session?.data.currentCoins}
           streak={session?.data.streakDays}
