@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "./SideBar/Sidebar";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import useToggleState from "@/app/lib/hooks/useToggleState";
+import Link from "next/link";
 
 function ConditionalRendering({
   coins,
@@ -71,15 +72,16 @@ export default function Header() {
             </button>
           </div>
         </div>
-
-        <Image
-          src={Logo}
-          alt=""
-          width={106}
-          height={38.74}
-          className="h-auto w-auto max-[200px]:sr-only"
-          priority
-        />
+        <Link href="/" passHref>
+          <Image
+            src={Logo}
+            alt=""
+            width={106}
+            height={38.74}
+            className="h-auto w-auto max-[200px]:sr-only"
+            priority
+          />
+        </Link>
         <ConditionalRendering
           coins={session?.data.currentCoins}
           streak={session?.data.streakDays}
