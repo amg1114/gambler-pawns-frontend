@@ -52,7 +52,6 @@ export default function Header() {
       <header className="sticky top-0 z-50 flex w-full items-center justify-between border-b-2 border-primary bg-dark-1 p-md">
         <div className="flex w-1/3 bg-dark-1 px-sm max-[370px]:w-1/4">
           <Sidebar
-            //isSidebarOpen={isSidebarOpen}
             session={session}
           />
         </div>

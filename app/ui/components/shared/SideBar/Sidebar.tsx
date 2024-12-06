@@ -103,7 +103,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
   };
 
   return (
-    <div className="z-10 flex w-full" id="sidebar-toggle">
+    <div className="z-10 flex  w-full" id="sidebar-toggle">
       <button
         type="button"
         onClick={toggleSideBar}
@@ -122,14 +122,14 @@ export default function Sidebar({ session }: { session: Session | null }) {
         } `}
         aria-label="Sidebar"
       >
-        <div className="flex flex-col overflow-y-auto pb-lg">
+        <div className="flex flex-col overflow-y-auto py-lg">
           {session && <UserInfoSideBar session={session} />}
           <ul className="space-y-1 text-base font-black">
             {sideBarOptions.map((option) => (
               <li key={option.name}>
                 <Link
                   href={option.link}
-                  className="flex items-center px-lg hover:text-lg hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
+                  className="flex items-center mx-lg hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
                 >
                   <Image
                     src={option.image}
@@ -138,7 +138,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
                     height={40}
                     className="max-h-6 items-center pr-sm"
                   />
-                  <span className="text-md block p-sm px-md">
+                  <span className="text-md block p-sm pl-md">
                     {option.name}
                   </span>
                 </Link>
@@ -148,7 +148,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
               <li key={option.name}>
                 <Link
                   href={option.link}
-                  className="flex items-center px-lg hover:text-lg hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
+                  className="flex items-center mx-lg hover:scale-105 hover:text-primary hover:underline hover:underline-offset-4 hover:duration-300"
                 >
                   <Image
                     src={option.image}
@@ -166,7 +166,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
             <div className="flex flex-col overflow-y-auto pb-lg"></div>
             {!session && (
               <>
-                <div className="p-md px-xl">
+                <div className="pt-3xl p-md px-xl">
                   <StyledButton onClick={onClickLogin} extraClasses="w-full ">
                     Login
                   </StyledButton>
