@@ -80,7 +80,7 @@ export default function MyFriends() {
   return (
     <div>
       {friends && friends.length ? (
-        <div className="w-full space-y-md">
+        <div className="space-y-md">
           {friends.map((friend, index) => (
             <div
               key={index}
@@ -100,6 +100,7 @@ export default function MyFriends() {
               </div>
               <div className="flex justify-end space-x-sm">
                 <StyledButton
+                  style="filled"
                   extraClasses="p-sm"
                   onClick={() => handlePlay(friend.userId)}
                 >
@@ -107,7 +108,7 @@ export default function MyFriends() {
                 </StyledButton>
                 <StyledButton
                   style="outlined"
-                  extraClasses="p-sm"
+                  extraClasses="pd-sm"
                   onClick={() => handleDelete(friend.userId)}
                 >
                   Delete
