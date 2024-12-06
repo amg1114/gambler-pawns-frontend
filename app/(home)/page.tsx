@@ -40,7 +40,7 @@ export default function HomePage() {
         const response = await axios.get(
           `/user/${session?.data.userId}/friends`,
         );
-        setFriends(response.data.data.friendsList);
+        setFriends(response.data.data.friends);
         setTotalFriends(response.data.data.totalFriends);
       } catch (error) {
         console.error("Error fetching friends:", error);
