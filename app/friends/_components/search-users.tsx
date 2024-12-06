@@ -11,6 +11,7 @@ import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledInput from "@/app/ui/components/forms/StyledInput";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
+import { on } from "events";
 
 interface userAvatarImg {
   fileName: string;
@@ -28,9 +29,13 @@ interface Users {
 
 //TODO: Create a backend endpoint to handle friend requests
 const getFriendRequestsFromStorage = (): number[] => {
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem("friendRequests");
-    return stored ? JSON.parse(stored) : [];
+  try {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("friendRequests");
+      return stored ? JSON.parse(stored) : [];
+    }
+  } catch (error) {
+    console.error("Error reading friend requests from storage:", error);
   }
   return [];
 };
@@ -39,7 +44,11 @@ const saveFriendRequestsToStorage = (requests: number[]) => {
   localStorage.setItem("friendRequests", JSON.stringify(requests));
 };
 
-export default function SearchUsers() {
+export default function SearchUsers({
+  onFriendshipChange,
+}: {
+  onFriendshipChange?: () => void;
+}) {
   const { data: session } = useSession();
   const [searchUser, setSearchUser] = useState("");
   const [users, setUsers] = useState<Users>({ data: [] });
@@ -65,6 +74,25 @@ export default function SearchUsers() {
   };
 
   useEffect(() => {
+    // Función para actualizar el estado desde localStorage
+    const updateFriendRequestsFromStorage = () => {
+      setFriendRequested(getFriendRequestsFromStorage());
+    };
+
+    // Escuchar cambios en el localStorage
+    window.addEventListener("storage", updateFriendRequestsFromStorage);
+
+    // También actualizar cuando cambie onFriendshipChange
+    if (onFriendshipChange) {
+      updateFriendRequestsFromStorage();
+    }
+
+    return () => {
+      window.removeEventListener("storage", updateFriendRequestsFromStorage);
+    };
+  }, [onFriendshipChange]);
+
+  useEffect(() => {
     const fetchUsers = async () => {
       await axios
         .get(`/user/search?query=${searchUser}`, {
@@ -81,8 +109,9 @@ export default function SearchUsers() {
     if (session) {
       fetchUsers();
     }
-  }, [session, searchUser, currentPage]);
+  }, [session, searchUser, currentPage, onFriendshipChange]);
 
+  console.log(users);
   return (
     <div className="space-y-md">
       <div className="w-full">

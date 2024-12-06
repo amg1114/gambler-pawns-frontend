@@ -25,10 +25,14 @@ export interface Friends {
   eloArcade: number;
 }
 
-export default function MyFriends() {
+export default function MyFriends({
+  onFriendshipChange,
+}: {
+  onFriendshipChange?: () => void;
+}) {
   const { data: session } = useSession();
   const [friends, setFriends] = useState<Friends[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, _setCurrentPage] = useState(1);
   const { socket } = useWebSocketConnection();
   const router = useRouter();
 
@@ -53,11 +57,25 @@ export default function MyFriends() {
       )
       .then((response) => {
         console.log("Friend deleted:", response);
+
+        const storedRequests = localStorage.getItem("friendRequests");
+        if (storedRequests) {
+          const requests = JSON.parse(storedRequests);
+          const updatedRequests = requests.filter(
+            (id: number) => id !== friendId,
+          );
+          localStorage.setItem(
+            "friendRequests",
+            JSON.stringify(updatedRequests),
+          );
+        }
+
+        setFriends(friends.filter((friend) => friend.userId !== friendId));
+        onFriendshipChange?.(); // Llamar a la función de recarga
       })
       .catch((error) => {
         console.error("Error deleting friend:", error);
       });
-    setFriends(friends.filter((friend) => friend.userId !== friendId));
   };
 
   useEffect(() => {
@@ -76,7 +94,7 @@ export default function MyFriends() {
       fetchFriends();
     }
   }, [session, currentPage]);
-
+  console.log(friends);
   return (
     <div>
       {friends && friends.length ? (
