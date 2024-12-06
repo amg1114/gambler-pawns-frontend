@@ -11,7 +11,6 @@ import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledInput from "@/app/ui/components/forms/StyledInput";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
-import { on } from "events";
 
 interface userAvatarImg {
   fileName: string;
