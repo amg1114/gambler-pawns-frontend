@@ -17,15 +17,15 @@ export default function FriendsPage() {
     <div className="mt-lg grid w-[850px] grid-cols-1 gap-12 lg:grid-cols-2">
       <div>
         <StyledTitle variant="h1" extraClasses="text-center">
-          Search Users
-        </StyledTitle>
-        <SearchUsers onFriendshipChange={handleFriendshipChange} />
-      </div>
-      <div>
-        <StyledTitle variant="h1" extraClasses="text-center">
           My Friends
         </StyledTitle>
         <MyFriends onFriendshipChange={handleFriendshipChange} />
+      </div>
+      <div>
+        <StyledTitle variant="h1" extraClasses="text-center">
+          Search Users
+        </StyledTitle>
+        <SearchUsers onFriendshipChange={handleFriendshipChange} />
       </div>
     </div>
   );

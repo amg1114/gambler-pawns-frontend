@@ -110,7 +110,6 @@ export default function SearchUsers({
     }
   }, [session, searchUser, currentPage, onFriendshipChange]);
 
-  console.log(users);
   return (
     <div className="space-y-md">
       <div className="w-full">

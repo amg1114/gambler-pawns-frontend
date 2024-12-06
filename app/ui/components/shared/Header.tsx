@@ -8,10 +8,12 @@ import Image from "next/image";
 import Logo from "@/app/ui/icons/logo.svg";
 import Coin from "@/app/ui/icons/coin.svg";
 import Fire from "@/app/ui/icons/fire.svg";
-import { useEffect, useState } from "react";
 import Sidebar from "./SideBar/Sidebar";
+<<<<<<< HEAD
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import useToggleState from "@/app/lib/hooks/useToggleState";
+=======
+>>>>>>> d1ba50a05f1ed53562d68a375b7b6d8635e451e6
 import Link from "next/link";
 
 function ConditionalRendering({
@@ -48,52 +50,41 @@ function ConditionalRendering({
 }
 
 export default function Header() {
-  const [isSidebarOpen, toggleSideBar] = useToggleState();
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Funcion para evitar parpadeo en pantallas pequeñas
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const { data: session } = useSession();
 
   return (
     <>
       <header className="sticky top-0 z-50 flex w-full items-center justify-between border-b-2 border-primary bg-dark-1 p-md">
-        <div className="flex w-1/3 bg-dark-1 px-sm py-sm max-[370px]:w-1/4">
-          <div className="flex items-center justify-start rtl:justify-end">
-            <button
-              type="button"
-              onClick={toggleSideBar}
-              className="inline-flex items-center rounded-base p-xs text-sm text-primary hover:bg-secondary focus:outline-none focus:ring-2 min-[1200px]:invisible"
-            >
-              <MenuRoundedIcon />
-            </button>
-          </div>
+        <div className="flex w-1/3 bg-dark-1 px-sm max-[370px]:w-1/4">
+          <Sidebar session={session} />
         </div>
+<<<<<<< HEAD
         <Link href="/" passHref>
           <Image
             src={Logo}
             alt=""
+=======
+        <Link href="/">
+          <Image
+            src={Logo}
+            alt="logo"
+>>>>>>> d1ba50a05f1ed53562d68a375b7b6d8635e451e6
             width={106}
             height={38.74}
             className="h-auto w-auto max-[200px]:sr-only"
             priority
           />
         </Link>
+<<<<<<< HEAD
+=======
+
+>>>>>>> d1ba50a05f1ed53562d68a375b7b6d8635e451e6
         <ConditionalRendering
           coins={session?.data.currentCoins}
           streak={session?.data.streakDays}
           session={session}
         />
       </header>
-
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        isMounted={isMounted}
-        session={session}
-      />
     </>
   );
 }

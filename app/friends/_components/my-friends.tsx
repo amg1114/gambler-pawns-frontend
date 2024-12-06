@@ -55,9 +55,7 @@ export default function MyFriends({
           headers: { Authorization: `Bearer ${session?.data.token}` },
         },
       )
-      .then((response) => {
-        console.log("Friend deleted:", response);
-
+      .then(() => {
         const storedRequests = localStorage.getItem("friendRequests");
         if (storedRequests) {
           const requests = JSON.parse(storedRequests);
@@ -83,7 +81,7 @@ export default function MyFriends({
       await axios
         .get(`/user/${session?.data.userId}/friends`)
         .then((response) => {
-          setFriends(response.data.data.friendsList);
+          setFriends(response.data.data.friends);
         })
         .catch((error) => {
           console.error("Error fetching friends:", error);
@@ -94,7 +92,7 @@ export default function MyFriends({
       fetchFriends();
     }
   }, [session, currentPage]);
-  console.log(friends);
+
   return (
     <div>
       {friends && friends.length ? (
