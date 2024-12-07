@@ -8,20 +8,12 @@ import { readFromSessionStorage } from "../lib/utils/sessionStorageUtils";
 import { useSession } from "next-auth/react";
 import useJoinToRandomPairingGame from "./_hooks/useJoinToRandomPairingGame";
 
-// TODO: we should to save joinGameDataFormRequest, and gameData in a global state
-// -> to avoid losing the data when the component unmounts.
-//    as a temporary solution we are saving it in sessionStorage
-
-// TODO: type joinGameDataFormRequest and gameData
-
 export default function GamePage() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
 
-  const isFriendRequest = useMemo(
-    () => searchParams.get("friend-req") === "true",
-    [searchParams],
-  );
+  const isFriendRequest = searchParams.get("friend-req") === "true";
+  const gameLink = searchParams.get("gameLink");
 
   // Reads the join game data form request from session storage.
   const joinGameDataFormRequest: any = useMemo(
@@ -50,6 +42,7 @@ export default function GamePage() {
     <SkeletonGame
       userData={currentUserData}
       exceptionFromBackendChessService={backendChessServiceException}
+      linkToJoin={gameLink}
     />
   );
 }
