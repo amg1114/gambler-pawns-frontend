@@ -1,3 +1,5 @@
+"use client";
+
 //libs
 import { bungee } from "@/app/ui/fonts";
 import { useRouter } from "next/navigation";
@@ -11,11 +13,13 @@ import ShowMessage from "./ShowMessage";
 interface SkeletonGameProps {
   userData: userDataInterface;
   exceptionFromBackendChessService?: any;
+  linkToJoin?: string;
 }
 
 export default function SkeletonGame({
   userData,
   exceptionFromBackendChessService,
+  linkToJoin,
 }: SkeletonGameProps) {
   const router = useRouter();
 
@@ -28,7 +32,9 @@ export default function SkeletonGame({
       {exceptionFromBackendChessService && (
         <ShowMessage message={exceptionFromBackendChessService.message} />
       )}
-      <UserInfo isLoading />
+
+      {linkToJoin ? <div> {linkToJoin}</div> : <UserInfo isLoading />}
+
       <div className="relative w-full">
         <div
           className={`absolute z-10 flex h-8 w-full items-center justify-center border-dark-1 bg-secondary text-base text-dark-1 ${bungee.className}`}

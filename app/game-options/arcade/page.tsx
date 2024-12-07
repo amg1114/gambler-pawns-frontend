@@ -44,42 +44,41 @@ export default function ClassicOptionPage() {
         <StyledTitle variant="h1" extraClasses="text-center">
           Against Who?
         </StyledTitle>
-        <div>
-          <div className="flex items-center justify-center py-md">
-            <StyledButton extraClasses={"w-full flex justify-center"}>
-              <Image
-                src={Dice}
-                alt=""
-                width={20}
-                height={20}
-                className="h-auto w-auto pr-sm"
-              />
-              Play vs. Random
-            </StyledButton>
-          </div>
-          <div className="flex items-center justify-center">
-            <StyledButton extraClasses={"w-full flex justify-center"}>
-              <Image src={Link} alt="" className="h-auto w-auto pr-sm" />
-              Copy Game’s Link
-            </StyledButton>
-          </div>
-          <div className="flex items-center justify-center py-md">
-            <StyledButton extraClasses={"w-full flex justify-center"}>
-              <Image
-                src={ChessTile}
-                alt=""
-                width={20}
-                height={20}
-                className="h-auto w-auto pr-sm"
-              />
-              Play vs. a Friend
-            </StyledButton>
-          </div>
-          <div className="flex items-center justify-center p-md">
-            <StyledButton style="outlined" extraClasses="!px-[32px]">
-              Cancel
-            </StyledButton>
-          </div>
+
+        <div className="flex items-center justify-center py-md">
+          <StyledButton extraClasses={"w-full flex justify-center"}>
+            <Image
+              src={Dice}
+              alt=""
+              width={20}
+              height={20}
+              className="h-auto w-auto pr-sm"
+            />
+            Play vs. Random
+          </StyledButton>
+        </div>
+        <div className="flex items-center justify-center">
+          <StyledButton extraClasses={"w-full flex justify-center"}>
+            <Image src={Link} alt="" className="h-auto w-auto pr-sm" />
+            Copy Game’s Link
+          </StyledButton>
+        </div>
+        <div className="flex items-center justify-center py-md">
+          <StyledButton extraClasses={"w-full flex justify-center"}>
+            <Image
+              src={ChessTile}
+              alt=""
+              width={20}
+              height={20}
+              className="h-auto w-auto pr-sm"
+            />
+            Play vs. a Friend
+          </StyledButton>
+        </div>
+        <div className="flex items-center justify-center p-md">
+          <StyledButton style="outlined" extraClasses="!px-[32px]">
+            Cancel
+          </StyledButton>
         </div>
       </div>
     </div>

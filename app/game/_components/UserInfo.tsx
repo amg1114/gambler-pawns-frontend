@@ -6,9 +6,6 @@ import "/node_modules/flag-icons/css/flag-icons.min.css";
 import Image from "next/image";
 import Timer from "./Timer";
 
-//Icons
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-
 export interface userDataInterface {
   nickname: string;
   eloRating: number;

@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef } from "react";
+import React, { forwardRef } from "react";
 import { azeret_mono, nunito } from "../../fonts";
 
 interface StyledInputProps {

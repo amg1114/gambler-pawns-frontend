@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-const useSidebarToggle = (
-  isSidebarOpen: boolean,
-  setIsSidebarOpen: (open: boolean) => void,
-) => {
+export function useSidebarToggle(setIsSidebarOpen: (open: boolean) => void) {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -43,7 +40,5 @@ const useSidebarToggle = (
   // Cerrar el sidebar cuando cambia la ruta
   useEffect(() => {
     setIsSidebarOpen(false);
-  }, [pathname]);
-};
-
-export default useSidebarToggle;
+  }, [pathname, setIsSidebarOpen]);
+}
