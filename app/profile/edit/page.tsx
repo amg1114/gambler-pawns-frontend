@@ -4,14 +4,15 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-import { z, ZodError } from "zod";
-
-import axios from "@/app/lib/_axios";
-
-import { Country } from "@/app/lib/interfaces/responses/countries-res.interface";
 import { User } from "@/app/lib/interfaces/models/user.interface";
-import { UpdateUserResponse } from "@/app/lib/interfaces/responses/updateUser-res.interface";
 import { useRouter } from "next/navigation";
+
+import {
+  useEditDetails,
+  useEditPassword,
+  useGetEditedUserChanges,
+} from "./_hooks/useEditUser.hook";
+import { PasswordForm as PasswordFormInterface } from "@/app/lib/interfaces/models/password-form.interface";
 
 // Components
 import ErrorIcon from "@mui/icons-material/Error";
@@ -19,24 +20,12 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 
-import StyledInput from "@/app/ui/components/forms/StyledInput";
-import StyledSelect, {
-  StyledSelectOption,
-} from "@/app/ui/components/forms/StyledSelect";
-
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 import DetailsForm from "./_components/DetailsForm";
 import PasswordForm from "./_components/PasswordForm";
-import {
-  useEditDetails,
-  useEditPassword,
-  useGetEditedUserChanges,
-} from "./_hooks/useEditUser.hook";
-import { PasswordForm as PasswordFormInterface } from "@/app/lib/interfaces/models/password-form.interface";
-import { set } from "date-fns";
 
 export default function ProfileEditPage() {
   const router = useRouter();
