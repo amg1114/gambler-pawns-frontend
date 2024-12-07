@@ -1,6 +1,6 @@
-import { UserRes } from "@/app/lib/interfaces/responses/user-res.interface";
-import axios from "@/app/lib/_axios";
-import { Metadata } from "next";
+// import { UserRes } from "@/app/lib/interfaces/responses/user-res.interface";
+// import axios from "@/app/lib/_axios";
+// import { Metadata } from "next";
 
 // export async function generateMetadata(props: {
 //   params: { nickname: string };

@@ -1,6 +1,4 @@
 import StyledLink from "../typography/StyledLink";
-import Image from "next/image";
-import StyledParagraph from "../typography/StyledParagraph";
 
 export default function Footer(): JSX.Element {
   return (
