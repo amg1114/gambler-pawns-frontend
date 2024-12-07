@@ -25,7 +25,6 @@ export default function StyledSelect({
   label,
   value,
   wrapperExtraClasses,
-  inputExtraClasses,
   options,
   defaultOption,
   onChange,
