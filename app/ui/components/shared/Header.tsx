@@ -63,7 +63,6 @@ export default function Header() {
             priority
           />
         </Link>
-
         <ConditionalRendering
           coins={session?.data.currentCoins}
           streak={session?.data.streakDays}

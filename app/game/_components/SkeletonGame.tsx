@@ -9,6 +9,7 @@ import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGam
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import UserInfo, { userDataInterface } from "./UserInfo";
 import ShowMessage from "./ShowMessage";
+import CopyLinkButton from "./CopyLinkButton";
 
 interface SkeletonGameProps {
   userData: userDataInterface;
@@ -33,7 +34,11 @@ export default function SkeletonGame({
         <ShowMessage message={exceptionFromBackendChessService.message} />
       )}
 
-      {linkToJoin ? <div> {linkToJoin}</div> : <UserInfo isLoading />}
+      {linkToJoin ? (
+        <CopyLinkButton value="Poner el link" />
+      ) : (
+        <UserInfo isLoading />
+      )}
 
       <div className="relative w-full">
         <div
