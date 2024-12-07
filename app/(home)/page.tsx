@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 import FriendModal from "./_components/FriendModal";
 import { useEffect, useState } from "react";
 import axios from "@/app/lib/_axios";
-import aguacate from "@/app/ui/icons/aguacate.png";
 import { FriendsHome } from "@/app/lib/interfaces/responses/friendsHome-res.interface";
 import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
 import StyledLink from "@/app/ui/components/typography/StyledLink";
@@ -51,6 +50,7 @@ export default function HomePage() {
       fetchFriends();
     }
   }, [session]);
+  console.log(friends);
 
   return (
     <div className="mx-auto mt-xl w-auto grid-cols-2 gap-14 max-md:w-10/12 max-[570px]:w-auto lg:grid">
@@ -154,16 +154,18 @@ export default function HomePage() {
                   friends.map((friend, index) => (
                     <div
                       key={index}
-                      className="p-2 bg-dark-3 rounded-md flex items-center space-x-4"
+                      className="p-2 bg-dark-3 flex items-center rounded-base"
                     >
                       <FriendModal
-                        avatar={aguacate}
-                        profileAvatar={aguacate}
-                        flag={aguacate}
+                        avatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
+                          friend.userAvatarImg.fileName
+                            ? friend.userAvatarImg.fileName
+                            : "1.png"
+                        }`}
+                        flag={friend.countryCode}
                         name={friend.nickname}
                         desc={friend.aboutText}
                         classic={friend.eloRapid}
-                        arcade={friend.eloArcade}
                       />
                     </div>
                   ))
