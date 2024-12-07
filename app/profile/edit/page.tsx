@@ -28,153 +28,130 @@ import StyledButton from "@/app/ui/components/typography/StyledButton";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
-
-const schema = z.object({
-  nickname: z.string().min(3, { message: "Nickname is too short" }).optional(),
-  email: z.string().email().optional(),
-  countryCode: z.string().min(2, { message: "Invalid country" }).optional(),
-  dateOfBirth: z.string().date().optional(),
-});
+import DetailsForm from "./_components/DetailsForm";
+import PasswordForm from "./_components/PasswordForm";
+import {
+  useEditDetails,
+  useEditPassword,
+  useGetEditedUserChanges,
+} from "./_hooks/useEditUser.hook";
+import { PasswordForm as PasswordFormInterface } from "@/app/lib/interfaces/models/password-form.interface";
+import { set } from "date-fns";
 
 export default function ProfileEditPage() {
   const router = useRouter();
-  const { data: session, status, update } = useSession();
 
-  const [form, setForm] = useState<User | null>(null);
-  const [changes, setChanges] = useState<Partial<User> | null>(null);
+  const { data: session, update } = useSession();
+  const [hasChanges, setChanges] = useState(false);
+
+  const [detailsForm, setDetailsForm] = useState<User | null>(null);
+  const [passwordForm, setPasswordForm] =
+    useState<PasswordFormInterface | null>({
+      currentPassword: "",
+      newPassword: "",
+    });
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [validationErrors, setValidationError] = useState<{
-    [key: string]: string[];
-  } | null>(null);
-
-  const [countryList, setCountryList] = useState<StyledSelectOption[]>([]);
 
   useEffect(() => {
-    if (session) {
-      setForm(session.data);
-    }
-  }, [session]);
-
-  useEffect(() => {
-    if (countryList.length > 0) {
+    if (!session) {
       return;
     }
-    axios
-      .get<Country[]>("https://restcountries.com/v3.1/all")
-      .then((res) => {
-        setCountryList(
-          res.data
-            .map((country) => ({
-              value: country.cca2,
-              label: country.name.common,
-            }))
-            .sort((a, b) => a.label.localeCompare(b.label)),
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, [countryList]);
 
-  const updateSession = async () => {
+    setDetailsForm(session.data);
+  }, [session]);
+
+  const handleSubmit = async () => {
+    if (hasChanges) {
+      if (detailsForm) {
+        const newData = useGetEditedUserChanges(detailsForm, session!);
+
+        if (newData) {
+          const { success, changes } = await useEditDetails(newData!, session!);
+
+          if (success) {
+            setChanges(false);
+            updateSession(changes!);
+          } else {
+            setErrorMessage("An error occurred while updating your profile");
+            setShowErrorAlert(true);
+            return;
+          }
+        }
+      }
+
+      if (passwordForm) {
+        if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+          setErrorMessage("Please fill in all fields");
+          setShowErrorAlert(true);
+          return;
+        }
+
+        const { success, message } = await useEditPassword(
+          passwordForm,
+          session!,
+        );
+
+        if (success) {
+          setPasswordForm(null);
+        } else {
+          if (errorMessage) {
+            setErrorMessage((val) => val + " and " + message);
+          } else {
+            setErrorMessage(message);
+          }
+
+          setShowErrorAlert(true);
+          return;
+        }
+      }
+      setShowSuccessAlert(true);
+      handleReset();
+      return;
+    }
+
+    setShowErrorAlert(true);
+    setErrorMessage("No changes were made");
+  };
+
+  const handleChanges = (
+    form: "details" | "password",
+    value: typeof detailsForm | typeof passwordForm,
+  ) => {
+    if (form === "details") {
+      const changes = useGetEditedUserChanges(value as User, session!);
+      if (changes) {
+        setChanges(true);
+        setDetailsForm(value as typeof detailsForm);
+      }
+    } else {
+      setPasswordForm(value as typeof passwordForm);
+      setChanges(true);
+    }
+  };
+
+  const handleReset = () => {
+    setDetailsForm(session!.data);
+    setPasswordForm(null);
+    setChanges(false);
+
+    router.back();
+  };
+
+  const updateSession = async (newData: Partial<User>) => {
     const newSession = {
       ...session,
       data: {
         ...session!.data,
-        ...form,
+        ...newData,
       },
     };
-
     await update(newSession);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const property = e && (e.target.name as keyof User);
-    const value = e.target.value;
-
-    if (!property || Object.keys(session!.data).indexOf(property) === -1) {
-      throw new Error(`Property '${property}' not found`);
-    }
-
-    setForm((prev) =>
-      prev
-        ? {
-            ...prev,
-            [property]: value,
-          }
-        : prev,
-    );
-
-    try {
-      schema.parse({
-        [property]: value,
-      });
-      setValidationError((prev) => ({
-        ...prev,
-        [property]: [],
-      }));
-    } catch (err: ZodError | any) {
-      if (err instanceof ZodError) {
-        const messages = err.errors.map((error) => error.message);
-        setValidationError((prev) => {
-          return {
-            ...prev,
-            [property]: messages,
-          };
-        });
-        return;
-      }
-      return;
-    }
-
-    if (session?.data[property] === value) {
-      return;
-    }
-
-    setChanges((prev) =>
-      prev === null
-        ? { [property]: value }
-        : {
-            ...prev,
-            [property]: value,
-          },
-    );
-  };
-
-  const handleSubmit = () => {
-    if (!changes) {
-      setErrorMessage("No changes detected");
-      setShowErrorAlert(true);
-
-      return;
-    }
-
-    axios
-      .patch<UpdateUserResponse>(`/user/${session?.data.userId}`, changes, {
-        headers: { Authorization: `Bearer ${session?.data.token}` },
-      })
-      .then(() => {
-        updateSession()
-          .then(() => {
-            setShowSuccessAlert(true);
-          })
-          .catch((err) => {
-            throw new Error(err);
-          });
-      })
-      .catch((err) => {
-        console.error("Error updating user", err);
-        setErrorMessage(err.response.data.data.message);
-        setShowErrorAlert(true);
-      });
-  };
-
-  if (status === "loading") {
+  if (!detailsForm) {
     return <PageLoadSpinner />;
   }
 
@@ -188,52 +165,13 @@ export default function ProfileEditPage() {
           >
             Account Settings
           </StyledTitle>
-          <form className="space-y-sm">
-            <StyledInput
-              label="Nickname"
-              type="text"
-              name="nickname"
-              id="nickname"
-              errorMessages={validationErrors?.nickname ?? []}
-              placeholder="johndoe"
-              value={form?.nickname || ""}
-              onInput={handleChange}
-            />
-            <StyledInput
-              label="E-mail"
-              type="text"
-              name="email"
-              id="email"
-              placeholder="example@mailer.com"
-              errorMessages={validationErrors?.email ?? []}
-              value={form?.email || ""}
-              onInput={handleChange}
-            />
-            <div className="grid lg:grid-cols-2 lg:gap-md">
-              <StyledSelect
-                label="Country"
-                name="countryCode"
-                options={countryList}
-                onChange={handleChange}
-                defaultOption={{
-                  label: "Select a country",
-                  value: "",
-                }}
-                value={form?.countryCode || ""}
-              />
-              <StyledInput
-                label="Birth Date"
-                type="date"
-                name="dateOfBirth"
-                id="dateOfBirth"
-                placeholder="1990-01-01"
-                errorMessages={validationErrors?.dateOfBirth ?? []}
-                onInput={handleChange}
-                value={form?.dateOfBirth || ""}
-              />
-            </div>
-          </form>
+
+          <DetailsForm
+            data={detailsForm!}
+            setData={(data) => handleChanges("details", data)}
+          />
         </section>
+
         <section>
           <StyledTitle
             extraClasses="uppercase text-center mb-lg"
@@ -241,18 +179,10 @@ export default function ProfileEditPage() {
           >
             Change Password
           </StyledTitle>
-          <form className="space-y-sm">
-            <StyledInput
-              label="Current Password"
-              type="password"
-              placeholder="********"
-            />
-            <StyledInput
-              label="New Password"
-              type="password"
-              placeholder="********"
-            />
-          </form>
+          <PasswordForm
+            data={passwordForm}
+            setData={(data) => handleChanges("password", data)}
+          />
         </section>
 
         <section className="flex justify-end gap-md lg:justify-center">
@@ -267,16 +197,13 @@ export default function ProfileEditPage() {
           <StyledButton
             extraClasses="min-w-32"
             style="outlined"
-            onClick={() => {
-              setForm(null);
-              setChanges(null);
-              router.back();
-            }}
+            onClick={() => handleReset()}
           >
             Discard
           </StyledButton>
         </section>
       </section>
+
       {showSuccessAlert && (
         <GameAlert close={() => setShowSuccessAlert(false)} size="large">
           <StyledTitle extraClasses="text-center">
@@ -289,7 +216,12 @@ export default function ProfileEditPage() {
       )}
 
       {showErrorAlert && (
-        <GameAlert close={() => setShowErrorAlert(false)}>
+        <GameAlert
+          close={() => {
+            setShowErrorAlert(false);
+            setErrorMessage("");
+          }}
+        >
           <StyledTitle extraClasses="text-center !flex items-center justify-center gap-sm">
             <ErrorIcon className="!text-4xl text-error" /> Error
           </StyledTitle>
