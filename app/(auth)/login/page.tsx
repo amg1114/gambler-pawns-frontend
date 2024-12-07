@@ -59,9 +59,9 @@ export default function LoginPage() {
   };
   return (
     <>
-      <div className="relative z-0 mx-lg mt-lg grid-cols-2 overflow-clip bg-secondary p-lg min-[700px]:grid min-[1200px]:ml-[300px] min-[1200px]:mr-[200px]">
+      <div className="relative z-0 m-lg grid-cols-2 overflow-clip bg-secondary min-[700px]:grid min-[700px]:p-lg min-[1400px]:ml-[300px] min-[1400px]:mr-[200px]">
         <div
-          className="absolute right-0 -z-10 h-80 rotate-3 transform bg-primary"
+          className="absolute right-0 -z-10 h-80 rotate-3 transform bg-primary max-[700px]:hidden"
           style={{ bottom: "-40px", width: "1500px", left: "-20px" }}
         ></div>
         <div className="z-10 col-span-1 hidden flex-col items-center justify-center bg-secondary p-xl min-[700px]:block">
@@ -88,7 +88,11 @@ export default function LoginPage() {
             />
           </div>
         </div>
-        <div className="z-10 col-span-1 min-h-[520px] w-full bg-dark-2 p-xl">
+        <div className="relative z-10 col-span-1 min-h-[520px] w-full bg-dark-2 p-xl">
+          <div
+            className="absolute right-0 -z-10 h-80 rotate-6 transform bg-primary min-[700px]:hidden"
+            style={{ bottom: "-250px", width: "1500px", left: "-20px" }}
+          ></div>
           <form onSubmit={handleSubmit(onSubmit)} className="">
             <StyledTitle
               fontFamily="bungee"
@@ -142,7 +146,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-center pt-lg">
               <button
                 type="submit"
-                className="hover:rounded-md mx-lg w-fit p-sm text-xl font-extrabold text-primary underline underline-offset-8 hover:bg-secondary"
+                className="hover:rounded-md mx-lg w-fit p-sm text-xl font-extrabold text-primary underline underline-offset-8 hover:scale-105 hover:rounded-base hover:bg-secondary hover:text-primary hover:duration-300 max-[700px]:text-dark-2"
               >
                 Login
               </button>
@@ -150,7 +154,7 @@ export default function LoginPage() {
                 href={"/register"}
                 className="flex w-fit items-center justify-center"
               >
-                <p className="rounded-md mx-md p-sm text-xl font-extrabold text-primary underline underline-offset-8 hover:bg-secondary">
+                <p className="rounded-md mx-md p-sm text-xl font-extrabold text-primary underline underline-offset-8 hover:scale-105 hover:rounded-base hover:bg-secondary hover:text-primary hover:duration-300 max-[700px]:text-dark-2">
                   Register
                 </p>
               </Link>

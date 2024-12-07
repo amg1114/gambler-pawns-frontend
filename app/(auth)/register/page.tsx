@@ -8,7 +8,7 @@ import {
   registerSchema,
   RegisterForm,
 } from "@/app/lib/interfaces/auth.interface";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 //components
 import StyledInput from "@/app/ui/components/forms/StyledInput";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -18,7 +18,7 @@ import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 //icons
 import ErrorIcon from "@mui/icons-material/Error";
 import Image from "next/image";
-import peon from "@/app/ui/icons/peon_logo.svg";
+import peon from "@/app/ui/icons/peon_logo_invert.svg";
 import Board from "@/app/ui/icons/board.svg";
 import Link from "next/link";
 
@@ -32,6 +32,7 @@ export default function RegisterPage() {
   });
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [countryCode, setCountryCode] = useState("");
 
   const router = useRouter();
   const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
@@ -41,7 +42,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
         confirmpassword: "",
-        countryCode: "CO",
+        countryCode: countryCode,
       });
 
       if (res.status === 201) {
@@ -59,14 +60,32 @@ export default function RegisterPage() {
     }
   };
 
+  useEffect(() => {
+    const fetchCountry = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        setCountryCode(data.country_code);
+      } catch (error) {
+        console.error("Error fetching country data:", error);
+      }
+    };
+
+    fetchCountry();
+  }, []);
+
   return (
     <>
-      <div className="relative z-0 mx-lg mt-lg grid-cols-2 overflow-clip bg-secondary p-lg min-[700px]:grid min-[1200px]:ml-[300px] min-[1200px]:mr-[200px]">
+      <div className="relative z-0 m-lg grid-cols-2 overflow-clip bg-secondary min-[700px]:grid min-[700px]:p-lg min-[1200px]:ml-[300px] min-[1200px]:mr-[200px]">
         <div
-          className="absolute right-0 -z-10 h-80 -rotate-3 transform bg-dark-2"
+          className="absolute right-0 -z-10 h-80 -rotate-3 transform bg-dark-2 max-[700px]:hidden"
           style={{ bottom: "-40px", width: "1500px", left: "-20px" }}
         ></div>
-        <div className="z-10 col-span-1 min-h-[520px] w-full bg-primary p-xl">
+        <div className="relative z-10 col-span-1 min-h-[520px] w-full bg-primary p-xl">
+          <div
+            className="absolute right-0 -z-10 h-80 -rotate-3 transform bg-dark-2 min-[700px]:hidden"
+            style={{ bottom: "-180px", width: "1500px", left: "-20px" }}
+          ></div>
           <form onSubmit={handleSubmit(onSubmit)} className="">
             <StyledTitle
               fontFamily="bungee"
@@ -142,7 +161,7 @@ export default function RegisterPage() {
             <div className="flex items-center justify-center pt-lg">
               <button
                 type="submit"
-                className="hover:rounded-md mx-lg w-fit p-sm text-xl font-extrabold text-dark-2 underline underline-offset-8 hover:text-2xl"
+                className="hover:rounded-md mx-lg w-fit p-sm text-xl font-extrabold text-dark-2 underline underline-offset-8 hover:scale-105 hover:rounded-base hover:bg-secondary hover:text-primary hover:duration-300 max-[700px]:text-primary"
               >
                 Register
               </button>
@@ -150,7 +169,7 @@ export default function RegisterPage() {
                 href={"/login"}
                 className="flex w-fit items-center justify-center"
               >
-                <p className="rounded-md mx-md p-sm text-xl font-extrabold text-dark-2 underline underline-offset-8 hover:text-2xl">
+                <p className="rounded-md mx-md p-sm text-xl font-extrabold text-dark-2 underline underline-offset-8 hover:scale-105 hover:rounded-base hover:bg-secondary hover:text-primary hover:duration-300 max-[700px]:text-primary">
                   Login
                 </p>
               </Link>
@@ -163,7 +182,7 @@ export default function RegisterPage() {
             fontFamily="bungee"
             extraClasses="text-4xl flex justify-center items-center"
           >
-            <span className="text-center">Redy for first check Mate?</span>
+            <span className="text-center">Ready for first check Mate?</span>
           </StyledTitle>
           <div className="flex items-center justify-center">
             <Image
