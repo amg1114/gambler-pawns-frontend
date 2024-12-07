@@ -3,7 +3,7 @@ import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGam
 import { useChessGame } from "../../lib/hooks/useChessGame";
 import { useStockfish } from "./_hooks/useStockfish";
 import { useEffect, useState } from "react";
-import { BLACK, Square, WHITE } from "chess.js";
+import { BLACK, WHITE } from "chess.js";
 import EndGameAgainsBotModal from "./_components/EndGameAgainsBotModal";
 import { lanToFromTo } from "@/app/lib/utils/chessUtils";
 import UserInfo from "../_components/UserInfo";

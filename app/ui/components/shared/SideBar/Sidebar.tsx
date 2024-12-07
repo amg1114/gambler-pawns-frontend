@@ -23,7 +23,7 @@ import UserInfoSideBar from "./UserInfoSideBar";
 //
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseIcon from "@mui/icons-material/Close";
-import useSidebarToggle from "../_hooks/useSidebarToggle";
+import { useSidebarToggle } from "../_hooks/useSidebarToggle";
 import { useState } from "react";
 
 const gameOptions = [
@@ -52,7 +52,8 @@ const gameOptions = [
 export default function Sidebar({ session }: { session: Session | null }) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  useSidebarToggle(isSidebarOpen, setIsSidebarOpen);
+  useSidebarToggle(setIsSidebarOpen);
+
   const sideBarOptions = [
     {
       name: "Home",

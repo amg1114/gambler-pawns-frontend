@@ -94,7 +94,7 @@ export function ProfileAvatarSelect({
 
       return () => clearTimeout(timeout);
     }
-  }, [isClosing]);
+  }, [isClosing, onClose]);
 
   return (
     <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">
