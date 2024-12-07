@@ -14,7 +14,7 @@ import CopyLinkButton from "./CopyLinkButton";
 interface SkeletonGameProps {
   userData: userDataInterface;
   exceptionFromBackendChessService?: any;
-  linkToJoin?: string;
+  linkToJoin?: string | null;
 }
 
 export default function SkeletonGame({
