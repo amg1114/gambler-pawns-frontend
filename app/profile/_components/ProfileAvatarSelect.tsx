@@ -136,6 +136,8 @@ export function ProfileAvatarSelect({
                 <Image
                   src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${avatar.fileName}`}
                   alt={`Avatar ${avatar.userAvatarImgId}`}
+                  width={77}
+                  height={77}
                 />
               </figure>
             ))}
