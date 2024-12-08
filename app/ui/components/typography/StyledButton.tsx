@@ -1,4 +1,5 @@
 import { nunito } from "@/app/ui/fonts";
+import clsx from "clsx";
 
 /**
  * StyledButton component
@@ -13,6 +14,7 @@ interface StyledButtonProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary";
   style?: "filled" | "outlined";
+  type?: "button" | "submit" | "reset";
   extraClasses?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
@@ -35,11 +37,20 @@ export default function StyledButton(props: StyledButtonProps) {
   const { children, extraClasses, onClick } = props;
   return (
     <button
-      className={`${styleClasses[props.style || "filled"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm ${nunito.className} cursor-pointer font-bold transition-colors ${extraClasses}`}
-      disabled={props.disabled}
-      onClick={onClick}
+      className={clsx(
+        `relative ${styleClasses[props.style || "filled"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm ${nunito.className} cursor-pointer font-bold transition-colors ${extraClasses}`,
+        {
+          "!pointer-events-none cursor-not-allowed": props.disabled,
+        },
+      )}
+      onClick={(e) => {
+        if (!props.disabled) onClick;
+      }}
     >
       {children}
+      {props.disabled && (
+        <span className="absolute inset-0 h-full w-full bg-dark-2/30"></span>
+      )}
     </button>
   );
 }
