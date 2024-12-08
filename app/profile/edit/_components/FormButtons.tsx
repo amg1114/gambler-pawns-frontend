@@ -21,7 +21,7 @@ export default function FormButtons({
           extraClasses="min-w-32"
           style="outlined"
           type="button"
-          onClick={(e) => {
+          onClick={() => {
             handleReset();
           }}
         >

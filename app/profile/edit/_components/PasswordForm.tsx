@@ -4,7 +4,7 @@ import { z } from "zod";
 import { FormEvent, useState } from "react";
 import type { PasswordForm } from "@/app/lib/interfaces/models/password-form.interface";
 import FormButtons from "./FormButtons";
-import { useEditPassword, userDataHasErrors } from "../_hooks/useEditUser.hook";
+import { useEditForms } from "../_hooks/useEditUser.hook";
 import { Session } from "next-auth";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
@@ -28,6 +28,8 @@ export default function PasswordForm({
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string[];
   } | null>(null);
+
+  const { sendPasswordUpdate, userDataHasErrors } = useEditForms();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,7 +83,7 @@ export default function PasswordForm({
         return;
       }
     }
-    const { success, message } = await useEditPassword(data, session);
+    const { success, message } = await sendPasswordUpdate(data, session);
 
     if (success) {
       setShowSuccessAlert(true);
