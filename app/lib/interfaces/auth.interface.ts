@@ -58,6 +58,11 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+export const updatePasswordSchema = z.object({
+  currentPassword: passwordField.optional(),
+  newPassword: passwordField.optional(),
+});
+
 export interface RegisterForm {
   nickname: string;
   email: string;

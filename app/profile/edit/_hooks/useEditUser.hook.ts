@@ -2,7 +2,7 @@ import { User } from "@/app/lib/interfaces/models/user.interface";
 import { UpdateUserResponse } from "@/app/lib/interfaces/responses/updateUser-res.interface";
 import axios from "@/app/lib/_axios";
 import { Session } from "next-auth";
-import { z } from "zod";
+import { z, ZodObject } from "zod";
 import { PasswordForm } from "@/app/lib/interfaces/models/password-form.interface";
 import { UpdatePasswordRes } from "@/app/lib/interfaces/responses/updatePassword-res.interface";
 
@@ -38,39 +38,40 @@ export const useEditDetails = async (
 };
 
 export const useEditPassword = async (
-    data: PasswordForm,
-    session: Session,
+  data: PasswordForm,
+  session: Session,
 ): Promise<{ success: boolean; message: string }> => {
-    try {
-        const res = await axios.patch<UpdatePasswordRes>(
-            `/auth/update-password`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${session!.data.token}`,
-                },
-            },
-        );
+  try {
+    const res = await axios.patch<UpdatePasswordRes>(
+      `/auth/update-password`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${session!.data.token}`,
+        },
+      },
+    );
 
-        if (!res.data.status) {
-            if (res.data.statusCode === 500) throw new Error(res.data.data.message);
-            return {
-                success: false,
-                message: res.data.data.message || "An error occurred while updating the password",
-            }
-            
-        }
-
-        return {
-            success: res.data.status,
-            message: "Password updated successfully",
-        };
-    } catch (error: any) {
-        return {
-            success: false,
-            message: error,
-        };
+    if (!res.data.status) {
+      if (res.data.statusCode === 500) throw new Error(res.data.data.message);
+      return {
+        success: false,
+        message:
+          res.data.data.message ||
+          "An error occurred while updating the password",
+      };
     }
+
+    return {
+      success: res.data.status,
+      message: "Password updated successfully",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error,
+    };
+  }
 };
 
 /**
@@ -99,4 +100,56 @@ export const useGetEditedUserChanges = (
   }
 
   return changes;
+};
+
+/**
+ * Checks if the user data has any errors.
+ *
+ * This function takes a partial `User` object and checks if any of its values
+ * are `undefined`, an empty string, or `null`. If any such values are found,
+ * the function returns `true`, indicating that the user data has errors.
+ *
+ * @param data - A partial `User` object containing user data to be validated.
+ * @returns `true` if any value in the user data is `undefined`, an empty string, or `null`; otherwise, `false`.
+ */
+export const userDataHasErrors = <T extends z.ZodRawShape>(
+  data: Partial<User | PasswordForm>,
+  schema: ZodObject<T> | null,
+) => {
+  let val = Object.values(data).some(
+    (val) => val === undefined || val === "" || val === null,
+  );
+
+  if (schema) {
+    try {
+      schema.parse(data);
+    } catch (err) {
+      val = true;
+    }
+  }
+
+  return val;
+};
+
+/**
+ * Updates the current session with new user data and calls the update function.
+ *
+ * @param newData - Partial user data to be merged into the current session data.
+ * @param session - The current session object.
+ * @param update - A function that takes a session object and returns a promise to update the session.
+ * @returns A promise that resolves when the session has been updated.
+ */
+export const updateSession = async (
+  newData: Partial<User>,
+  session: Session,
+  update: (s: Session) => Promise<Session | null>,
+) => {
+  const newSession = {
+    ...session,
+    data: {
+      ...session!.data,
+      ...newData,
+    },
+  };
+  await update(newSession);
 };
