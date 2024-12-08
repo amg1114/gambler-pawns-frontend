@@ -12,13 +12,6 @@ import { generatePlayerIdForGuest } from "../lib/utils/players.utils";
 export default function GamePage() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const [currentUrl, setCurrentUrl] = useState("");
-
-  // get the current url
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setCurrentUrl(window.location.href);
-  }, []);
 
   // Reads the join game data form request from session storage.
   const joinGameDataFormRequest: any = useMemo(
@@ -46,6 +39,14 @@ export default function GamePage() {
     isFriendGameRequest,
     joinGameDataFormRequest?.playerId,
   ]);
+
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+
+  // get the current url
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setCurrentUrl(idToJoinGame ? window.location.href : null);
+  }, [idToJoinGame]);
 
   const currentUserData = useMemo(
     () => ({

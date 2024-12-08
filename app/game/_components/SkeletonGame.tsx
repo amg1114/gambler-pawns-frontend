@@ -50,7 +50,7 @@ export default function SkeletonGame({
         </div>
         <ChessBoardGame />
       </div>
-      <div className="mb-lg mt-md">
+      <div className="my-lg flex w-full">
         <UserInfo isLoading={false} isCurrentPlayer userData={userData} />
       </div>
 
