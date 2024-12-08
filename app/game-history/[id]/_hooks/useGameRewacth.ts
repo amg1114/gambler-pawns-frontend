@@ -18,18 +18,18 @@ export function useGameRewatch() {
     timeAfterGameEndWhites,
   }: RewatchGame) => {
     const currentPlayer: userDataInterface = {
-      userAvatar: whitesPlayer.userAvatarImg.fileName,
-      nickname: whitesPlayer.nickname,
-      eloRating: eloWhitesBeforeGame,
-      countryCode: whitesPlayer.countryCode,
+      userAvatar: whitesPlayer?.userAvatarImg?.fileName || "1.png",
+      nickname: whitesPlayer?.nickname || "Guest",
+      eloRating: eloWhitesBeforeGame || 0,
+      countryCode: whitesPlayer?.countryCode || "Unknown",
       timer: formatTimeMs(timeAfterGameEndWhites ?? 0),
     };
 
     const opponentPlayer: userDataInterface = {
-      userAvatar: blacksPlayer.userAvatarImg.fileName,
-      nickname: blacksPlayer.nickname,
-      eloRating: eloBlacksBeforeGame,
-      countryCode: blacksPlayer.countryCode,
+      userAvatar: blacksPlayer?.userAvatarImg?.fileName || "1.png",
+      nickname: blacksPlayer?.nickname || "Guest",
+      eloRating: eloBlacksBeforeGame || 0,
+      countryCode: blacksPlayer?.countryCode || "Unknown",
       timer: formatTimeMs(timeAfterGameEndBlacks ?? 0),
     };
 
