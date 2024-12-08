@@ -65,7 +65,7 @@ export default function HomePage() {
   const handleFirstTime = () => {
     setFirstTime(false);
     sessionStorage.setItem("firstTime", JSON.stringify(false));
-  }
+  };
 
   return (
     <div className="mx-auto mt-xl w-auto grid-cols-2 gap-14 max-md:w-10/12 max-[570px]:w-auto lg:grid">
@@ -172,10 +172,11 @@ export default function HomePage() {
                       className="p-2 bg-dark-3 flex items-center rounded-base"
                     >
                       <FriendModal
-                        avatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${friend.userAvatarImg.fileName
-                          ? friend.userAvatarImg.fileName
-                          : "1.png"
-                          }`}
+                        avatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
+                          friend.userAvatarImg.fileName
+                            ? friend.userAvatarImg.fileName
+                            : "1.png"
+                        }`}
                         flag={friend.countryCode}
                         name={friend.nickname}
                         desc={friend.aboutText}
