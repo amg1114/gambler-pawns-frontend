@@ -91,7 +91,7 @@ export default function ProfilePage() {
             <StyledButton
               extraClasses="w-full"
               style="outlined"
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: "/login" })}
             >
               Log out
             </StyledButton>
