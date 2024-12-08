@@ -21,6 +21,7 @@ import Image from "next/image";
 import peon from "@/app/ui/icons/peon_logo_invert.svg";
 import Board from "@/app/ui/icons/board.svg";
 import Link from "next/link";
+import axios from "axios";
 
 export default function RegisterPage() {
   const {
@@ -63,9 +64,8 @@ export default function RegisterPage() {
   useEffect(() => {
     const fetchCountry = async () => {
       try {
-        const response = await fetch("https://ipapi.co/json/");
-        const data = await response.json();
-        setCountryCode(data.country_code);
+        const response = await axios.get("https://ipapi.co/json/");
+        setCountryCode(response.data.country_code);
       } catch (error) {
         console.error("Error fetching country data:", error);
       }
