@@ -8,12 +8,7 @@ import { Session } from "next-auth";
 import { FormEvent, useEffect, useState } from "react";
 import { Country } from "@/app/lib/interfaces/responses/countries-res.interface";
 import { z } from "zod";
-import {
-  useGetEditedUserChanges,
-  userDataHasErrors,
-  useEditDetails,
-  updateSession,
-} from "../_hooks/useEditUser.hook";
+import { useEditForms } from "../_hooks/useEditUser.hook";
 import GameAlert from "@/app/ui/components/modals/GameAlert";
 import StyledParagraph from "@/app/ui/components/typography/StyledParagraph";
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
@@ -45,6 +40,13 @@ export default function DetailsForm({
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string[];
   } | null>(null);
+
+  const {
+    updateSession,
+    sendUserDetailUpdates,
+    getEditedUserChanges,
+    userDataHasErrors,
+  } = useEditForms();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -87,7 +89,7 @@ export default function DetailsForm({
     e.preventDefault();
 
     if (hasChanges) {
-      const newData = useGetEditedUserChanges(data, session!);
+      const newData = getEditedUserChanges(data, session!);
       const hasErrors = userDataHasErrors(newData!, editUserSchema);
 
       if (hasErrors) {
@@ -99,7 +101,10 @@ export default function DetailsForm({
       }
 
       if (newData) {
-        const { success, changes } = await useEditDetails(newData!, session!);
+        const { success, changes } = await sendUserDetailUpdates(
+          newData!,
+          session!,
+        );
 
         if (success) {
           await updateSession(changes!, session, sessionUpdate);
@@ -134,7 +139,7 @@ export default function DetailsForm({
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [countryList.length]);
 
   return (
     <form className="space-y-sm" onSubmit={(e) => handleSubmit(e)}>

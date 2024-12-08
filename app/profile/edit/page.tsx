@@ -2,12 +2,7 @@
 
 // Libs
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-
-import { User } from "@/app/lib/interfaces/models/user.interface";
-import { useRouter } from "next/navigation";
-
-import { PasswordForm as PasswordFormInterface } from "@/app/lib/interfaces/models/password-form.interface";
+import { useState } from "react";
 
 // Components
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";

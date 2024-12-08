@@ -1,4 +1,4 @@
 export interface PasswordForm {
-    currentPassword: string;
-    newPassword: string;
+  currentPassword: string;
+  newPassword: string;
 }
