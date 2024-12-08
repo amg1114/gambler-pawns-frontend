@@ -86,7 +86,7 @@ export default function Sidebar({ session }: { session: Session | null }) {
       // },
       {
         name: "History",
-        link: "/game/history",
+        link: "/game-history",
         image: historyIcon,
       },
     );

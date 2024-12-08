@@ -201,8 +201,6 @@ export default function DynamicGamePage({ params }: DynamicGamePageProps) {
   return (
     <>
       <section className="mx-auto max-w-screen-board">
-        {/* TODO: crear un componente separado que se use para mostrar:
-          -> 1. excepciones, el timer de inactividad, cuando alguien rechace una oferta de tablas */}
         {backendChessServiceException && (
           <ShowMessage message={backendChessServiceException.message} />
         )}
