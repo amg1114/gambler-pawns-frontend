@@ -15,23 +15,30 @@ import FirstTimeModal from "@/app/ui/components/modals/FirstTimeModal";
 import StyledLink from "@/app/ui/components/typography/StyledLink";
 import { useRouter } from "next/navigation";
 import { ChessBoardGame } from "../ui/components/chessBoardGame/ChessBoardGame";
+import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const [friends, setFriends] = useState<FriendsHome[]>([]);
   const [totalFriends, setTotalFriends] = useState<number>(0);
-  const [firstTime, setFirstTime] = useState<boolean>(false);
+  const [firstTime, setFirstTime] = useState<boolean>(true);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") {
-      return;
+    if (session && session.data) {
+      setFirstTime(false);
     }
-    if (!session || !session.data) {
-      setFirstTime(true);
+  }, [session]);
+
+  useEffect(() => {
+    const storedFirstTime = sessionStorage.getItem("firstTime");
+    if (storedFirstTime) {
+      setFirstTime(JSON.parse(storedFirstTime));
+    } else {
+      sessionStorage.setItem("firstTime", JSON.stringify(false));
     }
-  }, [session, status]);
+  }, []);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -50,7 +57,15 @@ export default function HomePage() {
       fetchFriends();
     }
   }, [session]);
-  console.log(friends);
+
+  if (status === "loading") {
+    return <PageLoadSpinner />;
+  }
+
+  const handleFirstTime = () => {
+    setFirstTime(false);
+    sessionStorage.setItem("firstTime", JSON.stringify(false));
+  }
 
   return (
     <div className="mx-auto mt-xl w-auto grid-cols-2 gap-14 max-md:w-10/12 max-[570px]:w-auto lg:grid">
@@ -157,11 +172,10 @@ export default function HomePage() {
                       className="p-2 bg-dark-3 flex items-center rounded-base"
                     >
                       <FriendModal
-                        avatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
-                          friend.userAvatarImg.fileName
-                            ? friend.userAvatarImg.fileName
-                            : "1.png"
-                        }`}
+                        avatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${friend.userAvatarImg.fileName
+                          ? friend.userAvatarImg.fileName
+                          : "1.png"
+                          }`}
                         flag={friend.countryCode}
                         name={friend.nickname}
                         desc={friend.aboutText}
@@ -190,7 +204,7 @@ export default function HomePage() {
           <></>
         )}
       </div>
-      {firstTime && <FirstTimeModal close={() => setFirstTime(false)} />}
+      {firstTime && <FirstTimeModal close={handleFirstTime} />}
     </div>
   );
 }
