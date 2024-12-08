@@ -62,7 +62,7 @@ export default function GameHistoryPage({
     };
 
     fetchGame();
-  }, [formatPlayersData, loadGameFromPgn, params.id, router]);
+  }, [params.id]);
 
   useEffect(() => {
     if (gameMoves.length == 0) {
