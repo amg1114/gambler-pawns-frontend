@@ -37,15 +37,14 @@ export default function StyledButton(props: StyledButtonProps) {
   const { children, extraClasses, onClick } = props;
   return (
     <button
+      type={props.type || "button"}
       className={clsx(
         `relative ${styleClasses[props.style || "filled"][props.variant || "primary"]} w-fit shrink-0 rounded-base px-md py-sm ${nunito.className} cursor-pointer font-bold transition-colors ${extraClasses}`,
         {
           "!pointer-events-none cursor-not-allowed": props.disabled,
         },
       )}
-      onClick={(e) => {
-        if (!props.disabled) onClick;
-      }}
+      onClick={onClick}
     >
       {children}
       {props.disabled && (
