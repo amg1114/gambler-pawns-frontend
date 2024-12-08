@@ -9,7 +9,7 @@ import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGam
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import UserInfo, { userDataInterface } from "./UserInfo";
 import ShowMessage from "./ShowMessage";
-import CopyLinkButton from "./CopyLinkButton";
+import { CopyLinkButton } from "./CopyLinkButton";
 
 interface SkeletonGameProps {
   userData: userDataInterface;
@@ -33,12 +33,13 @@ export default function SkeletonGame({
       {exceptionFromBackendChessService && (
         <ShowMessage message={exceptionFromBackendChessService.message} />
       )}
-
-      {linkToJoin ? (
-        <CopyLinkButton value="Poner el link" />
-      ) : (
-        <UserInfo isLoading />
-      )}
+      <div className="my-lg flex w-full">
+        {linkToJoin ? (
+          <CopyLinkButton value={linkToJoin} />
+        ) : (
+          <UserInfo isLoading timer={userData.timer} />
+        )}
+      </div>
 
       <div className="relative w-full">
         <div
@@ -49,7 +50,7 @@ export default function SkeletonGame({
         </div>
         <ChessBoardGame />
       </div>
-      <div className="mb-lg mt-md">
+      <div className="my-lg flex w-full">
         <UserInfo isLoading={false} isCurrentPlayer userData={userData} />
       </div>
 

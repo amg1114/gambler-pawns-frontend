@@ -27,7 +27,7 @@ function ActionButton({
   );
 }
 
-const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
+export function CopyLinkButton({ value }: CopyLinkButtonProps) {
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [dialogText, setDialogText] = useState<string>("");
 
@@ -64,6 +64,4 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
       />
     </>
   );
-};
-
-export default CopyLinkButton;
+}
