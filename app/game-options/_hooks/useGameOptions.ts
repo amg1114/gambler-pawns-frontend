@@ -1,3 +1,4 @@
+import { generatePlayerIdForGuest } from "@/app/lib/utils/players.utils";
 import { useSession } from "next-auth/react";
 import { useCallback } from "react";
 
@@ -6,6 +7,7 @@ export type GameOptions = {
   bet?: number;
   timeIncrementPerMoveSeconds: number;
   timeInMinutes: number;
+  playerId: string;
 };
 
 export const useGameOptions = () => {
@@ -20,7 +22,8 @@ export const useGameOptions = () => {
       gameOptions = {
         ...gameOptions,
         ...option,
-        playerId: session?.data?.userId?.toString() || `guest_${Date.now()}`,
+        playerId:
+          session?.data?.userId?.toString() || generatePlayerIdForGuest(),
       };
 
       sessionStorage.setItem(

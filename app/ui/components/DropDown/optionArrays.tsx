@@ -24,7 +24,7 @@ export const arrayResultType = [
 export const arrayGameModes: {
   id: string;
   option: string;
-  config: GameOptions;
+  config: Partial<GameOptions>;
 }[] = [
   {
     id: "option1",
