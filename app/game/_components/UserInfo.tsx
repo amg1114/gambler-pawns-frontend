@@ -5,6 +5,7 @@ import "/node_modules/flag-icons/css/flag-icons.min.css";
 //Components
 import Image from "next/image";
 import Timer from "./Timer";
+import { formatTimer } from "../[id]/_utils/formatTimer.utils";
 
 export interface userDataInterface {
   nickname: string;
@@ -16,6 +17,7 @@ export interface userDataInterface {
 
 interface LoadingState {
   isLoading: true;
+  timer: string | number;
 }
 
 interface LoadedState {
@@ -36,7 +38,7 @@ function CurrentUserInfo({
   if (!countryCode) return null;
   return (
     <>
-      <Timer>{timer}</Timer>
+      <Timer>{formatTimer(timer.toString() ?? "5:00")}</Timer>
 
       <div className="ml-sm flex flex-grow items-end justify-end space-x-2">
         <span
@@ -97,7 +99,7 @@ function OpponentUserInfo({
   );
 }
 
-function SkelentonUserInfo() {
+function SkelentonUserInfo(props: { timer: string | number }) {
   return (
     <>
       <div className="mr-sm flex aspect-square w-10 items-center justify-center rounded-full bg-light text-t-secondary lg:w-14">
@@ -109,7 +111,7 @@ function SkelentonUserInfo() {
         <span className="mr-lg rounded-base bg-dark-2 p-xs">????</span>
       </div>
       <div className="flex items-center">
-        <Timer>5:00</Timer>
+        <Timer>{formatTimer(props.timer.toString() ?? "5:00")}</Timer>
       </div>
     </>
   );
@@ -117,11 +119,7 @@ function SkelentonUserInfo() {
 
 export default function UserInfo(props: UserInfoProps) {
   if (props.isLoading) {
-    return (
-      <div className="my-lg flex w-full">
-        <SkelentonUserInfo />
-      </div>
-    );
+    return <SkelentonUserInfo timer={props.timer} />;
   }
 
   return (

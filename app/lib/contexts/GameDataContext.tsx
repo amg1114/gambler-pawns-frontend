@@ -82,3 +82,7 @@ export const useGameContext = (): GameContextType => {
   }
   return context;
 };
+
+// the following comments related to random pairing join mechanism
+// TODO: revisar este enfoque, pero en el futuro es necesario agregar un tiempo maxDisconectedTime para no eliminar al socket de los rooms si se reconecta en un tiempo corto
+// TODO: revisar la reconexión del socket al recargar la pagina (no esta funcionando, si recarga la pagina se va a quedar esperando para siempre)
