@@ -8,6 +8,7 @@ interface StyledInputProps {
   id?: string;
   errorMessages?: string[];
   onInput?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
@@ -28,6 +29,7 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
       errorMessages,
       onInput,
       onBlur,
+      onChange,
       onFocus,
       ...props
     },
@@ -46,6 +48,7 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
         <input
           className={`flex items-center border-0 text-white ${nunito.className} focus:ring-t-primary rounded-base bg-dark-2 p-md focus:outline-none focus:ring-2 focus:ring-opacity-50 ${inputExtraClasses}`}
           onInput={onInput}
+          onChange={onChange}
           onBlur={onBlur}
           onFocus={onFocus}
           ref={ref}

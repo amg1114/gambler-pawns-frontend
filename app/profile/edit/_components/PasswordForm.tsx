@@ -62,12 +62,12 @@ export default function PasswordForm({
   };
 
   const handleReset = () => {
+    setValidationErrors(null);
+    setChanges(false);
     setData({
       currentPassword: "",
       newPassword: "",
     });
-    setValidationErrors(null);
-    setChanges(false);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -100,7 +100,8 @@ export default function PasswordForm({
         name="currentPassword"
         type="password"
         placeholder="********"
-        onInput={handleChange}
+        onChange={handleChange}
+        value={data.currentPassword}
         errorMessages={validationErrors?.currentPassword ?? []}
       />
       <StyledInput
@@ -108,7 +109,8 @@ export default function PasswordForm({
         name="newPassword"
         type="password"
         placeholder="********"
-        onInput={handleChange}
+        value={data.newPassword}
+        onChange={handleChange}
         errorMessages={validationErrors?.newPassword ?? []}
       />
 

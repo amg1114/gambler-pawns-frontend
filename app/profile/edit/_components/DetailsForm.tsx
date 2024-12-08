@@ -145,7 +145,7 @@ export default function DetailsForm({
         id="nickname"
         placeholder="johndoe"
         value={data.nickname || ""}
-        onInput={handleChange}
+        onChange={handleChange}
         errorMessages={validationErrors?.nickname ?? []}
       />
       <StyledInput
@@ -155,7 +155,7 @@ export default function DetailsForm({
         id="email"
         placeholder="example@mailer.com"
         value={data.email || ""}
-        onInput={handleChange}
+        onChange={handleChange}
         errorMessages={validationErrors?.email ?? []}
       />
       <div className="grid lg:grid-cols-2 lg:gap-md">
@@ -176,7 +176,7 @@ export default function DetailsForm({
           name="dateOfBirth"
           id="dateOfBirth"
           placeholder="1990-01-01"
-          onInput={handleChange}
+          onChange={handleChange}
           value={data.dateOfBirth || ""}
           errorMessages={validationErrors?.dateOfBirth ?? []}
         />

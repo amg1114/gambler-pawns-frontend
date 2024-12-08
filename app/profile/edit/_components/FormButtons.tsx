@@ -20,7 +20,10 @@ export default function FormButtons({
         <StyledButton
           extraClasses="min-w-32"
           style="outlined"
-          onClick={() => handleReset()}
+          type="button"
+          onClick={(e) => {
+            handleReset();
+          }}
         >
           Discard
         </StyledButton>
