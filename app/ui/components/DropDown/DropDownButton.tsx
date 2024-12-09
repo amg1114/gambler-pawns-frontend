@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import StyledButton from "../typography/StyledButton";
 import Image from "next/image";
 
@@ -40,6 +40,7 @@ export default function DropdownButton({
   const [selectedLabel, setSelectedLabel] = useState(dropDown.title);
 
   const { setGameOptions } = useGameOptions();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Función para alternar la visibilidad del dropdown
   const toggleDropdown = () => {
@@ -54,9 +55,31 @@ export default function DropdownButton({
     setIsDropdownVisible(false);
   }
 
+  // Cerrar el dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div id="dropdownButton">
-      <div className="flex justify-center">
+    <div
+      id="dropdown-container"
+      className="relative"
+      ref={dropdownRef} // Referencia al contenedor del dropdown
+    >
+      <div className="flex justify-center" id="dropdownButton">
         <StyledButton
           style={dropDown.dropStyles}
           extraClasses="w-full flex justify-between items-center bg-dark-2"
@@ -82,7 +105,9 @@ export default function DropdownButton({
       </div>
 
       <div
-        className={`absolute h-auto w-[334px] select-none rounded-base border-x-2 border-b-2 border-primary bg-dark-2 ${isDropdownVisible ? "" : "hidden"}`}
+        className={`absolute z-10 h-auto w-full select-none rounded-base border-x-2 border-b-2 border-primary bg-dark-2 ${
+          isDropdownVisible ? "" : "hidden"
+        }`}
         id="dropdown"
       >
         {options && options.length > 0 ? (
