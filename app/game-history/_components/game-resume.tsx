@@ -56,7 +56,6 @@ export default function GameResume({ options }: GameResumeProps) {
         }
         const response = await axios.get(url);
         setGames(response.data.data);
-        console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching friends:", error);
       }
@@ -86,7 +85,7 @@ export default function GameResume({ options }: GameResumeProps) {
   };
 
   return (
-    <div className="w-[334px] space-y-lg">
+    <div className="w-full space-y-lg">
       {games.data && games.data.length > 0 ? (
         <div className="space-y-lg">
           {games.data.map((game, index) => (
