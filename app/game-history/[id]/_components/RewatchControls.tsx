@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Move } from "chess.js";
 
-import { Snackbar } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
@@ -22,27 +20,11 @@ export default function RewatchControls({
   changeIndex: (index: number) => void;
 }) {
   const handleCopy = (value: "link" | "pgn") => {
-    // setDialogText(value);
-    // setSnackbarOpen(true);
-
     if (value === "link") {
       navigator.clipboard.writeText(window.location.href);
     } else {
       navigator.clipboard.writeText(pgn);
     }
-
-    // if (snackbarOpen) {
-    //   setSnackbarOpen(false);
-    //   setTimeout(() => {
-    //     setSnackbarOpen(true);
-    //   }, 0);
-    // }
-
-    // const timeout = setTimeout(() => {
-    //   setSnackbarOpen(false);
-    // }, 2000);
-
-    // return () => clearTimeout(timeout);
   };
 
   return (

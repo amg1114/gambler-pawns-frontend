@@ -40,6 +40,9 @@ export default function GameHistoryPage({
   );
   const [opponentPlayer, setOpponentPlayer] =
     useState<userDataInterface | null>(null);
+  const [currentPlayerSide, setCurrentPlayerSide] = useState<"white" | "black">(
+    "white",
+  );
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -47,12 +50,13 @@ export default function GameHistoryPage({
         const res = await axios.get<RewatchGameRes>(
           `/game/rewatch/${params.id}`,
         );
-        const { currentPlayer, opponentPlayer } = formatPlayersData(
-          res.data.data,
-        );
+        const { currentPlayer, opponentPlayer, currentPlayerSide } =
+          formatPlayersData(res.data.data);
+        console.log(res.data.data);
 
         setCurrentPlayer(currentPlayer);
         setOpponentPlayer(opponentPlayer);
+        setCurrentPlayerSide(currentPlayerSide as "white" | "black");
         setGameRewatch(res.data.data);
         loadGameFromPgn(res.data.data.pgn);
       } catch (err) {
@@ -62,7 +66,7 @@ export default function GameHistoryPage({
     };
 
     fetchGame();
-  }, [params.id]);
+  }, [formatPlayersData, loadGameFromPgn, params.id, router]);
 
   useEffect(() => {
     if (gameMoves.length == 0) {
@@ -96,7 +100,13 @@ export default function GameHistoryPage({
             />
           </div>
           <div className="mx-auto max-w-screen-board">
-            <ChessBoardGame game={game} position={position} onDrop={makeMove} />
+            <ChessBoardGame
+              game={game}
+              position={position}
+              onDrop={makeMove}
+              side={currentPlayerSide}
+              disabledUserMoves
+            />
           </div>
 
           <div className="mt-lg">

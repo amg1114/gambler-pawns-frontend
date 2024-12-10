@@ -28,6 +28,7 @@ interface ChessBoardGameProps {
   arePremovesAllowed?: boolean;
   game?: Chess;
   setPromotionPiece?: (piece: string) => void;
+  disabledUserMoves?: boolean;
 }
 
 export function ChessBoardGame({
@@ -38,6 +39,7 @@ export function ChessBoardGame({
   onDrop,
   arePremovesAllowed,
   game,
+  disabledUserMoves,
 }: ChessBoardGameProps) {
   /** Represents the currently selected piece. */
   const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
@@ -180,6 +182,7 @@ export function ChessBoardGame({
   const innerOnDrop = useCallback(
     (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
       if (!game || !onDrop) return false;
+      if (disabledUserMoves) return false;
 
       // check if turn is valid
       const isInvalidTurn =
@@ -229,7 +232,7 @@ export function ChessBoardGame({
 
       return result;
     },
-    [game, handleCastling, onDrop, side],
+    [game, handleCastling, onDrop, side, disabledUserMoves],
   );
 
   /**

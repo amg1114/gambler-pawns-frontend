@@ -45,7 +45,7 @@ export default function BotPage() {
     };
 
     makeBotMove();
-  }, [bestMove, game, makeMove, isProcessingMove, ,]);
+  }, [bestMove, game, makeMove, isProcessingMove]);
 
   const { data: userData } = useSession();
 
