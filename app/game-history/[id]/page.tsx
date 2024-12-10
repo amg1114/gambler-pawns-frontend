@@ -40,6 +40,9 @@ export default function GameHistoryPage({
   );
   const [opponentPlayer, setOpponentPlayer] =
     useState<userDataInterface | null>(null);
+  const [currentPlayerSide, setCurrentPlayerSide] = useState<"white" | "black">(
+    "white",
+  );
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -47,12 +50,13 @@ export default function GameHistoryPage({
         const res = await axios.get<RewatchGameRes>(
           `/game/rewatch/${params.id}`,
         );
-        const { currentPlayer, opponentPlayer } = formatPlayersData(
-          res.data.data,
-        );
+        const { currentPlayer, opponentPlayer, currentPlayerSide } =
+          formatPlayersData(res.data.data);
+        console.log(res.data.data);
 
         setCurrentPlayer(currentPlayer);
         setOpponentPlayer(opponentPlayer);
+        setCurrentPlayerSide(currentPlayerSide as "white" | "black");
         setGameRewatch(res.data.data);
         loadGameFromPgn(res.data.data.pgn);
       } catch (err) {
@@ -62,14 +66,14 @@ export default function GameHistoryPage({
     };
 
     fetchGame();
-  }, [params.id, router]);
+  }, [formatPlayersData, loadGameFromPgn, params.id, router]);
 
   useEffect(() => {
     if (gameMoves.length == 0) {
       setGameMoves(game.history({ verbose: true }));
       setGameMovesIndex(movesHistory.length - 1);
     }
-  }, [game]);
+  }, [game, gameMoves.length, movesHistory.length]);
 
   const handleIndexChange = (index: number) => {
     if (index == gameMovesIndex) return;
@@ -95,7 +99,16 @@ export default function GameHistoryPage({
               isCurrentPlayer={false}
             />
           </div>
-          <ChessBoardGame game={game} position={position} onDrop={makeMove} />
+          <div className="mx-auto max-w-screen-board">
+            <ChessBoardGame
+              game={game}
+              position={position}
+              onDrop={makeMove}
+              side={currentPlayerSide}
+              disabledUserMoves
+            />
+          </div>
+
           <div className="mt-lg">
             <UserInfo
               isLoading={false}

@@ -28,6 +28,7 @@ interface ChessBoardGameProps {
   arePremovesAllowed?: boolean;
   game?: Chess;
   setPromotionPiece?: (piece: string) => void;
+  disabledUserMoves?: boolean;
 }
 
 export function ChessBoardGame({
@@ -38,6 +39,7 @@ export function ChessBoardGame({
   onDrop,
   arePremovesAllowed,
   game,
+  disabledUserMoves,
 }: ChessBoardGameProps) {
   /** Represents the currently selected piece. */
   const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
@@ -180,6 +182,7 @@ export function ChessBoardGame({
   const innerOnDrop = useCallback(
     (sourceSquare: Square, targetSquare: Square, promotionPiece?: string) => {
       if (!game || !onDrop) return false;
+      if (disabledUserMoves) return false;
 
       // check if turn is valid
       const isInvalidTurn =
@@ -229,7 +232,7 @@ export function ChessBoardGame({
 
       return result;
     },
-    [game, handleCastling, onDrop, side],
+    [game, handleCastling, onDrop, side, disabledUserMoves],
   );
 
   /**
@@ -492,34 +495,32 @@ export function ChessBoardGame({
   ]);
 
   return (
-    <div className="mx-auto max-w-screen-board">
-      <Chessboard
-        id="StyledBoard"
-        boardOrientation={side}
-        position={position}
-        customBoardStyle={{
-          borderRadius: "8px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-        }}
-        customDarkSquareStyle={{
-          backgroundColor: bgDarkSquaresColor,
-        }}
-        customLightSquareStyle={{
-          backgroundColor: bgLightSquaresColor,
-        }}
-        customPieces={customPieces}
-        onPieceDrop={innerOnDrop}
-        customDropSquareStyle={{
-          boxShadow: `inset 0 0 2px 6px ${STYLE_COLORS.SQUARE_TO_DROP}`,
-        }}
-        customSquareStyles={customSquareStyles}
-        onSquareRightClick={handleRightClick}
-        onSquareClick={handleSquareClick}
-        arePremovesAllowed={arePremovesAllowed}
-        onPromotionPieceSelect={handlePromotionPieceSelect}
-        onPromotionCheck={handlePromotionCheck}
-        showPromotionDialog={showPromotionDialogManually}
-      />
-    </div>
+    <Chessboard
+      id="StyledBoard"
+      boardOrientation={side}
+      position={position}
+      customBoardStyle={{
+        borderRadius: "8px",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+      }}
+      customDarkSquareStyle={{
+        backgroundColor: bgDarkSquaresColor,
+      }}
+      customLightSquareStyle={{
+        backgroundColor: bgLightSquaresColor,
+      }}
+      customPieces={customPieces}
+      onPieceDrop={innerOnDrop}
+      customDropSquareStyle={{
+        boxShadow: `inset 0 0 2px 6px ${STYLE_COLORS.SQUARE_TO_DROP}`,
+      }}
+      customSquareStyles={customSquareStyles}
+      onSquareRightClick={handleRightClick}
+      onSquareClick={handleSquareClick}
+      arePremovesAllowed={arePremovesAllowed}
+      onPromotionPieceSelect={handlePromotionPieceSelect}
+      onPromotionCheck={handlePromotionCheck}
+      showPromotionDialog={showPromotionDialogManually}
+    />
   );
 }

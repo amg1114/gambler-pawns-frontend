@@ -16,16 +16,15 @@ export const arrayPlayedAsColor = [
 
 export const arrayResultType = [
   { id: "All", option: "All" },
-  { id: "won", option: "I won" },
-  { id: "Draw Offer", option: "Draw" },
-  { id: "Resing", option: "Resing" },
+  { id: "win", option: "I won" },
+  { id: "draw", option: "Draw" },
   { id: "loss", option: "I lost" },
 ];
 
 export const arrayGameModes: {
   id: string;
   option: string;
-  config: GameOptions;
+  config: Partial<GameOptions>;
 }[] = [
   {
     id: "option1",

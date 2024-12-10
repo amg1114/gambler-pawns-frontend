@@ -5,6 +5,7 @@ import Image from "next/image";
 import { nunito } from "@/app/ui/fonts";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 // Importing components
 import StyledButton from "@/app/ui/components/typography/StyledButton";
@@ -16,6 +17,7 @@ interface userAvatarImg {
   userAvatarImgId: number;
 }
 interface User {
+  isFriend: boolean;
   userId: number;
   nickname: string;
   userAvatarImg: userAvatarImg;
@@ -24,15 +26,70 @@ interface Users {
   data: User[];
 }
 
-export default function SearchUsers() {
+//TODO: Create a backend endpoint to handle friend requests
+const getFriendRequestsFromStorage = (): number[] => {
+  try {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("friendRequests");
+      return stored ? JSON.parse(stored) : [];
+    }
+  } catch (error) {
+    console.error("Error reading friend requests from storage:", error);
+  }
+  return [];
+};
+
+const saveFriendRequestsToStorage = (requests: number[]) => {
+  localStorage.setItem("friendRequests", JSON.stringify(requests));
+};
+
+export default function SearchUsers({
+  onFriendshipChange,
+}: {
+  onFriendshipChange?: () => void;
+}) {
   const { data: session } = useSession();
   const [searchUser, setSearchUser] = useState("");
   const [users, setUsers] = useState<Users>({ data: [] });
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, _setCurrentPage] = useState(1);
+  const [friendRequested, setFriendRequested] = useState<number[]>(
+    getFriendRequestsFromStorage(),
+  );
+  const { socket } = useWebSocketConnection();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchUser(e.target.value);
   };
+
+  const handleAddFriend = (userId: number) => {
+    socket?.emit("notif:friendRequest", {
+      receiverId: userId,
+    });
+    setFriendRequested((prev) => {
+      const newRequests = [...prev, userId];
+      saveFriendRequestsToStorage(newRequests);
+      return newRequests;
+    });
+  };
+
+  useEffect(() => {
+    // Función para actualizar el estado desde localStorage
+    const updateFriendRequestsFromStorage = () => {
+      setFriendRequested(getFriendRequestsFromStorage());
+    };
+
+    // Escuchar cambios en el localStorage
+    window.addEventListener("storage", updateFriendRequestsFromStorage);
+
+    // También actualizar cuando cambie onFriendshipChange
+    if (onFriendshipChange) {
+      updateFriendRequestsFromStorage();
+    }
+
+    return () => {
+      window.removeEventListener("storage", updateFriendRequestsFromStorage);
+    };
+  }, [onFriendshipChange]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -51,16 +108,16 @@ export default function SearchUsers() {
     if (session) {
       fetchUsers();
     }
-  }, [session, searchUser, currentPage]);
+  }, [session, searchUser, currentPage, onFriendshipChange]);
 
   return (
-    <div className="flex w-full flex-col items-center justify-center space-y-md">
+    <div className="space-y-md">
       <div className="w-full">
         <StyledInput
           type="text"
           name="nickname"
           id="nickname"
-          placeholder="find a new friend"
+          placeholder="Start typing to filter users..."
           onInput={handleSearch}
         />
       </div>
@@ -84,12 +141,28 @@ export default function SearchUsers() {
                   {user.nickname}
                 </span>
               </div>
-              <StyledButton
-                style="outlined"
-                extraClasses="py-xs justify-end px-sm"
-              >
-                Añadir amigo
-              </StyledButton>
+
+              {!user.isFriend && (
+                <>
+                  {friendRequested?.includes(user.userId) ? (
+                    <StyledButton
+                      style="outlined"
+                      extraClasses="py-xs justify-end px-sm opacity-50 pointer-events-none"
+                      disabled
+                    >
+                      Request Sent
+                    </StyledButton>
+                  ) : (
+                    <StyledButton
+                      style="outlined"
+                      extraClasses="py-xs justify-end px-sm"
+                      onClick={() => handleAddFriend(user.userId)}
+                    >
+                      Add Friend
+                    </StyledButton>
+                  )}
+                </>
+              )}
             </div>
           ))}
         </div>

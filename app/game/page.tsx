@@ -1,28 +1,17 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useExceptionHandler } from "./_hooks/useGameExceptionHandler";
 import SkeletonGame from "./_components/SkeletonGame";
 import { readFromSessionStorage } from "../lib/utils/sessionStorageUtils";
 import { useSession } from "next-auth/react";
-import useJoinToRandomPairingGame from "./_hooks/useJoinToRandomPairingGame";
-import useOnlineChessGameConnection from "../lib/hooks/useOnlineChessGameConnection";
-
-// TODO: we should to save joinGameDataFormRequest, and gameData in a global state
-// -> to avoid losing the data when the component unmounts.
-//    as a temporary solution we are saving it in sessionStorage
-
-// TODO: type joinGameDataFormRequest and gameData
+import { useSearchParams } from "next/navigation";
+import { useWebSocketConnection } from "../lib/contexts/WebSocketContext";
+import { generatePlayerIdForGuest } from "../lib/utils/players.utils";
 
 export default function GamePage() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-
-  const isFriendRequest = useMemo(
-    () => searchParams.get("friend-req") === "true",
-    [searchParams],
-  );
 
   // Reads the join game data form request from session storage.
   const joinGameDataFormRequest: any = useMemo(
@@ -30,14 +19,38 @@ export default function GamePage() {
     [],
   );
 
-  // call this hook conditionally, only when the user is joining a random pairing game
-  useJoinToRandomPairingGame(!isFriendRequest, joinGameDataFormRequest);
-  // handle game started event
-  useOnlineChessGameConnection();
+  // join game id from the url
+  const idToJoinGame = searchParams.get("join");
+  const isFriendGameRequest = searchParams.get("friend-req") === "true";
+
+  const { socket } = useWebSocketConnection();
+
+  // when component mounts, check if if user has game link to join to the correspoding game (pairing via link shared)
+  useEffect(() => {
+    if (isFriendGameRequest || !idToJoinGame || !socket) return;
+
+    socket.emit("game:joinWithLink", {
+      userId: joinGameDataFormRequest?.playerId || generatePlayerIdForGuest(),
+      gameLink: idToJoinGame,
+    });
+  }, [
+    socket,
+    idToJoinGame,
+    isFriendGameRequest,
+    joinGameDataFormRequest?.playerId,
+  ]);
+
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+
+  // get the current url
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setCurrentUrl(idToJoinGame ? window.location.href : null);
+  }, [idToJoinGame]);
 
   const currentUserData = useMemo(
     () => ({
-      timer: "5:00", // TODO: get the timer from the joinGameDataFormRequest
+      timer: joinGameDataFormRequest?.timeInMinutes || "5:00",
       nickname: session?.data?.nickname || joinGameDataFormRequest?.playerId,
       eloRating: joinGameDataFormRequest?.eloRating || 1200,
       countryCode: session?.data?.countryCode || "co",
@@ -53,6 +66,7 @@ export default function GamePage() {
     <SkeletonGame
       userData={currentUserData}
       exceptionFromBackendChessService={backendChessServiceException}
+      linkToJoin={currentUrl}
     />
   );
 }

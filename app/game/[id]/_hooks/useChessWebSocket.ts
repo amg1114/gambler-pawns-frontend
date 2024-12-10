@@ -222,7 +222,6 @@ export function useChessWebSocket(
   /** Emits event to reconnect to game */
   const emitWebsocketReconnectGame = useCallback(() => {
     if (!socket) return;
-    if (!socket.recovered) return;
     socket.emit("game:reconnect", { playerId, gameId: gameData.gameId });
   }, [socket, playerId, gameData?.gameId]);
 

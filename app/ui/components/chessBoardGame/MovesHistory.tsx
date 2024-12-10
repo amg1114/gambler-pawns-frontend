@@ -17,7 +17,7 @@ export default function MovesHistory({
             const isWhiteMove = (globalIndex + 1) % 2 === 1; // Determina si es movimiento de blancas
             const moveNumber = Math.floor(globalIndex / 2) + 1; // Calcula el número de jugada
             return (
-              <span key={globalIndex} className={isWhiteMove ? "" : "mr-sm"}>
+              <span key={index} className={isWhiteMove ? "" : "mr-sm"}>
                 {isWhiteMove ? `${moveNumber}. ` : ", "}
                 {move}
               </span>

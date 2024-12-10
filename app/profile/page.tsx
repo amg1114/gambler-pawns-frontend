@@ -1,6 +1,7 @@
 "use client";
 
 // Libs
+import axios from "@/app/lib/_axios";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -17,11 +18,12 @@ import { ProfileAvatarSelect } from "./_components/ProfileAvatarSelect";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
-import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
+// import ShowChartRoundedIcon from "@mui/icons-material/ShowChartRounded";
 import SupervisedUserCircleRoundedIcon from "@mui/icons-material/SupervisedUserCircleRounded";
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
 import UserAvatar from "../ui/components/user/UserAvatar";
+import { DeleteUserRes } from "../lib/interfaces/responses/deleteUser-res.interface";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -29,6 +31,8 @@ export default function ProfilePage() {
   const [showProfileAvatarSelect, setShowProfileAvatarSelect] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (!session) {
       return;
@@ -38,6 +42,29 @@ export default function ProfilePage() {
   if (status === "loading") {
     return <PageLoadSpinner />;
   }
+
+  const handleDeleteAccount = async () => {
+    setLoading(true);
+    setShowConfirmDialog(false);
+
+    const res = await axios.delete<DeleteUserRes>(
+      `/user/${session!.data.userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session!.data.token}`,
+        },
+      },
+    );
+
+    setLoading(false);
+    if (res.data.statusCode === 200) {
+      signOut({ callbackUrl: "/" });
+      return;
+    }
+
+    setError(res.data.data.message?.join(", ") ?? "An error occurred");
+    console.error(res.data);
+  };
 
   return (
     <>
@@ -74,15 +101,15 @@ export default function ProfilePage() {
               <HistoryRoundedIcon />
               Game History
             </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            {/* <ProfileOptionRow href="/profile">
               <ShowChartRoundedIcon /> User statistics
-            </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            </ProfileOptionRow> */}
+            <ProfileOptionRow href="/friends">
               <SupervisedUserCircleRoundedIcon /> My friends
             </ProfileOptionRow>
-            <ProfileOptionRow href="/profile">
+            {/* <ProfileOptionRow href="/profile">
               <DriveFileRenameOutlineRoundedIcon /> Customize
-            </ProfileOptionRow>
+            </ProfileOptionRow> */}
           </nav>
         </section>
 
@@ -91,7 +118,7 @@ export default function ProfilePage() {
             <StyledButton
               extraClasses="w-full"
               style="outlined"
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: "/login" })}
             >
               Log out
             </StyledButton>
@@ -117,7 +144,7 @@ export default function ProfilePage() {
         <></>
       )}
 
-      {showConfirmDialog ? (
+      {showConfirmDialog && (
         <GameAlert close={() => setShowConfirmDialog(false)} size="large">
           <StyledTitle variant="h4" extraClasses="text-center !mb-lg">
             Are you sure you want to delete your account?
@@ -129,12 +156,29 @@ export default function ProfilePage() {
             <StyledButton onClick={() => setShowConfirmDialog(false)}>
               Cancel
             </StyledButton>
-            <StyledButton style="outlined">Delete</StyledButton>
+            <StyledButton
+              style="outlined"
+              onClick={() => handleDeleteAccount()}
+            >
+              Delete
+            </StyledButton>
           </div>
         </GameAlert>
-      ) : (
-        <></>
       )}
+
+      {error && (
+        <GameAlert close={() => setError(null)} size="large">
+          <StyledTitle variant="h4" extraClasses="text-center !mb-lg">
+            Error
+          </StyledTitle>
+          <p className="text-slate-500 text-center">{error}</p>
+          <div className="mt-xl flex justify-center gap-md">
+            <StyledButton onClick={() => setError(null)}>Close</StyledButton>
+          </div>
+        </GameAlert>
+      )}
+
+      {loading && <PageLoadSpinner />}
     </>
   );
 }

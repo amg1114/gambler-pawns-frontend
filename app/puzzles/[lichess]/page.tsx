@@ -3,7 +3,7 @@
 // libs
 import axios from "@/app/lib/_axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 
 import {
   Puzzle,
@@ -17,7 +17,7 @@ import useChessPuzzles from "./_hooks/useChessPuzzles";
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
-import ActionButton from "./_components/ActionButton";
+import ActionButton from "@/app/ui/components/forms/ActionButton";
 import LinkIcon from "@mui/icons-material/Link";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoIcon from "@mui/icons-material/Info";
@@ -25,6 +25,8 @@ import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
+import EndPuzzleModal from "./_components/EndPuzzleModal";
+import CopyButton from "@/app/ui/components/forms/CopyButton";
 
 export default function PuzzlePage({
   params,
@@ -36,15 +38,20 @@ export default function PuzzlePage({
   const { loadGameFromFen, position, game, makeMove, movesHistory } =
     useChessGame();
 
-  const { setMovesSolutionQueue, handleHint, onShowSolution } =
-    useChessPuzzles(makeMove);
+  const {
+    setMovesSolutionQueue,
+    handleHint,
+    onShowSolution,
+    makeMoveInBoardPuzzles,
+    hasGameEnded,
+  } = useChessPuzzles(makeMove, game);
 
   // fetch data
   // TODO: crear un indice en la bd sobre lihessId
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (params.lichess) {
       axios
         .get<PuzzleResponse>(`/puzzle/${params.lichess}`)
@@ -77,6 +84,13 @@ export default function PuzzlePage({
     navigator.clipboard.writeText(puzzle!.fen);
   };
 
+  const [shouldShowSolution, setShouldShowSoultion] = useState(false);
+
+  const handleShowSolution = () => {
+    setShouldShowSoultion(true);
+    onShowSolution();
+  };
+
   if (loading || !puzzle) return <PageLoadSpinner />;
 
   return (
@@ -85,65 +99,42 @@ export default function PuzzlePage({
         Puzzle #{puzzle.lichessId}
       </StyledTitle>
       <MovesHistory extraClasses="mt-lg" movesHistory={movesHistory} />
-
-      <ChessBoardGame
-        side={side}
-        game={game}
-        onDrop={makeMove}
-        position={position}
-      />
-      <div className="flex justify-center gap-8 bg-secondary py-md text-white">
-        <ActionButton
-          label={
-            <>
-              Copy <br />
-              Link
-            </>
-          }
-          icon={<LinkIcon className="h-8 w-8" />}
-          onClick={() => handleCopy("link")}
-        />
-        <ActionButton
-          label={
-            <>
-              Copy <br />
-              Fen
-            </>
-          }
-          icon={<ContentCopyIcon className="h-8 w-8" />}
-          onClick={() => handleCopy("fen")}
-        />
-        <ActionButton
-          label={
-            <>
-              Show <br />
-              Solution
-            </>
-          }
-          icon={<InfoIcon className="h-8 w-8" />}
-          onClick={onShowSolution}
-        />
-        <ActionButton
-          label={
-            <>
-              Hint 1 <br />
-              Move
-            </>
-          }
-          icon={<LightbulbIcon className="h-8 w-8" />}
-          onClick={handleHint}
-        />
-        <ActionButton
-          label={
-            <>
-              Skip <br />
-              Puzzle
-            </>
-          }
-          icon={<NavigateNextIcon className="h-8 w-8" />}
-          onClick={() => router.push("/puzzles")}
+      {shouldShowSolution && (
+        <p className="text-center text-lg">{`solution: ${puzzle.solution}`}</p>
+      )}
+      <div className="mx-auto max-w-screen-board">
+        <ChessBoardGame
+          side={side}
+          game={game}
+          onDrop={makeMoveInBoardPuzzles}
+          position={position}
         />
       </div>
+
+      <div className="flex flex-wrap justify-center gap-0 bg-secondary py-md text-sm text-white">
+        <CopyButton dialogText="Link" onClick={() => handleCopy("link")}>
+          <LinkIcon />
+          Copy Link
+        </CopyButton>
+        <CopyButton dialogText="Fen" onClick={() => handleCopy("fen")}>
+          <ContentCopyIcon />
+          Copy FEN
+        </CopyButton>
+        <ActionButton onClick={handleShowSolution}>
+          <InfoIcon />
+          Show Solution
+        </ActionButton>
+        <ActionButton onClick={handleHint}>
+          <LightbulbIcon />
+          <span>
+            Hint 1<br /> Move
+          </span>
+        </ActionButton>
+        <ActionButton onClick={() => router.push("/puzzles")}>
+          <NavigateNextIcon /> Skip Puzzle
+        </ActionButton>
+      </div>
+      {hasGameEnded && <EndPuzzleModal />}
     </section>
   );
 }

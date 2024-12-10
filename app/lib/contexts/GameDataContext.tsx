@@ -6,7 +6,10 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { writeToSessionStorage } from "../utils/sessionStorageUtils";
+import {
+  readFromSessionStorage,
+  writeToSessionStorage,
+} from "../utils/sessionStorageUtils";
 import { useWebSocketConnection } from "../contexts/WebSocketContext";
 import { GameData } from "../interfaces/responses/gameData.interface";
 
@@ -27,7 +30,9 @@ const GameContext = createContext<GameContextType | null>(null);
 export const GameContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [gameData, setGameData] = useState<GameData | null>(null);
+  const [gameData, setGameData] = useState<GameData | null>(
+    readFromSessionStorage("gameData"),
+  );
   const router = useRouter();
   const { socket } = useWebSocketConnection();
 
@@ -77,3 +82,7 @@ export const useGameContext = (): GameContextType => {
   }
   return context;
 };
+
+// the following comments related to random pairing join mechanism
+// TODO: revisar este enfoque, pero en el futuro es necesario agregar un tiempo maxDisconectedTime para no eliminar al socket de los rooms si se reconecta en un tiempo corto
+// TODO: revisar la reconexión del socket al recargar la pagina (no esta funcionando, si recarga la pagina se va a quedar esperando para siempre)

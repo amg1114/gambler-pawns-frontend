@@ -41,13 +41,15 @@ export default function NotifyPage() {
       {/* Sección de notificaciones no leídas */}
       <div>
         <StyledTitle variant="h1" extraClasses="mx-auto text-center">
-          NO LEÍDAS
+          New
         </StyledTitle>
         {unreadNotifications.map((notification) => (
           <NotifyCard
             key={notification.notificationId}
             id={notification.notificationId}
-            playerName={notification.userWhoSend.nickname ?? "Unknown Player"}
+            playerName={
+              notification.userWhoSend.nickname ?? "System Notification"
+            }
             gameDescription={notification.message}
             playerAvatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
               notification.userWhoSend.userAvatarImg.fileName
@@ -68,13 +70,15 @@ export default function NotifyPage() {
       {/* Sección de notificaciones leídas */}
       <div>
         <StyledTitle variant="h1" extraClasses="mx-auto text-center">
-          LEÍDAS
+          Read
         </StyledTitle>
         {readNotifications.map((notification) => (
           <NotifyCard
             key={notification.notificationId}
             id={notification.notificationId}
-            playerName={notification.userWhoSend.nickname ?? "Unknown Player"}
+            playerName={
+              notification.userWhoSend.nickname ?? "System Notification"
+            }
             playerAvatar={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${
               notification.userWhoSend.userAvatarImg.fileName
                 ? notification.userWhoSend.userAvatarImg.fileName

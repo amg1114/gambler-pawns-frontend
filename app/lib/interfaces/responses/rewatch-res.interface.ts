@@ -19,8 +19,8 @@ export interface RewatchGame {
   eloWhitesAfterGame: null;
   eloBlacksBeforeGame: number;
   eloBlacksAfterGame: null;
-  timeAfterGameEndWhites: null;
-  timeAfterGameEndBlacks: null;
+  timeAfterGameEndWhites: number;
+  timeAfterGameEndBlacks: number;
   gameMode: string;
   resultType: null;
   typePairing: string;

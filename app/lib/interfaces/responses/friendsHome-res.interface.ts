@@ -3,5 +3,9 @@ export interface FriendsHome {
   avatar: string;
   aboutText: string;
   eloRapid: number;
-  eloArcade: number;
+  userAvatarImg: {
+    fileName: string;
+  };
+  userId: number;
+  countryCode: string;
 }

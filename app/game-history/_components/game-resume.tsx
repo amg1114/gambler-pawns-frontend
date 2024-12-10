@@ -85,7 +85,7 @@ export default function GameResume({ options }: GameResumeProps) {
   };
 
   return (
-    <div className="w-[334px] space-y-lg">
+    <div className="w-full space-y-lg">
       {games.data && games.data.length > 0 ? (
         <div className="space-y-lg">
           {games.data.map((game, index) => (
@@ -132,7 +132,7 @@ export default function GameResume({ options }: GameResumeProps) {
         </div>
       ) : (
         <StyledTitle variant="h1" extraClasses="text-center">
-          No Matches Found
+          No matches found.
         </StyledTitle>
       )}
     </div>

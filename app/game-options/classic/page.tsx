@@ -20,8 +20,9 @@ import Link from "@/app/ui/icons/link-shared.svg";
 
 // hooks
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useGameOptions } from "@/app/game-options/_hooks/useGameOptions";
+import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 export default function ClassicOptionPage() {
   const router = useRouter();
@@ -35,19 +36,59 @@ export default function ClassicOptionPage() {
     router.back();
   };
 
-  const handleSubmission = () => {
+  const { socket } = useWebSocketConnection();
+
+  /**
+   * Emits event to join a game via random pairing throught socket.io client.
+   */
+  const emitGameJoinRandomPairing = useCallback(
+    (joinGameDataFormRequest: any) => {
+      if (!socket) return;
+
+      socket.emit("game:join", joinGameDataFormRequest);
+    },
+    [socket],
+  );
+
+  const handleJoinToGameViaRandomPairing = () => {
     const gameOptions = getGameOptions();
     if (gameOptions) {
       if (gameOptions.mode && !gameOptions.bet) {
         setGameOptions({ bet: 0 });
       }
 
+      emitGameJoinRandomPairing(gameOptions);
       router.push("/game");
-      return;
     } else {
       setFormError("Please select all the game options");
       return;
     }
+  };
+
+  const onResponseLinkCreated = (tempGameId: string) => {
+    console.log(tempGameId, "response");
+    router.push(`/game?join=${tempGameId}`);
+  };
+
+  // TODO: move this logic to a custom hook to respect SRP
+  const handleCreateGameWithLink = () => {
+    if (!socket) return;
+    const gameOptions = getGameOptions();
+    if (!gameOptions) {
+      setFormError("Please select all the game options");
+      return;
+    }
+
+    socket.emit(
+      "game:createLink",
+      {
+        playerId: gameOptions.playerId,
+        gameMode: gameOptions.mode,
+        timeInMinutes: gameOptions.timeInMinutes,
+        timeIncrementPerMoveSeconds: gameOptions.timeIncrementPerMoveSeconds,
+      },
+      onResponseLinkCreated,
+    );
   };
 
   return (
@@ -74,7 +115,7 @@ export default function ClassicOptionPage() {
       />
 
       <StyledTitle variant="h2" extraClasses="text-center">
-        Your bet
+        Your bet:
       </StyledTitle>
       <div>
         <fieldset className="flex justify-center pb-lg">
@@ -90,13 +131,13 @@ export default function ClassicOptionPage() {
         </fieldset>
       </div>
       <StyledTitle variant="h2" extraClasses="text-center">
-        Against Who?
+        Against who?
       </StyledTitle>
       <div>
         <div className="flex items-center justify-center py-md">
           <StyledButton
             extraClasses={"w-full flex justify-center"}
-            onClick={() => handleSubmission()}
+            onClick={() => handleJoinToGameViaRandomPairing()}
           >
             <Image
               src={Dice}
@@ -109,25 +150,28 @@ export default function ClassicOptionPage() {
           </StyledButton>
         </div>
         <div className="flex items-center justify-center">
-          <StyledButton extraClasses={"w-full flex justify-center"}>
+          <StyledButton
+            extraClasses={"w-full flex justify-center"}
+            onClick={() => handleCreateGameWithLink()}
+          >
             <Image src={Link} alt="" className="h-auto w-auto pr-sm" />
             Copy Game’s Link
           </StyledButton>
         </div>
         <div className="flex items-center justify-center py-md">
-          <StyledButton extraClasses={"w-full flex justify-center"}>
+          <StyledButton
+            extraClasses={"w-full flex justify-center"}
+            onClick={() => router.push("/friends")}
+          >
             <Image
               src={ChessTile}
-              alt=""
+              alt="Friends Icon"
               width={20}
               height={20}
               className="h-auto w-auto pr-sm"
             />
-            Play vs. a Friend
+            Play vs. Friend
           </StyledButton>
-        </div>
-        <div>
-          <StyledButton>Friends</StyledButton>
         </div>
 
         <div className="flex items-center justify-center p-md">

@@ -1,3 +1,5 @@
+"use client";
+
 //libs
 import { bungee } from "@/app/ui/fonts";
 import { useRouter } from "next/navigation";
@@ -7,15 +9,18 @@ import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGam
 import StyledButton from "@/app/ui/components/typography/StyledButton";
 import UserInfo, { userDataInterface } from "./UserInfo";
 import ShowMessage from "./ShowMessage";
+import { CopyLinkButton } from "./CopyLinkButton";
 
 interface SkeletonGameProps {
   userData: userDataInterface;
   exceptionFromBackendChessService?: any;
+  linkToJoin?: string | null;
 }
 
 export default function SkeletonGame({
   userData,
   exceptionFromBackendChessService,
+  linkToJoin,
 }: SkeletonGameProps) {
   const router = useRouter();
 
@@ -28,7 +33,14 @@ export default function SkeletonGame({
       {exceptionFromBackendChessService && (
         <ShowMessage message={exceptionFromBackendChessService.message} />
       )}
-      <UserInfo isLoading />
+      <div className="my-lg flex w-full">
+        {linkToJoin ? (
+          <CopyLinkButton value={linkToJoin} />
+        ) : (
+          <UserInfo isLoading timer={userData.timer} />
+        )}
+      </div>
+
       <div className="relative w-full">
         <div
           className={`absolute z-10 flex h-8 w-full items-center justify-center border-dark-1 bg-secondary text-base text-dark-1 ${bungee.className}`}
@@ -38,7 +50,7 @@ export default function SkeletonGame({
         </div>
         <ChessBoardGame />
       </div>
-      <div className="mb-lg mt-md">
+      <div className="my-lg flex w-full">
         <UserInfo isLoading={false} isCurrentPlayer userData={userData} />
       </div>
 

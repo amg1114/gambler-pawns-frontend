@@ -1,18 +1,16 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import StyledTitle from "../typography/StyledTitle";
-import StyledLink from "../typography/StyledLink";
 import StyledButton from "../typography/StyledButton";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { bungee } from "../../fonts";
 
 interface StoreModalProps {
-  children: React.ReactNode;
   close: () => void;
 }
 
-export default function StoreModal({ children, close }: StoreModalProps) {
+export default function StoreModal({ close }: StoreModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const router = useRouter();
   const closeHandler = (
@@ -29,10 +27,6 @@ export default function StoreModal({ children, close }: StoreModalProps) {
       document.removeEventListener("keydown", closeHandler);
     };
   }, []);
-
-  const onClick = () => {
-    router.push("/login");
-  };
 
   useEffect(() => {
     if (isClosing) {
@@ -77,7 +71,7 @@ export default function StoreModal({ children, close }: StoreModalProps) {
                 <StyledButton
                   variant="primary"
                   extraClasses="w-1/3 text-dark-1 my-lg"
-                  onClick={onClick}
+                  onClick={() => router.push("/login")}
                 >
                   {" "}
                   Login{" "}
@@ -85,6 +79,7 @@ export default function StoreModal({ children, close }: StoreModalProps) {
               </div>
               <div className="flex justify-center">
                 <StyledButton
+                  onClick={() => router.push("/game-options/classic")}
                   style="outlined"
                   extraClasses="w-1/3 text-warning"
                 >

@@ -94,26 +94,29 @@ export function ProfileAvatarSelect({
 
       return () => clearTimeout(timeout);
     }
-  }, [isClosing]);
+  }, [isClosing, onClose]);
 
   return (
-    <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">
+    <div className="fixed inset-0 z-50 flex flex-wrap-reverse items-center justify-center bg-gray/70">
       <div
         className={clsx(`w-4/5 max-w-lg`, {
           "animate-fade-out-up": isClosing,
           "animate-fade-in-down": !isClosing,
         })}
       >
-        <header className="flex justify-end">
-          <button className="text-xl" onClick={(e) => closeHandler(e)}>
-            &times;
-          </button>
-        </header>
         <div
-          className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary p-lg lg:max-h-none lg:overflow-y-auto`}
+          className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary px-lg py-md xl:max-h-none xl:overflow-y-auto`}
         >
+          <header className="flex justify-end">
+            <button
+              className="text-2xl font-bold text-gray hover:text-secondary"
+              onClick={(e) => closeHandler(e)}
+            >
+              &times;
+            </button>
+          </header>
           <StyledTitle extraClasses="!text-secondary text-center" variant="h3">
-            Select yor Avatar
+            Select your avatar
           </StyledTitle>
 
           <figure className="mx-auto mb-lg block w-28">
@@ -136,6 +139,8 @@ export function ProfileAvatarSelect({
                 <Image
                   src={`${process.env.NEXT_PUBLIC_AVATAR_URL}/${avatar.fileName}`}
                   alt={`Avatar ${avatar.userAvatarImgId}`}
+                  width={77}
+                  height={77}
                 />
               </figure>
             ))}

@@ -10,7 +10,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  pnpm_config_cache: $(Pipeline.Workspace)/.pnpm-store
+- group: StaticWebAppSecrets
+- name: pnpm_config_cache    # Declaración de la variable específica
+  value: $(Pipeline.Workspace)/.pnpm-store
 
 steps:
   - task: Cache@2
@@ -29,8 +31,3 @@ steps:
       pnpm install
       pnpm run build
     displayName: "pnpm install and build"
-
-  - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-    displayName: 'Run a multi-line script'
