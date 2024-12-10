@@ -50,13 +50,11 @@ const NotifyCard = ({
 
         <div className="mb-xs flex flex-1 flex-col">
           <div>
-            <StyledTitle variant="h3">
-              {playerName} {type}
-            </StyledTitle>
+            <StyledTitle variant="h3">{type}</StyledTitle>
           </div>
           <div>
             <StyledParagraph extraClasses="mb-xs">
-              {gameDescription}
+              {playerName} {gameDescription}
             </StyledParagraph>
             <StyledParagraph>{timeAgo}</StyledParagraph>
           </div>

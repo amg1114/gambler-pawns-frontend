@@ -59,7 +59,7 @@ export default function NotifyPage() {
             timeAgo={formatDistanceToNow(new Date(notification.timeStamp), {
               addSuffix: true,
             })} // Formateo de fecha
-            type={notification.message}
+            type={notification.type}
             actionText1={notification.actionText1}
             actionText2={notification.actionText2}
             actionLink1={notification.actionLink1}
@@ -88,7 +88,7 @@ export default function NotifyPage() {
             timeAgo={formatDistanceToNow(new Date(notification.timeStamp), {
               addSuffix: true,
             })} // Formateo de fecha
-            type={notification.message}
+            type={notification.type}
             actionText1={notification.actionText1}
             actionText2={notification.actionText2}
             actionLink1={notification.actionLink1}
