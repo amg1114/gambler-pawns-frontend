@@ -132,7 +132,7 @@ const DevelopmentTeam = () => {
       </div>
       <div className="mb-none mt-lg">
         <StyledParagraph extraClasses="text-center !text-light !p-lg !text-md !mb-none">
-          ¡We are excited to share our game and redefine the way we play chess
+          We are excited to share our game and redefine the way we play chess
           together!
         </StyledParagraph>
       </div>

@@ -115,7 +115,7 @@ export default function ClassicOptionPage() {
       />
 
       <StyledTitle variant="h2" extraClasses="text-center">
-        Your bet
+        Your bet:
       </StyledTitle>
       <div>
         <fieldset className="flex justify-center pb-lg">
@@ -131,7 +131,7 @@ export default function ClassicOptionPage() {
         </fieldset>
       </div>
       <StyledTitle variant="h2" extraClasses="text-center">
-        Against Who?
+        Against who?
       </StyledTitle>
       <div>
         <div className="flex items-center justify-center py-md">
@@ -170,7 +170,7 @@ export default function ClassicOptionPage() {
               height={20}
               className="h-auto w-auto pr-sm"
             />
-            Play vs. a Friend
+            Play vs. Friend
           </StyledButton>
         </div>
 

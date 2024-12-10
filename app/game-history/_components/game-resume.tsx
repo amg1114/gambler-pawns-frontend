@@ -132,7 +132,7 @@ export default function GameResume({ options }: GameResumeProps) {
         </div>
       ) : (
         <StyledTitle variant="h1" extraClasses="text-center">
-          No Matches Found
+          No matches found.
         </StyledTitle>
       )}
     </div>

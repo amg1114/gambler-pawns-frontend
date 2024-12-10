@@ -64,14 +64,14 @@ export default function ForgotPasswordPage() {
             </StyledTitle>
             <div className="flex">
               <StyledParagraph extraClasses="text-center">
-                Enter your email to receive a recovery link
+                Enter your email to receive a recovery link:
               </StyledParagraph>
             </div>
             <StyledInput
               label="Email"
               type="email"
               inputExtraClasses="bg-secondary mb-md"
-              wrapperExtraClasses="mb-md min-[700px]:px-md"
+              wrapperExtraClasses="mb-md"
               {...register("email")}
               id="email"
               placeholder="user@example.com"

@@ -27,7 +27,7 @@ export default function AboutPage() {
       <div className="grid-col-1 grid w-auto justify-center p-md text-center">
         <div className="m-xl mx-auto max-w-2xl">
           <StyledTitle variant="h1" extraClasses="text-center">
-            WHO WE ARE
+            Who are we?
           </StyledTitle>
           <StyledParagraph extraClasses="text-center !text-2xl">
             We are six students passionate about software development,

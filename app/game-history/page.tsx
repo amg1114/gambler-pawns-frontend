@@ -25,7 +25,7 @@ export default function GameHistoryPage() {
         </StyledTitle>
         <div>
           <p className={`${azeret_mono.className} pb-md font-bold`}>
-            Game Type
+            Game mode:
           </p>
           <DropdownButton
             options={arraySimplifyGameModes}
@@ -36,7 +36,7 @@ export default function GameHistoryPage() {
         </div>
         <div>
           <p className={`${azeret_mono.className} pb-md font-bold`}>
-            I played as
+            I played as:
           </p>
           <DropdownButton
             options={arrayPlayedAsColor}
@@ -47,9 +47,7 @@ export default function GameHistoryPage() {
         </div>
 
         <div>
-          <p className={`${azeret_mono.className} pb-md font-bold`}>
-            Result Type
-          </p>
+          <p className={`${azeret_mono.className} pb-md font-bold`}>Result:</p>
           <DropdownButton
             options={arrayResultType}
             dropDown={{ dropStyles: "outlined", title: "All" }}

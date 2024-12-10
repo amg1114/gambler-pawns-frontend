@@ -117,7 +117,7 @@ export default function SearchUsers({
           type="text"
           name="nickname"
           id="nickname"
-          placeholder="find a new friend"
+          placeholder="Start typing to filter users..."
           onInput={handleSearch}
         />
       </div>

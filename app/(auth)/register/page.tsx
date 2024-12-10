@@ -182,7 +182,9 @@ export default function RegisterPage() {
             fontFamily="bungee"
             extraClasses="text-4xl flex justify-center items-center"
           >
-            <span className="text-center">Ready for first check Mate?</span>
+            <span className="text-center">
+              Ready for your first check mate?
+            </span>
           </StyledTitle>
           <div className="flex items-center justify-center">
             <Image

@@ -76,7 +76,7 @@ export default function LoginPage() {
               height={50}
               className="mt-sm w-auto items-center justify-center"
             />
-            <span>Welcome Again!!</span>
+            <span>Welcome back!</span>
           </StyledTitle>
           <div className="flex items-center justify-center">
             <Image
@@ -140,7 +140,7 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="underline-offset-4 hover:text-primary hover:underline"
               >
-                Forgot password?
+                Forgot your password?
               </Link>
             </p>
             <div className="flex items-center justify-center pt-lg">

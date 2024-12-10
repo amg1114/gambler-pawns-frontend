@@ -113,7 +113,7 @@ export function ProfileAvatarSelect({
           className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary p-lg lg:max-h-none lg:overflow-y-auto`}
         >
           <StyledTitle extraClasses="!text-secondary text-center" variant="h3">
-            Select yor Avatar
+            Select your avatar
           </StyledTitle>
 
           <figure className="mx-auto mb-lg block w-28">

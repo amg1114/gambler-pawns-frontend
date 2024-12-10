@@ -75,7 +75,8 @@ export default function HomePage() {
             variant="h2"
             extraClasses="text-left text-slate-500 text-xl"
           >
-            Welcome to gambler pawns {session?.data.nickname}
+            Welcome to Gambler Pawns
+            {session?.data.nickname ? `, ${session?.data.nickname}` : ""}!
           </StyledTitle>
 
           <StyledParagraph extraClasses="text-left text-slate-500">
@@ -86,6 +87,7 @@ export default function HomePage() {
             >
               about
             </StyledLink>
+            .
           </StyledParagraph>
         </div>
         <ChessBoardGame />
@@ -101,7 +103,7 @@ export default function HomePage() {
             extraClasses="flex items-center justify-center w-full !h-12"
             onClick={() => router.push("/game-options/classic")}
           >
-            Play Online
+            Play Online (Rapid, Blitz, Bullet)
           </StyledButton>
           {/* Pagina a la que dirige hecha pero el modo de juego no esta listo 
           <StyledButton
@@ -185,7 +187,7 @@ export default function HomePage() {
                     </div>
                   ))
                 ) : (
-                  <StyledParagraph>You have no friends</StyledParagraph>
+                  <StyledParagraph>You have no friends.</StyledParagraph>
                 )}
                 {totalFriends > 5 ? (
                   <StyledButton

@@ -125,7 +125,7 @@ export default function PuzzlePage({
           label={
             <>
               Copy <br />
-              Fen
+              FEN
             </>
           }
           icon={<ContentCopyIcon className="h-8 w-8" />}

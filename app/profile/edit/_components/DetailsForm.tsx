@@ -148,7 +148,7 @@ export default function DetailsForm({
         type="text"
         name="nickname"
         id="nickname"
-        placeholder="johndoe"
+        placeholder="John_Doe"
         value={data.nickname || ""}
         onChange={handleChange}
         errorMessages={validationErrors?.nickname ?? []}
