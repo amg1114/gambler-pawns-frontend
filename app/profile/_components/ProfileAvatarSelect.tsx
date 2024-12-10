@@ -97,7 +97,7 @@ export function ProfileAvatarSelect({
   }, [isClosing, onClose]);
 
   return (
-    <div className="fixed inset-0 flex flex-wrap-reverse items-center justify-center bg-gray/70">
+    <div className="fixed inset-0 z-50 flex flex-wrap-reverse items-center justify-center bg-gray/70">
       <div
         className={clsx(`w-4/5 max-w-lg`, {
           "animate-fade-out-up": isClosing,
@@ -105,7 +105,7 @@ export function ProfileAvatarSelect({
         })}
       >
         <div
-          className={`mt-2xl max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary px-lg py-md xl:max-h-none xl:overflow-y-auto`}
+          className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary px-lg py-md xl:max-h-none xl:overflow-y-auto`}
         >
           <header className="flex justify-end">
             <button
