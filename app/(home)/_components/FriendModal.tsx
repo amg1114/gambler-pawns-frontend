@@ -11,6 +11,7 @@ interface FriendProps {
   desc: string;
   classic: number;
   flag: string;
+  action: () => void;
 }
 
 export default function FriendModal({
@@ -19,6 +20,7 @@ export default function FriendModal({
   desc,
   classic,
   flag,
+  action,
 }: FriendProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -153,7 +155,9 @@ export default function FriendModal({
           </div>
           <StyledParagraph extraClasses="ml-sm">{desc}</StyledParagraph>
           <div className="mt-none text-center">
-            <StyledButton extraClasses="!w-full">Play</StyledButton>
+            <StyledButton onClick={action} extraClasses="!w-full">
+              Play
+            </StyledButton>
           </div>
         </div>
       )}

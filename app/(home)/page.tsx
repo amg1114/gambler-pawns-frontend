@@ -16,12 +16,14 @@ import StyledLink from "@/app/ui/components/typography/StyledLink";
 import { useRouter } from "next/navigation";
 import { ChessBoardGame } from "../ui/components/chessBoardGame/ChessBoardGame";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
+import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const [friends, setFriends] = useState<FriendsHome[]>([]);
   const [totalFriends, setTotalFriends] = useState<number>(0);
   const [firstTime, setFirstTime] = useState<boolean>(true);
+  const { socket } = useWebSocketConnection();
 
   const router = useRouter();
 
@@ -67,6 +69,16 @@ export default function HomePage() {
     sessionStorage.setItem("firstTime", JSON.stringify(false));
   };
 
+  const handlePlay = (reciverId: number) => {
+    socket?.emit("notif:friendGameInvite", {
+      receiverId: reciverId,
+      mode: "rapid",
+      timeInMinutes: 10,
+      timeIncrementPerMoveSeconds: 2,
+    });
+    router.push("/game");
+  };
+  console.log(friends);
   return (
     <div className="mx-auto mt-xl w-auto grid-cols-2 gap-14 max-md:w-10/12 max-[570px]:w-auto lg:grid">
       <div className="w-auto space-y-8 pb-2xl">
@@ -183,6 +195,7 @@ export default function HomePage() {
                         name={friend.nickname}
                         desc={friend.aboutText}
                         classic={friend.eloRapid}
+                        action={() => handlePlay(friend.userId)}
                       />
                     </div>
                   ))

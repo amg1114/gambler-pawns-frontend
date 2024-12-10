@@ -94,7 +94,7 @@ const DevelopmentTeam = () => {
   };
 
   return (
-    <div className="rounded-lg mt-3xl w-full rounded-base bg-gradient-to-r from-transparent via-dark-2 to-transparent p-md">
+    <div className="rounded-lg relative mt-3xl h-full w-full rounded-base bg-gradient-to-r from-transparent via-dark-2 to-transparent p-md">
       <StyledTitle
         variant="h1"
         extraClasses="w-80 items-center md:w-full lg:w-full xl:w-full  pt-2xl !text-primary mx-auto"
