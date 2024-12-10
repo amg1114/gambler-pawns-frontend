@@ -6,7 +6,10 @@ import LinkIcon from "@mui/icons-material/Link";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
+import ActionButton from "@/app/ui/components/forms/ActionButton";
+import CopyButton from "@/app/ui/components/forms/CopyButton";
+
 export default function RewatchControls({
   pgn,
   gameMovesIndex,
@@ -18,12 +21,9 @@ export default function RewatchControls({
   gameMoves: Move[];
   changeIndex: (index: number) => void;
 }) {
-  const [dialogText, setDialogText] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-
   const handleCopy = (value: "link" | "pgn") => {
-    setDialogText(value);
-    setSnackbarOpen(true);
+    // setDialogText(value);
+    // setSnackbarOpen(true);
 
     if (value === "link") {
       navigator.clipboard.writeText(window.location.href);
@@ -31,18 +31,18 @@ export default function RewatchControls({
       navigator.clipboard.writeText(pgn);
     }
 
-    if (snackbarOpen) {
-      setSnackbarOpen(false);
-      setTimeout(() => {
-        setSnackbarOpen(true);
-      }, 0);
-    }
+    // if (snackbarOpen) {
+    //   setSnackbarOpen(false);
+    //   setTimeout(() => {
+    //     setSnackbarOpen(true);
+    //   }, 0);
+    // }
 
-    const timeout = setTimeout(() => {
-      setSnackbarOpen(false);
-    }, 2000);
+    // const timeout = setTimeout(() => {
+    //   setSnackbarOpen(false);
+    // }, 2000);
 
-    return () => clearTimeout(timeout);
+    // return () => clearTimeout(timeout);
   };
 
   return (
@@ -82,43 +82,14 @@ export default function RewatchControls({
           Forward
         </ActionButton>
       </div>
-      <ActionButton onClick={() => handleCopy("link")}>
+      <CopyButton onClick={() => handleCopy("link")} dialogText="Link">
         <LinkIcon />
         Copy Link
-      </ActionButton>
-      <ActionButton>
-        <ContentCopyIcon onClick={() => handleCopy("pgn")} />
+      </CopyButton>
+      <CopyButton onClick={() => handleCopy("pgn")} dialogText="PGN">
+        <ContentCopyIcon />
         Copy PGN
-      </ActionButton>
-      <Snackbar
-        open={snackbarOpen}
-        message={
-          <span className="gam-sm flex items-center">
-            <CheckCircleIcon className="mr-sm text-success" />
-            {dialogText.charAt(0).toUpperCase() + dialogText.slice(1)} was
-            copied.
-          </span>
-        }
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      />
+      </CopyButton>
     </div>
-  );
-}
-
-function ActionButton({
-  children,
-  onClick,
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className="flex flex-col items-center rounded-base px-sm transition-colors hover:bg-primary hover:text-dark-1"
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 }
