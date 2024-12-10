@@ -17,7 +17,7 @@ import useChessPuzzles from "./_hooks/useChessPuzzles";
 // components
 import StyledTitle from "@/app/ui/components/typography/StyledTitle";
 import PageLoadSpinner from "@/app/ui/components/PageLoadSpinner";
-import ActionButton from "./_components/ActionButton";
+import ActionButton from "@/app/ui/components/forms/ActionButton";
 import LinkIcon from "@mui/icons-material/Link";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoIcon from "@mui/icons-material/Info";
@@ -26,6 +26,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ChessBoardGame } from "@/app/ui/components/chessBoardGame/ChessBoardGame";
 import MovesHistory from "@/app/ui/components/chessBoardGame/MovesHistory";
 import EndPuzzleModal from "./_components/EndPuzzleModal";
+import CopyButton from "@/app/ui/components/forms/CopyButton";
 
 export default function PuzzlePage({
   params,
@@ -110,57 +111,28 @@ export default function PuzzlePage({
         />
       </div>
 
-      <div className="flex justify-center gap-8 bg-secondary py-md text-white">
-        <ActionButton
-          label={
-            <>
-              Copy <br />
-              Link
-            </>
-          }
-          icon={<LinkIcon className="h-8 w-8" />}
-          onClick={() => handleCopy("link")}
-        />
-        <ActionButton
-          label={
-            <>
-              Copy <br />
-              FEN
-            </>
-          }
-          icon={<ContentCopyIcon className="h-8 w-8" />}
-          onClick={() => handleCopy("fen")}
-        />
-        <ActionButton
-          label={
-            <>
-              Show <br />
-              Solution
-            </>
-          }
-          icon={<InfoIcon className="h-8 w-8" />}
-          onClick={handleShowSolution}
-        />
-        <ActionButton
-          label={
-            <>
-              Hint 1 <br />
-              Move
-            </>
-          }
-          icon={<LightbulbIcon className="h-8 w-8" />}
-          onClick={handleHint}
-        />
-        <ActionButton
-          label={
-            <>
-              Skip <br />
-              Puzzle
-            </>
-          }
-          icon={<NavigateNextIcon className="h-8 w-8" />}
-          onClick={() => router.push("/puzzles")}
-        />
+      <div className="flex flex-wrap justify-center gap-0 bg-secondary py-md text-sm text-white">
+        <CopyButton dialogText="Link" onClick={() => handleCopy("link")}>
+          <LinkIcon />
+          Copy Link
+        </CopyButton>
+        <CopyButton dialogText="Fen" onClick={() => handleCopy("fen")}>
+          <ContentCopyIcon />
+          Copy FEN
+        </CopyButton>
+        <ActionButton onClick={handleShowSolution}>
+          <InfoIcon />
+          Show Solution
+        </ActionButton>
+        <ActionButton onClick={handleHint}>
+          <LightbulbIcon />
+          <span>
+            Hint 1<br /> Move
+          </span>
+        </ActionButton>
+        <ActionButton onClick={() => router.push("/puzzles")}>
+          <NavigateNextIcon /> Skip Puzzle
+        </ActionButton>
       </div>
       {hasGameEnded && <EndPuzzleModal />}
     </section>
