@@ -105,7 +105,7 @@ export function ProfileAvatarSelect({
         })}
       >
         <div
-          className={`max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary px-lg py-md xl:max-h-none xl:overflow-y-auto`}
+          className={`mt-2xl max-h-[600px] w-full overflow-y-scroll rounded-base bg-primary px-lg py-md xl:max-h-none xl:overflow-y-auto`}
         >
           <header className="flex justify-end">
             <button
