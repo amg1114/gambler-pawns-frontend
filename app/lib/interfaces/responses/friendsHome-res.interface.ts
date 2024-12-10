@@ -6,5 +6,6 @@ export interface FriendsHome {
   userAvatarImg: {
     fileName: string;
   };
+  userId: number;
   countryCode: string;
 }

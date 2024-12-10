@@ -2,7 +2,7 @@ import StyledLink from "../typography/StyledLink";
 
 export default function Footer(): JSX.Element {
   return (
-    <footer className="mx-auto mt-2xl w-full text-light">
+    <footer className="mx-auto mt-[80px] w-full text-light">
       <div className="mt-md border-t pt-md text-center text-sm text-secondary">
         <div className="mb-none flex w-full flex-col items-center">
           <StyledLink
