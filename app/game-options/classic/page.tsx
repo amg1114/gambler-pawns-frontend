@@ -21,7 +21,10 @@ import Link from "@/app/ui/icons/link-shared.svg";
 // hooks
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { useGameOptions } from "@/app/game-options/_hooks/useGameOptions";
+import {
+  GameOptions,
+  useGameOptions,
+} from "@/app/game-options/_hooks/useGameOptions";
 import { useWebSocketConnection } from "@/app/lib/contexts/WebSocketContext";
 
 export default function ClassicOptionPage() {
@@ -42,7 +45,7 @@ export default function ClassicOptionPage() {
    * Emits event to join a game via random pairing throught socket.io client.
    */
   const emitGameJoinRandomPairing = useCallback(
-    (joinGameDataFormRequest: any) => {
+    (joinGameDataFormRequest: GameOptions) => {
       if (!socket) return;
 
       socket.emit("game:join", joinGameDataFormRequest);
@@ -82,7 +85,6 @@ export default function ClassicOptionPage() {
     socket.emit(
       "game:createLink",
       {
-        playerId: gameOptions.playerId,
         gameMode: gameOptions.mode,
         timeInMinutes: gameOptions.timeInMinutes,
         timeIncrementPerMoveSeconds: gameOptions.timeIncrementPerMoveSeconds,
