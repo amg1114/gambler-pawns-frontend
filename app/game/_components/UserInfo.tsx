@@ -6,6 +6,7 @@ import "/node_modules/flag-icons/css/flag-icons.min.css";
 import Image from "next/image";
 import Timer from "./Timer";
 import { formatTimer } from "../[id]/_utils/formatTimer.utils";
+import { useEffect, useState } from "react";
 
 export interface userDataInterface {
   nickname: string;
@@ -38,7 +39,7 @@ function CurrentUserInfo({
   if (!countryCode) return null;
   return (
     <>
-      <Timer>{formatTimer(timer.toString() ?? "5:00")}</Timer>
+      <Timer>{formatTimer(timer?.toString() ?? "5:00")}</Timer>
 
       <div className="ml-sm flex flex-grow items-end justify-end space-x-2">
         <span
@@ -118,17 +119,27 @@ function SkelentonUserInfo(props: { timer: string | number }) {
 }
 
 export default function UserInfo(props: UserInfoProps) {
+  const [timer, setTimer] = useState<string | number>("5:00");
+
+  useEffect(() => {
+    if (!props.isLoading && "userData" in props) {
+      setTimer(props.userData.timer);
+    } else {
+      setTimer(props.timer);
+    }
+  }, [props]);
+
   if (props.isLoading) {
-    return <SkelentonUserInfo timer={props.timer} />;
+    return <SkelentonUserInfo timer={timer} />;
   }
 
   return (
     <>
       <div className="flex w-full gap-md">
         {props.isCurrentPlayer ? (
-          <CurrentUserInfo {...props.userData} />
+          <CurrentUserInfo {...props.userData} timer={timer} />
         ) : (
-          <OpponentUserInfo {...props.userData} />
+          <OpponentUserInfo {...props.userData} timer={timer} />
         )}
       </div>
     </>

@@ -22,21 +22,15 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   //socket connection
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    let playerId = session?.user?.id;
+    if (typeof window === "undefined" || status === "loading") return;
+    let playerId: string | undefined | null = session?.data?.userId.toString();
 
-    // if user is guest, generate playerId for guest and store it in localStorage
+    // if user is guest, Generate a new playerId for guest
     if (!playerId) {
-      // Check if playerId exists in localStorage
-      playerId = localStorage.getItem("guestPlayerId") || undefined;
-
-      if (!playerId) {
-        // Generate a new playerId for guest and store it in localStorage
-        playerId = generatePlayerIdForGuest();
-        localStorage.setItem("guestPlayerId", playerId);
-      }
+      playerId = generatePlayerIdForGuest();
     }
 
     const options = {
@@ -62,7 +56,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       socketInstance.disconnect();
     };
-  }, [session]);
+  }, [session, status]);
 
   return (
     <WebSocketContext.Provider value={{ socket }}>

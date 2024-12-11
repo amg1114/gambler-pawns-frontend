@@ -46,8 +46,7 @@ export default function GamePage() {
   const currentUserData = useMemo(
     () => ({
       timer: joinGameDataFormRequest?.timeInMinutes || "5:00",
-      nickname:
-        session?.data?.nickname || localStorage.getItem("guestPlayerId")!,
+      nickname: session?.data?.nickname || "Guest",
       eloRating: joinGameDataFormRequest
         ? getEloRatingByMode(joinGameDataFormRequest?.mode, session)
         : 1200,
