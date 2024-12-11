@@ -1,7 +1,7 @@
 # Gambler Pawns ♟️
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/jfmonsa/AtlasBooks-front/blob/main/README.md)
-[![es](https://img.shields.io/badge/lang-es-red.svg)](https://github.com/jfmonsa/AtlasBooks-front/blob/main/README-es.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/amg1114/gambler-pawns-frontend/blob/main/README.md)
+[![es](https://img.shields.io/badge/lang-es-red.svg)](https://github.com/amg1114/gambler-pawns-frontend/blob/main/README-es.md)
 
 Gambler Pawns is an innovative web platform for playing chess online, designed to elevate the classic chess experience with unique and exciting features. Play in real-time, connect with friends, and sharpen your skills with tailored challenges!
 
