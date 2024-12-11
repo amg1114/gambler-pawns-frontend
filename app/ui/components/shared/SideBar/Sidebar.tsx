@@ -100,7 +100,6 @@ export default function Sidebar({ session }: { session: Session | null }) {
 
   const toggleSideBar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-    console.log(isSidebarOpen);
   };
 
   return (

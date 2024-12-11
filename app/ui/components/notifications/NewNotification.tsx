@@ -28,7 +28,7 @@ export default function NewNotification({
   return (
     <div
       key={newNotification.notificationId}
-      className="lg:scale-85 fixed bottom-0 right-0 h-auto w-auto max-w-sm transform rounded-base bg-dark-2 p-md shadow-xl transition-all duration-300 ease-in-out sm:max-w-sm sm:scale-100 md:max-w-md md:scale-100 lg:max-w-auto xl:max-w-auto xl:scale-100"
+      className="lg:scale-85 fixed bottom-0 right-0 z-50 h-auto w-auto max-w-sm transform rounded-base bg-dark-2 p-md shadow-xl transition-all duration-300 ease-in-out sm:max-w-sm sm:scale-100 md:max-w-md md:scale-100 lg:max-w-auto xl:max-w-auto xl:scale-100"
     >
       <StyledTitle variant="h3" extraClasses="text-center">
         {newNotification.title}
