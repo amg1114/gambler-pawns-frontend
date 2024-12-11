@@ -12,7 +12,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         nickname: { label: "nickname", type: "text" },
         password: { label: "password", type: "password" },
       },
-      async authorize(credentials, req: Request) {
+      async authorize(credentials, _req: Request) {
         if (
           !credentials ||
           typeof credentials.nickname !== "string" ||
@@ -35,7 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.token = res.data.data.access_token;
 
           return token as JWT;
-        } catch (error) {
+        } catch {
           return null;
         }
       },

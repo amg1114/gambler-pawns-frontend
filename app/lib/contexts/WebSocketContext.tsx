@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
+import { generatePlayerIdForGuest } from "../utils/players.utils";
 
 interface WebSocketContextType {
   socket: Socket | null;
@@ -21,26 +22,41 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   //socket connection
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const options = session?.user
-      ? {
-          auth: {
-            token: session.data.token.replace(/^"|"$/g, ""),
-          },
-        }
-      : {};
+    if (typeof window === "undefined" || status === "loading") return;
+    let playerId: string | undefined | null = session?.data?.userId.toString();
 
-    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
+    // if user is guest, Generate a new playerId for guest
+    if (!playerId) {
+      playerId = generatePlayerIdForGuest();
+    }
+
+    const options = {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      auth: {
+        token: session ? session.data.token.replace(/^"|"$/g, "") : "",
+        playerId,
+      },
+    };
+
+    const socketInstance = io(process.env.NEXT_PUBLIC_WS_URL, {
       ...options,
     });
-    setSocket(newSocket);
+
+    socketInstance.io.on("reconnect", (attempt) => {
+      console.log("Reconnected on attempt:", attempt);
+      socketInstance.emit("user:reconnected", {});
+    });
+
+    setSocket(socketInstance);
 
     return () => {
-      newSocket.disconnect();
+      socketInstance.disconnect();
     };
-  }, [session]);
+  }, [session, status]);
 
   return (
     <WebSocketContext.Provider value={{ socket }}>

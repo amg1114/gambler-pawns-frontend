@@ -177,9 +177,9 @@ export function useChessWebSocket(
   const emitWebsocketMakeMove = useCallback(
     (from: string, to: string, promotion: string) => {
       if (!socket) return;
-      socket.emit("game:makeMove", { playerId, from, to, promotion });
+      socket.emit("game:makeMove", { from, to, promotion });
     },
-    [socket, playerId],
+    [socket],
   );
 
   /** Emits event to accept a draw offer.*/
@@ -187,43 +187,40 @@ export function useChessWebSocket(
     if (!socket) return;
 
     socket.emit("game:acceptDraw", {
-      playerId,
       gameId: gameData.gameId,
     });
-  }, [socket, playerId, gameData?.gameId]);
+  }, [socket, gameData?.gameId]);
 
   /** Emits event to reject a draw offer. */
   const emitWebsocketRejectDraw = useCallback(() => {
     if (!socket) return;
 
     socket.emit("game:rejectDraw", {
-      playerId,
       gameId: gameData.gameId,
     });
-  }, [socket, playerId, gameData?.gameId]);
+  }, [socket, gameData?.gameId]);
 
   /** Emits event to offer a draw to the opponent.*/
   const emitWebsocketOfferDraw = useCallback(() => {
     if (!socket) return;
 
     socket.emit("game:offerDraw", {
-      playerId,
       gameId: gameData.gameId,
     });
-  }, [socket, playerId, gameData?.gameId]);
+  }, [socket, gameData?.gameId]);
 
   /** Emits event to resign the game.*/
   const emitWebsocketResignGame = useCallback(() => {
     if (!socket) return;
 
-    socket.emit("game:resign", { playerId });
-  }, [socket, playerId]);
+    socket.emit("game:resign");
+  }, [socket]);
 
   /** Emits event to reconnect to game */
   const emitWebsocketReconnectGame = useCallback(() => {
     if (!socket) return;
-    socket.emit("game:reconnect", { playerId, gameId: gameData.gameId });
-  }, [socket, playerId, gameData?.gameId]);
+    socket.emit("game:reconnect", { gameId: gameData.gameId });
+  }, [socket, gameData?.gameId]);
 
   // reconnect to game when component mounts
   // TODO: verificar si hay una manera mejor de hacer esto, cuando alguien pierda la conexión o cuando intencionalmente recargue la página

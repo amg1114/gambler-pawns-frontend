@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Peon from "@/app/ui/icons/peon.svg";
 import StyledTitle from "./typography/StyledTitle";
+
 export default function PageLoadSpinner() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-dark-1 bg-opacity-90">

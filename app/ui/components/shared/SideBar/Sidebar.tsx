@@ -39,7 +39,7 @@ const gameOptions = [
   // },
   {
     name: "1 VS AI",
-    link: "game/1-vs-ai",
+    link: "/game/1-vs-ai",
     image: aiIcon,
   },
   {
@@ -100,7 +100,6 @@ export default function Sidebar({ session }: { session: Session | null }) {
 
   const toggleSideBar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-    console.log(isSidebarOpen);
   };
 
   return (

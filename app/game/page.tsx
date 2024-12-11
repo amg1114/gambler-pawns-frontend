@@ -7,14 +7,15 @@ import { readFromSessionStorage } from "../lib/utils/sessionStorageUtils";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useWebSocketConnection } from "../lib/contexts/WebSocketContext";
-import { generatePlayerIdForGuest } from "../lib/utils/players.utils";
+import { GameOptions } from "../game-options/_hooks/useGameOptions";
+import { getEloRatingByMode } from "../lib/utils/players.utils";
 
 export default function GamePage() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
 
   // Reads the join game data form request from session storage.
-  const joinGameDataFormRequest: any = useMemo(
+  const joinGameDataFormRequest: GameOptions | null = useMemo(
     () => readFromSessionStorage("joinGameDataFormRequest"),
     [],
   );
@@ -30,15 +31,9 @@ export default function GamePage() {
     if (isFriendGameRequest || !idToJoinGame || !socket) return;
 
     socket.emit("game:joinWithLink", {
-      userId: joinGameDataFormRequest?.playerId || generatePlayerIdForGuest(),
       gameLink: idToJoinGame,
     });
-  }, [
-    socket,
-    idToJoinGame,
-    isFriendGameRequest,
-    joinGameDataFormRequest?.playerId,
-  ]);
+  }, [socket, idToJoinGame, isFriendGameRequest]);
 
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
 
@@ -51,8 +46,10 @@ export default function GamePage() {
   const currentUserData = useMemo(
     () => ({
       timer: joinGameDataFormRequest?.timeInMinutes || "5:00",
-      nickname: session?.data?.nickname || joinGameDataFormRequest?.playerId,
-      eloRating: joinGameDataFormRequest?.eloRating || 1200,
+      nickname: session?.data?.nickname || "Guest",
+      eloRating: joinGameDataFormRequest
+        ? getEloRatingByMode(joinGameDataFormRequest?.mode, session)
+        : 1200,
       countryCode: session?.data?.countryCode || "co",
       userAvatar: session?.data?.userAvatarImg?.fileName || "1.png",
     }),

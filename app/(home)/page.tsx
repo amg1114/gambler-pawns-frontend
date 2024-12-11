@@ -78,7 +78,7 @@ export default function HomePage() {
     });
     router.push("/game");
   };
-  console.log(friends);
+
   return (
     <div className="mx-auto mt-xl w-auto grid-cols-2 gap-14 max-md:w-10/12 max-[570px]:w-auto lg:grid">
       <div className="w-auto space-y-8 pb-2xl">
@@ -143,7 +143,7 @@ export default function HomePage() {
             Puzzles
           </StyledButton>
         </div>
-        {session?.data ? (
+        {session?.data && (
           <section className="space-y-8">
             <div className="h-auto w-auto rounded-base bg-dark-2 p-md">
               <StyledTitle variant="h3" extraClasses="text-left text-base ">
@@ -202,7 +202,7 @@ export default function HomePage() {
                 ) : (
                   <StyledParagraph>You have no friends.</StyledParagraph>
                 )}
-                {totalFriends > 5 ? (
+                {totalFriends > 5 && (
                   <StyledButton
                     variant="primary"
                     style="outlined"
@@ -210,14 +210,10 @@ export default function HomePage() {
                   >
                     {totalFriends - 5} +{" "}
                   </StyledButton>
-                ) : (
-                  <></>
                 )}
               </div>
             </div>
           </section>
-        ) : (
-          <></>
         )}
       </div>
       {firstTime && <FirstTimeModal close={handleFirstTime} />}

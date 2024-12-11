@@ -1,5 +1,3 @@
-import { generatePlayerIdForGuest } from "@/app/lib/utils/players.utils";
-import { useSession } from "next-auth/react";
 import { useCallback } from "react";
 
 export type GameOptions = {
@@ -7,32 +5,24 @@ export type GameOptions = {
   bet?: number;
   timeIncrementPerMoveSeconds: number;
   timeInMinutes: number;
-  playerId: string;
 };
 
 export const useGameOptions = () => {
-  const { data: session } = useSession();
+  const setGameOptions = useCallback((option: Partial<GameOptions>) => {
+    let gameOptions = JSON.parse(
+      sessionStorage.getItem("joinGameDataFormRequest") || "{}",
+    );
 
-  const setGameOptions = useCallback(
-    (option: Partial<GameOptions>) => {
-      let gameOptions = JSON.parse(
-        sessionStorage.getItem("joinGameDataFormRequest") || "{}",
-      );
+    gameOptions = {
+      ...gameOptions,
+      ...option,
+    };
 
-      gameOptions = {
-        ...gameOptions,
-        ...option,
-        playerId:
-          session?.data?.userId?.toString() || generatePlayerIdForGuest(),
-      };
-
-      sessionStorage.setItem(
-        "joinGameDataFormRequest",
-        JSON.stringify(gameOptions),
-      );
-    },
-    [session],
-  );
+    sessionStorage.setItem(
+      "joinGameDataFormRequest",
+      JSON.stringify(gameOptions),
+    );
+  }, []);
 
   const getGameOptions = useCallback((): GameOptions | null => {
     const gameOptions = sessionStorage.getItem("joinGameDataFormRequest");
